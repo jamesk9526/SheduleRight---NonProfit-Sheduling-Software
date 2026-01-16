@@ -452,11 +452,23 @@ pnpm build
 
 ## 📚 Additional Resources
 
-- [**BOOKING_API_GUIDE.md**](./BOOKING_API_GUIDE.md) - Complete booking API with examples
-- [**DEPLOYMENT.md**](./DEPLOYMENT.md) - Production deployment guide
+### Essential Documentation
+- [**PROJECT_COMPLETION.md**](./PROJECT_COMPLETION.md) - 🎉 **START HERE** - Complete project status, features, and deployment readiness
+- [**TWILIO_SMS_GUIDE.md**](./TWILIO_SMS_GUIDE.md) - SMS reminders setup, API docs, and testing guide
+- [**PRODUCTION_HARDENING.md**](./PRODUCTION_HARDENING.md) - Security, deployment, backups, and disaster recovery
+- [**MONITORING_OBSERVABILITY.md**](./MONITORING_OBSERVABILITY.md) - Logging, metrics, tracing, and alerting setup
+
+### Developer Guides
+- [**GETTING_STARTED.md**](./GETTING_STARTED.md) - Development environment setup
+- [**DEVELOPMENT.md**](./DEVELOPMENT.md) - Architecture, code organization, and development workflow
+- [**API_CONTRACTS.md**](./API_CONTRACTS.md) - Complete API reference with request/response examples
 - [**TROUBLESHOOTING.md**](./TROUBLESHOOTING.md) - Common issues & solutions
+
+### Operations & Deployment
+- [**DEPLOYMENT.md**](./DEPLOYMENT.md) - Docker and Kubernetes deployment
 - [**OPERATIONS.md**](./OPERATIONS.md) - Operational runbook
 - [**GITHUB_COPILOT_TODO.md**](./GITHUB_COPILOT_TODO.md) - Development checklist & next steps
+- [**SESSION_SUMMARY.md**](./SESSION_SUMMARY.md) - Recent session work summary
 
 ---
 
