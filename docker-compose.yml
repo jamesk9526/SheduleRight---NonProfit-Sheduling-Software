@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  couchdb:
+    image: couchdb:3.3
+    container_name: scheduleright-couchdb
+    restart: unless-stopped
+    environment:
+      COUCHDB_USER: admin
+      COUCHDB_PASSWORD: changeme
+    ports:
+      - "5984:5984"
+    volumes:
+      - couchdb_data:/opt/couchdb/data
+      - couchdb_logs:/opt/couchdb/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://admin:changeme@localhost:5984/_up"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - scheduleright
+
+  # Optional: Redis for job queue
+  redis:
+    image: redis:7-alpine
+    container_name: scheduleright-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - scheduleright
+
+volumes:
+  couchdb_data:
+  couchdb_logs:
+  redis_data:
+
+networks:
+  scheduleright:
+    driver: bridge
