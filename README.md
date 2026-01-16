@@ -12,10 +12,6 @@
 
 ScheduleRight is an open-source scheduling platform designed specifically for non-profit pregnancy care centers. It enables seamless appointment scheduling, volunteer management, and client communication with an emphasis on privacy, reliability, and offline-first data synchronization.
 
-## 🎯 Overview
-
-ScheduleRight is an open-source scheduling platform designed specifically for non-profit pregnancy care centers. It enables seamless appointment scheduling, volunteer management, and client communication with an emphasis on privacy, reliability, and offline-first data synchronization.
-
 **Key Features:**
 - 📅 **Smart Scheduling**: Availability slots with recurring patterns, automatic conflict detection
 - 👥 **Client Bookings**: Public booking interface with capacity management
@@ -29,269 +25,534 @@ ScheduleRight is an open-source scheduling platform designed specifically for no
 ---
 
 ## 🚀 Quick Start
-- PWA: Next.js (App Router), TypeScript, React; Workbox service worker for caching and Background Sync.
-- Local data: PouchDB (IndexedDB) with outbox/inbox and conflict handling.
-- Server API: Node (Express/Fastify), TypeScript. JWT + refresh in HttpOnly cookies, RBAC, multi-tenancy.
-- Replication: Server-side proxy to CouchDB-compatible store with filtered replication by organization/site.
-- Messaging: Twilio (SMS/Verify) via server-side jobs and webhooks; templates with variables.
-- Embedding: Partner-friendly JS widget + public REST/GraphQL API with webhooks, theming, and CORS.
-- Observability: Structured logs, metrics, tracing (OpenTelemetry), audit trails.
 
-## Key Features
-- Client management: Custom fields, intake forms, consent tracking, secure messaging.
-- Staff & volunteer management: Skills, certifications, shifts, PTO, on-call, availability, trade approvals.
-- Scheduling: Variable durations/buffers, block scheduling, group appointments, waitlists, eligibility rules, resource constraints, timezone/DST-safe recurrence, overbooking policies.
-- Messaging (Twilio): Two-way SMS, reminders, confirmations, rescheduling links, phone verification, opt-in/out.
-- Embeddable widget: Drop-in script with theming, i18n, accessibility; booking/search API; signed webhooks.
-- Offline-first: Local store, queued mutations, background sync, deterministic conflict policy, audit logs.
-- Customization: JSON Schema forms builder, versioning/migrations, field-level permissions, export/import.
+### Prerequisites
+- **Node.js** 20.x
+- **pnpm** 8.x
+- **MySQL** 8.0 or **CouchDB** 3.3 (Docker recommended)
+- **.env file** with required secrets (see `.env.example`)
 
-## Security & Compliance
-- Multi-tenant isolation and strict org/site scoping on all endpoints.
-- RBAC with least-privilege roles; field-level permissions.
-- PHI minimization, consent auditing, redaction in logs.
-- Data retention, backups, restore drills; encrypted transport; secret management.
+### Installation
 
-## Offline Sync Strategy
-- PouchDB (IndexedDB) for local documents (`clients`, `resources`, `services`, `availability`, `bookings`, `messages`, `consents`, `audit_events`).
-- Outbox for mutations with idempotent actions; inbox for server events.
-- Background Sync via service worker, resumable replication checkpoints, filtered by org/site/scope.
-- Conflict policy: Last-write-wins with domain merges (e.g., prevent double-booking in `bookings`), user-visible resolution UI, audit entries.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/yourusername/SheduleRight.git
+   cd SheduleRight
+   ```
 
-## Embeddable Booking & Public API
-- Widget: `<script>` that mounts a booking UI into a container with `data-*` config for org/site/service/theme.
-- API: REST/GraphQL endpoints to search availability, create/update/cancel bookings, waitlist operations, intake submissions.
-- Webhooks: Signed event callbacks (booking lifecycle), retries and idempotency.
-- Theming/branding: CSS variables, logo, colors, typography; i18n and accessibility.
+2. **Install dependencies:**
+   ```bash
+   pnpm install
+   ```
 
-## Twilio Flows
-- Outbound: Message templates (versioned), personalization, schedules (72h/24h/2h), quiet hours.
-- Inbound: Webhook ingestion, keyword handling (STOP/START/HELP), intent routing (reschedule/cancel).
-- Verification: OTP via Twilio Verify; store verified status and consent.
-- Status tracking: Delivery receipts, escalations, fallbacks (email), audit logs.
+3. **Configure environment:**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your database credentials and secrets
+   ```
 
-## Data Model (High-Level)
-- Organization, Site, Program
-- User (roles: Admin, Scheduler, Staff, Volunteer, Client)
-- StaffProfile, VolunteerProfile (skills, certifications, preferences)
-- Resource (rooms/equipment), Service (durations/buffers)
-- Availability (recurrence + exceptions), Shift, PTO, TradeRequest
-- Booking (single/group), Waitlist, Message, MessageTemplate
-- Consent, AuditEvent, CustomFieldDefinition (JSON Schema)
+4. **Start services:**
+   ```bash
+   # Start MySQL and CouchDB (if using Docker)
+   docker-compose up -d
 
-## Repository Layout (Planned)
-- apps/web: Next.js PWA (App Router), service worker, client portal
-- apps/server: Node API (auth, scheduling, replication, Twilio, public API/webhooks)
-- apps/admin: Admin UI for customization, RBAC, schedules, templates
-- apps/embed: Demo host for embeddable widget
-- packages/embed-widget: Partner drop-in JS widget (UMD/ESM), CDN-ready
-- packages/ui: Shared UI components (scheduler grid, forms, dashboards)
-- packages/core: Domain models, scheduling engine, rules/utilities
-- packages/schema: JSON Schemas, Zod types, validation, migrations
-- packages/pouch-sync: PouchDB setup, replication, outbox/inbox, conflict resolution
-- packages/workflows: Twilio flows, reminder schedulers, intake/triage logic
-- packages/observability: Logging, metrics, tracing setup
-- packages/testing: Test helpers, fixtures, contract/e2e runners
-- infra: Docker Compose for dev (CouchDB/Redis), CI/CD, secrets templates
+   # Start dev servers (web + server)
+   pnpm dev
+   ```
 
-## Environments & Prerequisites (Planned)
-- Dev: Node 18+, pnpm, Docker (CouchDB, Redis), Twilio test credentials.
-- Env: `.env` for web/server; secrets in OS/key vault for production.
-- CI: Lint, type-check, tests, bundle budgets; canary releases for widget.
-
-## Milestones & Success Criteria
-1) Foundations & Tenancy: Auth (JWT+refresh), RBAC, org/site scoping; seed data; CI green.
-2) Scheduling Basics: Availability search, variable durations/buffers, recurring + DST-safe rules; resource constraints.
-3) Staff/Volunteer Ops: Profiles, availability/exceptions, shifts/PTO, trade approvals; audits.
-4) Client Portal & Intake: Public booking, cancel/reschedule, waitlist, JSON Schema intake; e2e passing.
-5) Embeddable Widget + Public API: `<script>` widget, REST/GraphQL with docs, webhooks with signed payloads, theming & CORS.
-6) Twilio Messaging: Two-way SMS, reminders, verification, opt-in/out; delivery status; quiet hours.
-7) Offline-First: PouchDB local store, outbox/inbox, background sync, conflicts resolved; visible sync status.
-8) Integrations & Observability: ICS feeds, CSV export; logs/metrics/tracing; feature flags; blue/green deploy.
-
-## Data Classification & Policy Defaults
-- Sensitive vs normal data: define categories (pregnancy test results, appointment notes, counseling notes, abuse disclosures, medical referrals, verified phone/email vs general contact info).
-- Minimum necessary access: restrict sensitive fields to roles; default-deny for high-risk fields.
-- Audit logging: append-only audits for create/update/delete, consent changes, break-glass access; include actor, timestamp, before/after, reason.
-- Retention/archival: per-tenant policies; default retention (e.g., 7 years) configurable; archival states; deletion workflows with approvals.
-- Right to be forgotten: configurable per-tenant; ensure audit-safe redactions; immutable audit of deletion request.
-- Break-glass access: emergency override with mandatory reason; auto-notify admins; prominent audit entries.
-- Data exports: governed by role; watermarking and access logs; CSV exports with field-level permissions.
-- PHI minimization: store only necessary; avoid PHI in SMS/email; redact logs by default.
-- Consent lifecycle: explicit opt-in tracking with timestamp, source, form version; opt-out registry.
-- Policy publication: surface org/site policies in admin; versioned; enforce via RBAC and server validation.
-
-## Offline Device Security & Encryption
-- Local DB: prefer encryption-at-rest (browser limits apply); where strong encryption is infeasible, use compensating controls.
-- Compensating controls: short session TTLs; auto-lock on inactivity; device PIN guidance; shared-device mode for front desk.
-- Remote wipe: server-initiated "wipe on next sync" flag; local "purge data" button for device owners.
-- Offline session policy: configurable offline session duration; forced re-auth on reconnect if roles changed.
-- PII minimization offline: limit offline replication by role (e.g., appointment snapshots for non-clinical roles). 
-- Fast user switching: shared-device mode with quick lock/unlock and role-based views.
-
-## Booking Consistency & Anti-Double-Booking Guarantees
-- Source of truth: server is authoritative for final booking acceptance.
-- Confirmation handshake: client creates booking (queued if offline) → server validates with atomic constraints → server commits and returns confirmation → webhooks/SMS sent → client updates local record.
-- Hard constraints: uniqueness locks for (resource+time), (staff+time), capacity buckets; transactional validation on server.
-- Waitlists & overbooking: explicit thresholds per service/site; server enforces caps; auto-promotion rules.
-- Timezone/DST policy: store times in UTC; display in site/user TZ; generate recurrence in site TZ with DST-safe logic; document conversions and edge cases.
-
-## Messaging Compliance & Registration (A2P/Consent)
-- A2P 10DLC: define brand/campaign registration ownership, required data storage (brand, campaign IDs), onboarding steps.
-- Consent capture: accepted opt-in methods (form checkbox, portal agreement, SMS "YES"); store timestamp, source, actor/IP, form/template version.
-- Template governance: draft → approval workflow; per-org template library; versioning & rollback with audit.
-- Quiet hours: configurable per org; suppress sends in defined windows; queue for next window.
-- STOP/START/HELP handling: automatic opt-out/in responses; update consent registry; throttle abusive inbound traffic.
-- Rate limiting: per-tenant messaging limits; webhook spam protection; inbound keyword throttling.
-- Verification: Twilio Verify OTP; store verification status; re-verify policies.
-
-## Public API Hardening (Auth/Rate limits/Bot protection)
-- Auth modes: public availability search (rate-limited, no PII), booking with short-lived signed tokens, partner API keys with scoped permissions.
-- CORS/CSP: explicit allowlists; widget is CSP-safe (no eval); content security guidelines for partners.
-- Bot protection: optional hCaptcha/Turnstile, IP throttling, anomaly detection flags.
-- API versioning: `/v1/...` with deprecation policy and changelog; contract tests for stability.
-- Webhooks: HMAC-signed payloads; retries with backoff; idempotency keys; delivery status dashboards.
-
-## Core Workflows (Happy paths + edge cases)
-- New client intake → eligibility → booking → reminders → visit → follow-up: track consent and data minimization throughout; audit key actions.
-- Walk-in conversion: front desk quickly creates appointment; eligibility & consent captured; notify assigned staff.
-- Staff scheduling & resource assignment: create shifts; assign resources; resolve conflicts; publish schedules.
-- Volunteer sign-up & approval: volunteers claim shifts; coordinator approves; messaging confirmations.
-- Reschedule/cancel from SMS link: signed, time-bound links; server validates; updates booking and notifies parties.
-- Multi-site org: client seen at alternate site; enforce cross-site permissions; reconcile site-specific availability.
-
-## Reporting & Exports
-- Dashboards: counts by site/service/date range; waitlist churn; no-shows; messaging deliverability.
-- CSV exports: governed by role; template-based; de-identification options.
-- Audit export: compliance review bundles; filter by time window and actor.
-- Calendar feeds (ICS): per user/resource; secret token URLs; permissioned subscriptions.
-
-## Backups / DR / Tenant Offboarding
-- RPO/RTO: define targets (e.g., RPO ≤ 24h, RTO ≤ 4h) and review quarterly.
-- Backups: daily snapshots; encrypted; periodic restore drills; compaction policies for CouchDB.
-- Tenant export: full tenant data export with schemas; audit and messaging logs included.
-- Tenant delete: retention rules; phased deletion; audit of requests; redaction where appropriate.
-- Restore verification: cadence (e.g., monthly); documented playbooks.
-
-## Testing Strategy (unit/contract/e2e/offline/security)
-- Unit tests: scheduling engine with property-based tests (timezones/DST, buffers, capacity).
-- Contract tests: widget ↔ public API; webhook signature verification.
-- E2E: booking flow, SMS reminders, reschedule/cancel via link; admin customization.
-- Offline simulation: network drop, replay outbox, induced conflicts; ensure reconciliation.
-- Security tests: dependency scanning, SAST, rate-limit/bot protection checks.
-
-## MVP Definition
-- Thin slice: Org/site setup → services/resources → staff availability → public booking → confirmation SMS → staff schedule view → cancel/reschedule → audit log.
-- Exit criteria: All steps function online/offline; server authoritative commits; audits present; Twilio flows pass tests; widget embeds with basic theming.
-
-## RBAC Matrix (Initial)
-- Roles: Admin, Scheduler, Staff, Volunteer, Client.
-- Admin: full tenant admin, policy/config, forms, templates, users, exports, webhooks.
-- Scheduler: manage availability, bookings, waitlists, resources; view client minimal data as policy allows.
-- Staff: view assigned bookings/clients; add case notes; limited booking operations; messaging within policy.
-- Volunteer: view assigned shifts; limited client exposure; messaging constrained; hour logging.
-- Client: portal access; self-service booking/reschedule/cancel; messaging consent.
-- Field-level permissions: sensitive fields visible/editable only to Admin/Staff (policy-driven).
-- Site scoping: users bound to sites/programs; cross-site access requires explicit grants.
-
-## API Contracts Overview (Draft)
-- REST base: `/v1`
-- Availability: `GET /v1/availability?org=...&site=...&service=...&from=...&to=...`
-- Book: `POST /v1/bookings` (body: org/site/service, client, slot, metadata) → returns booking with status `confirmed|pending`.
-- Modify: `PATCH /v1/bookings/{id}` (reschedule, cancel, notes)
-- Waitlist: `POST /v1/waitlist` / `DELETE /v1/waitlist/{id}`
-- Intake: `POST /v1/intake` (JSON Schema payload + version)
-- Clients: `GET/POST/PATCH /v1/clients`
-- Shifts: `GET/POST/PATCH /v1/shifts`
-- Resources/Services: `GET/POST/PATCH /v1/resources`, `/v1/services`
-- Messaging: `POST /v1/messages/send` (templateId, vars, recipients)
-- Webhooks: `POST /v1/webhooks/{event}` (incoming Twilio, partner callbacks) with HMAC signature
-- Auth: `POST /v1/auth/login`, `POST /v1/auth/refresh`, `POST /v1/auth/logout`
-- Widget token: `POST /v1/embed/token` (short-lived booking token scoped to org/site/service)
-- GraphQL: `/v1/graphql` for partner integrations (optional; mirrors core entities)
-
-## Service Worker & Caching Strategy
-- Precache: app shell, core routes, static assets, widget script (versioned), i18n bundles.
-- Runtime caches:
-  - GET APIs: stale-while-revalidate with TTL caps.
-  - POST/PUT/PATCH/DELETE: network-only with Background Sync queue; idempotent actions.
-- Sync cadence: backoff with jitter; pause during quiet hours for messaging.
-- Offline fallbacks: dedicated offline route with essential actions (view schedule, create pending booking).
-- Cache busting: versioned assets; SW update prompts; safe rollover.
-
-## Deployment & Environments
-- Envs: dev, staging, prod; per-tenant feature flags.
-- Server: Fastify/Express on Node 18+; Docker images; deploy via Render/Railway/Azure; autoscaling; HTTPS enforced.
-- Data: CouchDB (managed or self-hosted); Redis for queues; backups automated.
-- Widget: CDN-hosted (Cloudflare/Akamai) with versioned filenames; CSP-safe headers.
-- Secrets: managed via platform vault; `.env` only for local dev.
-- CI/CD: lint, type-check, tests, build; canary releases for widget and API; blue/green deploys for server.
-
-## Staff Flexible Scheduling Details
-- Shifts: variable durations; split shifts; overlapping support; soft/hard constraints per role.
-- On-call: windows with escalation rules; paging via SMS; assignment rotation.
-- Overrides: per-day exceptions; blackout dates; PTO/leave integration; approvals workflow.
-- Load balancing: distribute bookings across staff; fairness and capacity rules.
-- Overtime policies: warnings and approvals when exceeding thresholds.
-
-## Volunteer Management Details
-- Sign-up windows: volunteers claim open shifts; coordinator approval queues.
-- Credential tracking: certifications, background checks, expirations; reminders.
-- Training modules: record completion; eligibility gates for certain services.
-- Hour logging: per-shift clock-in/out or auto-log; export for reporting.
-- Messaging: broadcast to volunteer groups; shift reminders; opt-in compliance.
-
-## Internationalization & Accessibility
-- Locales: configurable per tenant; language packs; date/time localization.
-- Accessibility: WCAG 2.2 AA targets; keyboard navigation; high-contrast mode; screen reader labels.
-- RTL support: layouts and components adapt to RTL languages.
-
-## Performance Budgets
-- PWA shell ≤ 200KB gzip initial; critical CSS inlined; lazy-load non-critical bundles.
-- TTI ≤ 3s on mid-tier devices; cache-first for shell.
-- API response budgets: availability search ≤ 300ms p95 (staging target); pagination enforced.
-
-## Architecture Decision Records (ADR)
-- Maintain `/docs/adr/` with numbered decisions.
-- Template: context, decision, alternatives, consequences.
-- Initial ADRs: Next.js App Router; Fastify vs Express; PouchDB+CouchDB sync; A2P registration ownership; widget delivery strategy.
-
-## Partner Integration Guide (Outline)
-- Embedding: script include, container setup, data attributes, init API.
-- CSP guidance: required directives; example configurations.
-- Auth: short-lived booking tokens; token issuance; scopes and expiries.
-- Webhooks: event types, payload schemas, signature verification examples.
-- Theming: CSS variables; theme packs; logo and brand assets.
-- Troubleshooting: rate limits, bot protection, common errors.
-
-## Data Migration Strategy
-- Schema versioning: JSON Schema + UI Schema; migrations with safe roll-forward/back.
-- Compatibility: client enforces version gates; warns/admins when mismatch.
-- Backfill jobs: server tasks for evolving fields; audit changes.
-
-## Analytics & KPIs
-- Core: bookings created/confirmed/canceled; show rate; waitlist churn; message deliverability; volunteer hours; staff utilization.
-- Per-tenant dashboards; exportable reports; anomaly alerts.
-
-## Operations & Support
-- Runbooks: incident handling, webhook retries, queue congestion, backup/restore.
-- SLAs: response targets for critical endpoints; maintenance windows.
-- Escalation: on-call rotations; contact points; status page.
-
-## Open Questions (To Align Before Scaffolding)
-- Next.js choice: App Router vs Pages + `next-pwa`? (App Router + custom Workbox recommended.)
-- Server framework preference: Fastify vs Express? (Fastify recommended for performance.)
-- CouchDB hosting strategy and per-tenant database vs partitions?
-- Widget CDN and CSP constraints for partner sites?
-- Minimum viable scheduling policies (overbooking, waitlist promotion) for v1?
-- Required locales and accessibility targets.
-
-## Next Steps
-- Confirm open questions and priorities with stakeholders.
-- Lock tech choices (Next.js App Router, Fastify, CouchDB proxy).
-- Scaffold monorepo and minimal stubs (web app shell, server health, schemas package).
-- Draft API contracts for booking/search/webhooks and widget init options.
+5. **Initialize database:**
+   - Open http://localhost:3001/api/v1/bootstrap
+   - Complete the bootstrap flow to create your first admin account
+   - Log in at http://localhost:3000
 
 ---
 
-This README is the master guide. Once aligned, we’ll scaffold the repository to this plan and iterate feature by feature with tests and observability.
+## 📋 Core Features
+
+### 1. **Availability & Booking Management**
+- Create availability slots with flexible recurrence patterns (daily, weekly, monthly, once)
+- Set capacity limits per slot
+- Automatic conflict detection
+- Soft delete with audit trail
+- Status tracking (pending → confirmed/completed/cancelled/no-show)
+
+**Endpoints:**
+```
+POST   /api/v1/sites/:siteId/availability        # Create slot
+GET    /api/v1/sites/:siteId/availability        # List all
+PUT    /api/v1/availability/:slotId/deactivate   # Soft delete
+
+POST   /api/v1/sites/:siteId/bookings            # Create booking (public)
+GET    /api/v1/bookings/me                       # My bookings
+PUT    /api/v1/bookings/:bookingId/confirm       # Confirm (STAFF+)
+PUT    /api/v1/bookings/:bookingId/cancel        # Cancel
+```
+
+### 2. **Organization & Multi-Site Support**
+- Organization creation (ADMIN only)
+- Per-organization sites
+- Role-based access control
+- Organization branding (planned)
+
+**Endpoints:**
+```
+POST   /api/v1/orgs                              # Create org
+GET    /api/v1/orgs                              # List user's orgs
+GET    /api/v1/orgs/:orgId                       # Get org details
+POST   /api/v1/orgs/:orgId/sites                 # Create site
+GET    /api/v1/orgs/:orgId/sites                 # List sites
+```
+
+### 3. **Authentication & RBAC**
+- JWT tokens (15-min access, 7-day refresh)
+- Email/password login
+- HttpOnly refresh cookies
+- Role enforcement (ADMIN, STAFF, CLIENT)
+- Automatic request ID tracking for debugging
+
+**Endpoints:**
+```
+POST   /api/v1/auth/login                        # Login
+POST   /api/v1/auth/refresh                      # Refresh token
+GET    /api/v1/users/me                          # Current user
+```
+
+### 4. **Volunteer Management**
+- Volunteer profiles with contact info
+- Shift scheduling and assignment
+- Status tracking (active, inactive, etc.)
+
+**Endpoints:**
+```
+POST   /api/v1/volunteers                        # Create volunteer
+GET    /api/v1/volunteers                        # List volunteers
+POST   /api/v1/volunteers/:volunteerId/shifts    # Create shift
+POST   /api/v1/volunteers/:volunteerId/assign    # Assign to shift
+```
+
+### 5. **SMS Reminders**
+- Twilio integration for automated SMS
+- Per-organization reminder settings
+- Reminder templates (customizable)
+- Status tracking
+
+**Endpoints:**
+```
+GET    /api/v1/reminders/:orgId/settings         # Get settings
+PUT    /api/v1/reminders/:orgId/settings         # Update settings
+POST   /api/v1/reminders/send                    # Send reminder (WIP)
+```
+
+### 6. **Admin Bootstrap**
+- First-run initialization flow
+- Auto-create admin account
+- Ensure default system config
+- Required before other routes activate
+
+**Endpoints:**
+```
+POST   /api/v1/bootstrap                         # Complete bootstrap
+GET    /api/v1/bootstrap/status                  # Check bootstrap status
+```
+
+---
+
+## 🏗️ Architecture
+
+### Tech Stack
+
+**Backend:**
+- **Framework**: Fastify 4.x (lightweight, high-performance HTTP server)
+- **Language**: TypeScript 5.3
+- **Database**: MySQL 8.0 (primary) or CouchDB 3.3 (alternative)
+- **Auth**: JWT (jsonwebtoken)
+- **Validation**: Zod
+- **Logging**: Pino
+- **Queue** (future): BullMQ
+- **SMS**: Twilio
+
+**Frontend:**
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript 5.3
+- **Styling**: Tailwind CSS
+- **State**: TanStack Query (React Query)
+- **Validation**: Zod
+- **Offline**: PouchDB (progressive sync)
+
+**DevOps:**
+- **Containerization**: Docker & Docker Compose
+- **Package Manager**: pnpm (monorepo)
+- **Testing**: Vitest
+- **Linting**: ESLint, TypeScript strict mode
+
+### Project Structure
+
+```
+.
+├── apps/
+│   ├── server/                 # Fastify API server
+│   │   ├── src/
+│   │   │   ├── index.ts       # Server bootstrap, middleware, routes
+│   │   │   ├── config.ts      # Environment config validation (Zod)
+│   │   │   ├── db/            # Database layer (MySQL, CouchDB)
+│   │   │   ├── services/      # Business logic (Auth, Org, Booking, etc.)
+│   │   │   ├── routes/        # HTTP endpoints (organized by domain)
+│   │   │   ├── middleware/    # Fastify hooks (auth, logging, rate-limit)
+│   │   │   └── __tests__/     # Integration & E2E tests
+│   ├── web/                    # Next.js frontend
+│   │   ├── app/               # App Router pages
+│   │   ├── lib/               # Hooks, utilities
+│   │   ├── public/            # Assets, PWA icons
+│   │   └── components/        # Reusable UI (future)
+│   ├── admin/                  # Admin panel (Next.js) - WIP
+│   └── embed/                  # Embeddable widget (Next.js) - WIP
+├── packages/
+│   ├── core/                   # Shared business logic
+│   ├── schema/                 # Zod schemas, types
+│   ├── ui/                     # Shared UI components
+│   ├── testing/                # Test utilities
+│   └── observability/          # Logging, metrics
+├── infra/
+│   └── docker-compose.yml      # Local dev environment
+├── docs/                       # Architecture docs, ADRs
+└── pnpm-workspace.yaml         # Monorepo config
+```
+
+### Database Schema (MySQL)
+
+**Core Tables:**
+- `organizations` - Tenant info
+- `users` - User accounts with roles
+- `sites` - Per-org locations
+- `availability` - Scheduling slots
+- `bookings` - Client appointments
+- `audit_logs` - Change trail
+- `system_config` - Global settings
+- `system_bootstrap` - Initialization state
+
+**Volunteer Tables:**
+- `volunteers` - Volunteer profiles
+- `shifts` - Shift definitions
+- `shift_assignments` - Volunteer-shift relationships
+
+**Documents Table (JSON bridge):**
+- `documents` - Generic document store for CouchDB parity
+
+**Migrations:**
+- `001_documents_indexes.sql` - Base indexes
+- `002_users_orgs.sql` - Query optimization
+- `003_volunteers_shifts.sql` - Volunteer management
+
+### Authentication Flow
+
+```
+Client Login
+    ↓
+POST /api/v1/auth/login { email, password }
+    ↓
+Verify password
+    ↓
+Generate JWT (15-min) + Refresh Token (7-day)
+    ↓
+Return { accessToken, refreshToken (HttpOnly cookie) }
+    ↓
+Store accessToken in localStorage
+    ↓
+All requests: Authorization: Bearer <accessToken>
+    ↓
+On expiry: POST /api/v1/auth/refresh → new token
+```
+
+---
+
+## 🔧 Development
+
+### Running Locally
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start Docker containers (MySQL, CouchDB)
+docker-compose up -d
+
+# Run all dev servers (watches for changes)
+pnpm dev
+
+# Run server only
+pnpm --filter @scheduleright/server run dev
+
+# Run web only
+pnpm --filter @scheduleright/web run dev
+```
+
+### Database Commands
+
+```bash
+# Initialize MySQL schema and run migrations
+pnpm --filter @scheduleright/server run db:mysql:init
+pnpm --filter @scheduleright/server run db:mysql:migrate
+
+# Seed test data
+pnpm --filter @scheduleright/server run seed
+
+# Create CouchDB indexes
+pnpm --filter @scheduleright/server run db:indexes
+```
+
+### Testing
+
+```bash
+# Run all tests
+pnpm test
+
+# Watch mode
+pnpm test:watch
+
+# Server tests only
+pnpm --filter @scheduleright/server test
+
+# With coverage (via Vitest)
+pnpm test -- --coverage
+```
+
+### Linting & Type Checking
+
+```bash
+# Lint all packages
+pnpm lint
+
+# Format code
+pnpm format
+
+# Type check (no emit)
+pnpm type-check
+```
+
+---
+
+## 🔐 Environment Configuration
+
+Create a `.env` file based on `.env.example`:
+
+```bash
+# Database
+DB_PROVIDER=mysql                          # or 'couchdb'
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_DATABASE=scheduleright
+MYSQL_USER=root
+MYSQL_PASSWORD=
+
+# CouchDB (if using)
+COUCHDB_URL=http://localhost:5984
+COUCHDB_USER=admin
+COUCHDB_PASSWORD=password
+
+# Server
+NODE_ENV=development
+SERVER_PORT=3001
+JWT_SECRET=your-secret-key-min-32-chars
+
+# CORS
+CORS_ORIGIN=http://localhost:3000,http://localhost:3001
+
+# Twilio (optional)
+TWILIO_ACCOUNT_SID=
+TWILIO_AUTH_TOKEN=
+TWILIO_PHONE_NUMBER=
+TWILIO_VERIFY_SID=
+```
+
+---
+
+## 📊 API Documentation
+
+### Health & Status Endpoints
+
+```bash
+# Liveness probe
+GET /health
+→ { status: "ok", uptime: 123 }
+
+# Readiness probe (detailed health checks)
+GET /readiness
+→ { status: "healthy", database: "connected", ... }
+
+# Metrics
+GET /metrics
+→ { requestCount, avgResponseTime, ... }
+
+# HTML status page with diagnostics
+GET /status
+→ Interactive dashboard showing all services
+```
+
+### Error Handling
+
+All endpoints return consistent error responses:
+
+```json
+{
+  "statusCode": 400,
+  "error": "Bad Request",
+  "message": "Validation failed",
+  "code": "VALIDATION_ERROR",
+  "details": [...]
+}
+```
+
+**Status Codes:**
+- `200` - Success
+- `400` - Validation error
+- `401` - Unauthorized (missing/invalid token)
+- `403` - Forbidden (insufficient permissions)
+- `404` - Not found
+- `409` - Conflict (duplicate, capacity exceeded, etc.)
+- `500` - Server error
+
+---
+
+## 🚢 Deployment
+
+### Docker
+
+```bash
+# Build images
+docker-compose -f docker-compose.prod.yml build
+
+# Run production
+docker-compose -f docker-compose.prod.yml up
+```
+
+### Manual (Ubuntu 22.04)
+
+```bash
+# Install Node.js
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# Install pnpm
+npm install -g pnpm
+
+# Clone repo
+git clone https://github.com/yourusername/SheduleRight.git
+cd SheduleRight
+
+# Install dependencies
+pnpm install
+
+# Build
+pnpm build
+
+# Set up systemd service (see DEPLOYMENT.md)
+```
+
+---
+
+## 📚 Additional Resources
+
+- [**BOOKING_API_GUIDE.md**](./BOOKING_API_GUIDE.md) - Complete booking API with examples
+- [**DEPLOYMENT.md**](./DEPLOYMENT.md) - Production deployment guide
+- [**TROUBLESHOOTING.md**](./TROUBLESHOOTING.md) - Common issues & solutions
+- [**OPERATIONS.md**](./OPERATIONS.md) - Operational runbook
+- [**GITHUB_COPILOT_TODO.md**](./GITHUB_COPILOT_TODO.md) - Development checklist & next steps
+
+---
+
+## 🐛 Known Limitations & Planned Features
+
+### Current Limitations
+- Twilio SMS sending not yet implemented (endpoints ready, wiring pending)
+- PouchDB offline sync scaffolded but not yet integrated
+- Admin panel and embed widget in early stages
+- Multi-tenancy branding customization not yet available
+
+### Planned Features
+- 📖 Online documentation site (Nextra)
+- 🎨 Organization branding (logos, colors, custom domain)
+- 📊 Advanced analytics dashboard
+- 🔄 Offline-first with PouchDB sync
+- 🌍 Multi-language support
+- ⏰ Timezone-aware scheduling
+- 📱 Native mobile apps (React Native)
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+
+### Development Setup
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Make changes and commit: `git commit -m 'Add my feature'`
+4. Push to your fork: `git push origin feature/my-feature`
+5. Open a Pull Request
+
+### Code Standards
+- TypeScript with strict mode enabled
+- Zod for all input validation
+- 100% ESM (server), CommonJS (Next.js)
+- Tests required for new features
+- Conventional commit messages
+
+---
+
+## 📈 Project Status
+
+**Version:** 0.0.1 (Alpha)  
+**Last Updated:** January 16, 2026
+
+### Completed (9/12 Goals)
+✅ Authentication system (JWT, RBAC)  
+✅ Organization & site management  
+✅ Availability & booking lifecycle  
+✅ Web UI (login, dashboard, bookings)  
+✅ Volunteer management (profiles, shifts)  
+✅ SMS reminders settings  
+✅ Admin bootstrap flow  
+✅ MySQL support with migrations  
+✅ Comprehensive test suite (110+ tests)  
+
+### In Progress
+🔄 Twilio SMS integration  
+🔄 Production hardening & security  
+
+### Not Started
+⏳ Monitoring & observability (Pino, Prometheus)  
+⏳ Advanced admin dashboard  
+⏳ Multi-language support  
+
+See [GITHUB_COPILOT_TODO.md](./GITHUB_COPILOT_TODO.md) for detailed roadmap.
+
+---
+
+## 📝 License
+
+This project is licensed under the **MIT License** - see [LICENSE](./LICENSE) file for details.
+
+---
+
+## 💬 Support & Contact
+
+- **Issues**: [GitHub Issues](https://github.com/yourusername/SheduleRight/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/yourusername/SheduleRight/discussions)
+- **Email**: support@scheduleright.org (coming soon)
+
+---
+
+## 🙏 Acknowledgments
+
+Built with ❤️ for non-profit organizations serving their communities.
+
+**Key Technologies:**
+- [Fastify](https://www.fastify.io/) - Fast and low overhead web framework
+- [Next.js](https://nextjs.org/) - React framework for production
+- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS
+- [TypeScript](https://www.typescriptlang.org/) - Type safety for JavaScript
+- [Docker](https://www.docker.com/) - Containerization & local development
+
+---
+
+**Made with 💙 for healthcare**
