@@ -1,0 +1,35 @@
+{
+  "name": "schedule-right",
+  "version": "0.0.1",
+  "description": "Offline-first PWA for non-profit pregnancy care centers: client/staff/volunteer management, scheduling, and Twilio messaging.",
+  "private": true,
+  "license": "MIT",
+  "author": "James Knox",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "pnpm --parallel -r run dev",
+    "build": "pnpm --parallel -r run build",
+    "type-check": "pnpm --parallel -r run type-check",
+    "lint": "pnpm --parallel -r run lint",
+    "test": "pnpm --parallel -r run test",
+    "test:watch": "pnpm --parallel -r run test:watch",
+    "clean": "pnpm --parallel -r run clean && rm -rf node_modules .turbo",
+    "docker:up": "docker compose -f infra/docker-compose.yml up -d",
+    "docker:down": "docker compose -f infra/docker-compose.yml down",
+    "docker:logs": "docker compose -f infra/docker-compose.yml logs -f"
+  },
+  "devDependencies": {
+    "prettier": "^3.1.1",
+    "eslint": "^8.55.0",
+    "typescript": "^5.3.3",
+    "turbo": "^1.10.16"
+  }
+}

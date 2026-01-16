@@ -1,0 +1,22 @@
+{
+  "name": "@packages/core",
+  "version": "0.0.1",
+  "description": "Core domain logic and scheduling engine",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist", "src"],
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@packages/schema": "workspace:*",
+    "date-fns": "^2.30.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vitest": "^1.1.0"
+  }
+}

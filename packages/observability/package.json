@@ -1,0 +1,19 @@
+{
+  "name": "@packages/observability",
+  "version": "0.0.1",
+  "description": "Logging, metrics, and tracing",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist", "src"],
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "pino": "^8.17.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

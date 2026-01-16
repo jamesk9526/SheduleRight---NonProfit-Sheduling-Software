@@ -1,0 +1,23 @@
+{
+  "name": "@packages/pouch-sync",
+  "version": "0.0.1",
+  "description": "PouchDB setup, replication, and conflict resolution",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist", "src"],
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@packages/schema": "workspace:*",
+    "pouchdb-browser": "^8.0.1",
+    "pouchdb-node": "^8.0.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vitest": "^1.1.0"
+  }
+}

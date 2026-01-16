@@ -1,0 +1,21 @@
+{
+  "name": "@packages/schema",
+  "version": "0.0.1",
+  "description": "Shared types, schemas, and validation",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist", "src"],
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vitest": "^1.1.0"
+  }
+}

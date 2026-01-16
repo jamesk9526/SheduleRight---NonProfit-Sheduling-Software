@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@packages/schema": ["packages/schema/src/index.ts"],
+      "@packages/schema/*": ["packages/schema/src/*"],
+      "@packages/core": ["packages/core/src/index.ts"],
+      "@packages/core/*": ["packages/core/src/*"],
+      "@packages/ui": ["packages/ui/src/index.ts"],
+      "@packages/ui/*": ["packages/ui/src/*"],
+      "@packages/pouch-sync": ["packages/pouch-sync/src/index.ts"],
+      "@packages/pouch-sync/*": ["packages/pouch-sync/src/*"],
+      "@packages/workflows": ["packages/workflows/src/index.ts"],
+      "@packages/workflows/*": ["packages/workflows/src/*"],
+      "@packages/observability": ["packages/observability/src/index.ts"],
+      "@packages/observability/*": ["packages/observability/src/*"],
+      "@packages/testing": ["packages/testing/src/index.ts"],
+      "@packages/testing/*": ["packages/testing/src/*"],
+      "@packages/embed-widget": ["packages/embed-widget/src/index.ts"],
+      "@packages/embed-widget/*": ["packages/embed-widget/src/*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "build"]
+}

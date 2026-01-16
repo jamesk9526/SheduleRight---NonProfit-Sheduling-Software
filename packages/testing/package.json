@@ -1,0 +1,19 @@
+{
+  "name": "@packages/testing",
+  "version": "0.0.1",
+  "description": "Test helpers, fixtures, and utilities",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist", "src"],
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "vitest": "^1.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "@packages/embed-widget",
+  "version": "0.0.1",
+  "description": "Embeddable booking widget for partner sites",
+  "private": true,
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.esm.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist", "src"],
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@packages/schema": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vitest": "^1.1.0"
+  }
+}

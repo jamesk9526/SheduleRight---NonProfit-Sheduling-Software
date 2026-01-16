@@ -1,0 +1,2 @@
+// Embeddable Schedule Widget
+export {};
