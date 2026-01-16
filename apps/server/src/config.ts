@@ -1,36 +1,118 @@
 import dotenv from 'dotenv'
+import { z } from 'zod'
 
 dotenv.config()
 
-export const config = {
-  nodeEnv: process.env.NODE_ENV || 'development',
-  port: parseInt(process.env.SERVER_PORT || '3001', 10),
-  serverUrl: process.env.SERVER_URL || 'http://localhost:3001',
-  apiVersion: process.env.API_VERSION || 'v1',
+/**
+ * Environment Configuration Schema
+ * Validates all required environment variables on server startup
+ */
+const ConfigSchema = z.object({
+  // Server
+  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+  SERVER_PORT: z.string().default('3001').transform(Number),
+  SERVER_URL: z.string().url().default('http://localhost:3001'),
+  API_VERSION: z.string().default('v1'),
 
   // Database
-  couchdbUrl: process.env.COUCHDB_URL || 'http://couchdb:5984',
-  couchdbUser: process.env.COUCHDB_USER || 'admin',
-  couchdbPassword: process.env.COUCHDB_PASSWORD || 'changeme',
+  COUCHDB_URL: z.string().url('COUCHDB_URL must be a valid URL'),
+  COUCHDB_USER: z.string().min(1, 'COUCHDB_USER is required'),
+  COUCHDB_PASSWORD: z.string().min(1, 'COUCHDB_PASSWORD is required'),
 
   // Redis
-  redisUrl: process.env.REDIS_URL || 'redis://redis:6379',
+  REDIS_URL: z.string().url().default('redis://redis:6379'),
 
-  // Twilio
-  twilioAccountSid: process.env.TWILIO_ACCOUNT_SID || '',
-  twilioAuthToken: process.env.TWILIO_AUTH_TOKEN || '',
-  twilioPhoneNumber: process.env.TWILIO_PHONE_NUMBER || '',
-  twilioVerifySid: process.env.TWILIO_VERIFY_SID || '',
-
-  // Auth
-  jwtSecret: process.env.JWT_SECRET || 'your-secret-key-change-in-production',
-  jwtExpiry: parseInt(process.env.JWT_EXPIRY || '900', 10),
-  refreshTokenExpiry: parseInt(process.env.REFRESH_TOKEN_EXPIRY || '604800', 10),
+  // Authentication
+  JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters for security'),
+  JWT_EXPIRY: z.string().default('900').transform(Number),
+  REFRESH_TOKEN_EXPIRY: z.string().default('604800').transform(Number),
 
   // CORS
-  corsOrigin: process.env.CORS_ORIGIN || ['http://localhost:3000', 'http://localhost:3001'],
+  CORS_ORIGIN: z.string().default('http://localhost:3000,http://localhost:3001'),
+
+  // Optional: Twilio
+  TWILIO_ACCOUNT_SID: z.string().optional(),
+  TWILIO_AUTH_TOKEN: z.string().optional(),
+  TWILIO_PHONE_NUMBER: z.string().optional(),
+  TWILIO_VERIFY_SID: z.string().optional(),
 
   // Observability
-  logLevel: process.env.LOG_LEVEL || 'info',
-  otelEnabled: process.env.OTEL_ENABLED === 'true',
+  LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
+  OTEL_ENABLED: z.string().default('false'),
+})
+
+/**
+ * Validate and load configuration
+ */
+function validateConfig() {
+  try {
+    const parsed = ConfigSchema.parse(process.env)
+    
+    // Parse CORS origins into array
+    const corsOrigins = parsed.CORS_ORIGIN.split(',').map(origin => origin.trim())
+    
+    return {
+      nodeEnv: parsed.NODE_ENV,
+      port: parsed.SERVER_PORT,
+      serverUrl: parsed.SERVER_URL,
+      apiVersion: parsed.API_VERSION,
+      
+      // Database
+      couchdbUrl: parsed.COUCHDB_URL,
+      couchdbUser: parsed.COUCHDB_USER,
+      couchdbPassword: parsed.COUCHDB_PASSWORD,
+      
+      // Redis
+      redisUrl: parsed.REDIS_URL,
+      
+      // Twilio
+      twilioAccountSid: parsed.TWILIO_ACCOUNT_SID || '',
+      twilioAuthToken: parsed.TWILIO_AUTH_TOKEN || '',
+      twilioPhoneNumber: parsed.TWILIO_PHONE_NUMBER || '',
+      twilioVerifySid: parsed.TWILIO_VERIFY_SID || '',
+      
+      // Auth
+      jwtSecret: parsed.JWT_SECRET,
+      jwtExpiry: parsed.JWT_EXPIRY,
+      refreshTokenExpiry: parsed.REFRESH_TOKEN_EXPIRY,
+      
+      // CORS
+      corsOrigin: corsOrigins,
+      
+      // Observability
+      logLevel: parsed.LOG_LEVEL,
+      otelEnabled: parsed.OTEL_ENABLED === 'true',
+    }
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.error('❌ Environment configuration validation failed:\n')
+      error.errors.forEach((err) => {
+        console.error(`  ✗ ${err.path.join('.')}: ${err.message}`)
+      })
+      console.error('\nPlease check your .env file and ensure all required variables are set.')
+      process.exit(1)
+    }
+    throw error
+  }
 }
+
+export const config = validateConfig()
+
+/**
+ * Get sanitized config for logging (excludes secrets)
+ */
+export function getSanitizedConfig() {
+  return {
+    nodeEnv: config.nodeEnv,
+    port: config.port,
+    serverUrl: config.serverUrl,
+    apiVersion: config.apiVersion,
+    couchdbUrl: config.couchdbUrl,
+    redisUrl: config.redisUrl,
+    corsOrigin: config.corsOrigin,
+    logLevel: config.logLevel,
+    otelEnabled: config.otelEnabled,
+    // Secrets excluded: jwtSecret, couchdbPassword, twilioAuthToken
+  }
+}
+

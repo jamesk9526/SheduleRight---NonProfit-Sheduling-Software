@@ -3,20 +3,28 @@ import fastifyCookie from '@fastify/cookie'
 import fastifyHelmet from '@fastify/helmet'
 import fastifyCors from '@fastify/cors'
 import nano from 'nano'
-import { config } from './config.js'
+import { config, getSanitizedConfig } from './config.js'
 import { logger } from './logger.js'
 import { createAuthService } from './services/auth.service.js'
 import { createOrgService } from './services/org.service.js'
 import { createAvailabilityService } from './services/availability.service.js'
 import { createBookingService } from './services/booking.service.js'
+import { createHealthService } from './services/health.service.js'
 import { registerAuthRoutes } from './routes/auth.js'
 import { registerOrgRoutes } from './routes/orgs.js'
 import { registerSiteRoutes } from './routes/sites.js'
 import { registerAvailabilityRoutes } from './routes/availability.js'
 import { registerBookingRoutes } from './routes/booking.js'
+import { securityHeaders, requestId, httpsEnforcement } from './middleware/security.js'
+import { standardRateLimit, authRateLimit } from './middleware/rate-limit.js'
 
 const PORT = config.port
 const HOST = '0.0.0.0'
+
+// Log configuration on startup (without secrets)
+console.log('🔧 Server Configuration:')
+console.log(JSON.stringify(getSanitizedConfig(), null, 2))
+console.log('')
 
 export async function createServer() {
   const fastify = Fastify({
@@ -32,6 +40,7 @@ export async function createServer() {
   const orgService = createOrgService(scheduleDb)
   const availabilityService = createAvailabilityService(scheduleDb)
   const bookingService = createBookingService(scheduleDb)
+  const healthService = createHealthService(scheduleDb)
 
   // Plugins
   await fastify.register(fastifyHelmet, {
@@ -50,31 +59,32 @@ export async function createServer() {
 
   await fastify.register(fastifyCookie)
 
-  // Health and Status Endpoints
-  fastify.get('/health', async (_request, reply) => {
-    let dbStatus = 'connected'
-    try {
-      await scheduleDb.info()
-    } catch (error) {
-      dbStatus = 'disconnected'
-    }
+  // Security Middleware
+  fastify.addHook('onRequest', requestId)
+  fastify.addHook('onRequest', securityHeaders)
+  if (config.nodeEnv === 'production') {
+    fastify.addHook('onRequest', httpsEnforcement)
+  }
 
-    return reply.status(200).send({
-      status: 'ok',
+  // Apply standard rate limiting to all routes
+  fastify.addHook('onRequest', standardRateLimit)
+
+  // Health and Status Endpoints
+  // Basic health check (for quick liveness probes)
+  fastify.get('/health', async (_request, reply) => {
+    const isHealthy = healthService.isHealthy()
+    return reply.status(isHealthy ? 200 : 503).send({
+      status: isHealthy ? 'ok' : 'unhealthy',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
-      environment: config.nodeEnv,
-      services: {
-        api: 'running',
-        database: dbStatus,
-        cors: 'enabled',
-        auth: 'ready',
-      },
-      versions: {
-        node: process.version,
-        fastify: '4.25.2',
-      },
     })
+  })
+
+  // Detailed readiness check (for load balancers and monitoring)
+  fastify.get('/readiness', async (_request, reply) => {
+    const healthStatus = await healthService.performHealthChecks()
+    const statusCode = healthStatus.status === 'healthy' ? 200 : 503
+    return reply.status(statusCode).send(healthStatus)
   })
 
   // Detailed status page

@@ -125,4 +125,49 @@ export async function registerOrgRoutes(
       }
     }
   )
+
+  /**
+   * PUT /api/v1/orgs/:orgId
+   * Update organization (including branding)
+   * RBAC: ADMIN or org member with appropriate role
+   */
+  fastify.put<{
+    Params: { orgId: string }
+    Body: Partial<z.infer<typeof CreateOrgSchema>>
+  }>(
+    '/api/v1/orgs/:orgId',
+    {
+      preHandler: [authMiddleware, enforceTenancy()],
+    },
+    async (request, reply) => {
+      try {
+        const { orgId } = request.params
+
+        // Validate request body (partial update)
+        const validationResult = CreateOrgSchema.partial().safeParse(request.body)
+        if (!validationResult.success) {
+          return reply.status(400).send({
+            error: 'Invalid request: ' + validationResult.error.errors[0].message,
+            code: 'VALIDATION_ERROR',
+            statusCode: 400,
+            timestamp: new Date().toISOString(),
+          })
+        }
+
+        const updated = await orgService.updateOrg(orgId, validationResult.data)
+
+        return reply.status(200).send(updated)
+      } catch (error) {
+        console.error('Update org error:', error)
+        const message = error instanceof Error ? error.message : 'Failed to update organization'
+        const status = message.includes('not found') ? 404 : 500
+        return reply.status(status).send({
+          error: message,
+          code: status === 404 ? 'ORG_NOT_FOUND' : 'ORG_UPDATE_FAILED',
+          statusCode: status,
+          timestamp: new Date().toISOString(),
+        })
+      }
+    }
+  )
 }

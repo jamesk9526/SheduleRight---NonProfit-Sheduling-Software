@@ -2,6 +2,7 @@ import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
 import { AuthService } from '../services/auth.service.js'
 import { authMiddleware, requireRole, extractToken } from '../middleware/auth.js'
+import { authRateLimit } from '../middleware/rate-limit.js'
 
 /**
  * Request/Response schemas
@@ -40,9 +41,13 @@ export async function registerAuthRoutes(
   /**
    * POST /api/v1/auth/login
    * Authenticate user with email and password
+   * Rate limited: 5 attempts per 15 minutes
    */
   fastify.post<{ Body: z.infer<typeof LoginRequestSchema> }>(
     '/api/v1/auth/login',
+    {
+      preHandler: [authRateLimit],
+    },
     async (request: FastifyRequest, reply: FastifyReply) => {
       try {
         // Validate request

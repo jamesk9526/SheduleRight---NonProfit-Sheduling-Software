@@ -17,6 +17,12 @@ export interface Organization {
     businessHours?: string
     requireVerification?: boolean
   }
+  branding?: {
+    logoUrl?: string
+    primaryColor?: string
+    secondaryColor?: string
+    customDomain?: string
+  }
   createdAt: string
   updatedAt: string
 }
@@ -42,6 +48,12 @@ export const CreateOrgSchema = z.object({
     timezone: z.string(),
     businessHours: z.string().optional(),
     requireVerification: z.boolean().optional(),
+  }).optional(),
+  branding: z.object({
+    logoUrl: z.string().url().optional(),
+    primaryColor: z.string().regex(/^#[0-9A-F]{6}$/i, 'Must be a valid hex color (e.g., #FF5733)').optional(),
+    secondaryColor: z.string().regex(/^#[0-9A-F]{6}$/i, 'Must be a valid hex color (e.g., #FF5733)').optional(),
+    customDomain: z.string().optional(),
   }).optional(),
 })
 
@@ -121,6 +133,7 @@ export function createOrgService(db: ServerScope) {
           settings: data.settings || {
             timezone: 'UTC',
           },
+          branding: data.branding,
           createdAt: now,
           updatedAt: now,
         }
@@ -212,6 +225,40 @@ export function createOrgService(db: ServerScope) {
       } catch (error) {
         console.error('Error creating site:', error)
         throw new Error('Failed to create site')
+      }
+    },
+
+    /**
+     * Update organization (including branding)
+     */
+    async updateOrg(orgId: string, data: Partial<CreateOrgInput>): Promise<Organization> {
+      try {
+        // Get existing org
+        const existing = await this.getOrgById(orgId)
+        if (!existing) {
+          throw new Error('Organization not found')
+        }
+
+        const now = new Date().toISOString()
+
+        const updated: Organization = {
+          ...existing,
+          name: data.name !== undefined ? data.name : existing.name,
+          settings: data.settings !== undefined ? data.settings : existing.settings,
+          branding: data.branding !== undefined ? data.branding : existing.branding,
+          updatedAt: now,
+        }
+
+        const response = await db.insert(updated)
+
+        if (!response.ok) {
+          throw new Error('Failed to update organization')
+        }
+
+        return { ...updated, _rev: response.rev }
+      } catch (error) {
+        console.error('Error updating org:', error)
+        throw new Error('Failed to update organization')
       }
     },
   }

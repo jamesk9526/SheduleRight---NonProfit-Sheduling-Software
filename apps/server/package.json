@@ -10,6 +10,8 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "seed": "tsx src/seeds/seed.ts",
+    "db:indexes": "tsx src/db/indexes.ts",
+    "db:indexes:list": "tsx src/db/indexes.ts list",
     "lint": "eslint src",
     "type-check": "tsc --noEmit",
     "test": "vitest",

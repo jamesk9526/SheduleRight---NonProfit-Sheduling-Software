@@ -14,11 +14,23 @@ export const Organization = BaseEntity.extend({
   name: z.string().min(1),
   tenantId: z.string().uuid(),
   settings: z.record(z.unknown()).optional(),
+  branding: z.object({
+    logoUrl: z.string().url().optional(),
+    primaryColor: z.string().regex(/^#[0-9A-F]{6}$/i).optional(),
+    secondaryColor: z.string().regex(/^#[0-9A-F]{6}$/i).optional(),
+    customDomain: z.string().optional(),
+  }).optional(),
 })
 
 export const CreateOrganizationRequest = z.object({
   name: z.string().min(1),
   settings: z.record(z.unknown()).optional(),
+  branding: z.object({
+    logoUrl: z.string().url().optional(),
+    primaryColor: z.string().regex(/^#[0-9A-F]{6}$/i).optional(),
+    secondaryColor: z.string().regex(/^#[0-9A-F]{6}$/i).optional(),
+    customDomain: z.string().optional(),
+  }).optional(),
 })
 
 export type Organization = z.infer<typeof Organization>

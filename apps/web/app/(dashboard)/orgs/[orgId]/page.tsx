@@ -103,6 +103,12 @@ export default function OrgDetailPage() {
             <h1 className="text-4xl font-bold text-primary-600">{org.name}</h1>
             <p className="mt-2 text-neutral-600">ID: {org._id}</p>
           </div>
+          <button
+            onClick={() => router.push(`/dashboard/orgs/${orgId}/settings`)}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium"
+          >
+            ⚙️ Branding Settings
+          </button>
         </div>
       </div>
 
