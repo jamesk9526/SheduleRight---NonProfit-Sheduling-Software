@@ -1,9 +1,10 @@
 import type { FastifyInstance } from 'fastify'
 import { BootstrapSchema } from '../services/bootstrap.service.js'
+import { generateTokens } from '../services/auth.service.js'
 
 export async function registerBootstrapRoutes(
   fastify: FastifyInstance,
-  bootstrapService: ReturnType<typeof createBootstrapService>
+  bootstrapService: ReturnType<typeof import('../services/bootstrap.service.js').createBootstrapService>
 ) {
   fastify.post('/api/v1/bootstrap', async (request, reply) => {
     try {
@@ -18,7 +19,33 @@ export async function registerBootstrapRoutes(
       }
 
       const result = await bootstrapService.bootstrap(parsed.data)
-      return reply.status(201).send({ message: 'Bootstrap complete', ...result })
+      
+      // Generate JWT token for immediate login
+      const tokens = generateTokens({
+        id: result.adminUserId,
+        email: parsed.data.adminEmail,
+        name: parsed.data.adminName,
+        roles: ['ADMIN'],
+        orgId: result.orgId,
+        verified: true,
+        active: true,
+      })
+      
+      // Set refresh token as HttpOnly cookie
+      reply.setCookie('refreshToken', tokens.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      })
+
+      return reply.status(201).send({
+        message: 'Bootstrap complete',
+        orgId: result.orgId,
+        adminUserId: result.adminUserId,
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+      })
     } catch (error: any) {
       const status = error?.statusCode === 409 ? 409 : 500
       return reply.status(status).send({
