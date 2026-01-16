@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useCurrentUser, useReminderSettings, useUpdateReminderSettings } from '@/lib/hooks/useData'
+import { useApi } from '@/lib/hooks/useApi'
 
 interface TwilioStatus {
   twilioConfigured: boolean
@@ -14,6 +15,7 @@ interface TwilioStatus {
 
 export default function RemindersPage() {
   const router = useRouter()
+  const { call } = useApi()
   const { data: user, isLoading } = useCurrentUser()
   const { data: settings, isLoading: loadingSettings, isError } = useReminderSettings()
   const updateSettings = useUpdateReminderSettings()
@@ -46,22 +48,18 @@ export default function RemindersPage() {
   const fetchTwilioStatus = async () => {
     setLoadingTwilio(true)
     try {
-      const response = await fetch('/api/v1/reminders/twilio-status', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setTwilioStatus(data)
-      } else {
-        console.error('Failed to fetch Twilio status:', response.statusText)
-      }
+      const data = await call('/api/v1/reminders/twilio-status')
+      setTwilioStatus(data)
     } catch (error) {
       console.error('Error fetching Twilio status:', error)
+      // Set default offline status on error
+      setTwilioStatus({
+        twilioConfigured: false,
+        remindersEnabled: false,
+        phoneNumber: null,
+        message: 'Unable to check Twilio status',
+        timestamp: new Date().toISOString(),
+      })
     } finally {
       setLoadingTwilio(false)
     }

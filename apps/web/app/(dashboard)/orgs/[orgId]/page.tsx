@@ -3,11 +3,13 @@
 import { useRouter, useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useCurrentUser, useOrganization, useSites, useCreateSite } from '@/lib/hooks/useData'
+import { useSite } from '@/lib/hooks/useSite'
 import type { Site } from '@/lib/hooks/useData'
 
 export default function OrgDetailPage() {
   const router = useRouter()
   const params = useParams()
+  const { setSiteId } = useSite()
   const orgId = params?.orgId as string
   const [showNewSiteForm, setShowNewSiteForm] = useState(false)
   const [newSiteName, setNewSiteName] = useState('')
@@ -49,6 +51,11 @@ export default function OrgDetailPage() {
         },
       }
     )
+  }
+
+  const handleSelectSite = (siteId: string) => {
+    setSiteId(siteId)
+    router.push(`/orgs/${orgId}/sites/${siteId}`)
   }
 
   if (!mounted) return null
@@ -266,7 +273,8 @@ export default function OrgDetailPage() {
                   {sites.map((site: Site) => (
                     <div
                       key={site._id}
-                      className="border border-neutral-200 rounded-lg p-4 hover:bg-neutral-50 transition"
+                      onClick={() => handleSelectSite(site._id)}
+                      className="border border-neutral-200 rounded-lg p-4 hover:bg-primary-50 hover:border-primary-300 transition cursor-pointer"
                     >
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="text-lg font-semibold text-neutral-900">
@@ -291,6 +299,10 @@ export default function OrgDetailPage() {
 
                       <div className="text-xs text-neutral-500">
                         Created: {new Date(site.createdAt).toLocaleDateString()}
+                      </div>
+
+                      <div className="mt-3 text-primary-600 font-medium flex items-center">
+                        View Site →
                       </div>
                     </div>
                   ))}

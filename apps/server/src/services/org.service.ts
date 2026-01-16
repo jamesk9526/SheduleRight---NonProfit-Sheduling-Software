@@ -60,7 +60,8 @@ export const CreateOrgSchema = z.object({
 export const CreateSiteSchema = z.object({
   name: z.string().min(3).max(100),
   address: z.string().optional(),
-  timezone: z.string(),
+  phone: z.string().optional(),
+  timezone: z.string().optional(),
 })
 
 export type CreateOrgInput = z.infer<typeof CreateOrgSchema>

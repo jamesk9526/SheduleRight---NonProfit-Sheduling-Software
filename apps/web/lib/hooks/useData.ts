@@ -255,3 +255,167 @@ export function useUpdateReminderSettings() {
     },
   })
 }
+/**
+ * Hook to fetch user's own bookings
+ */
+export function useMyBookings() {
+  const { call } = useApi()
+
+  return useQuery({
+    queryKey: ['bookings', 'me'],
+    queryFn: async () => {
+      const response = await call('/api/v1/bookings/me')
+      return response.data as Booking[]
+    },
+  })
+}
+
+/**
+ * Hook to fetch booking details
+ */
+export function useBookingDetails(bookingId: string | null) {
+  const { call } = useApi()
+
+  return useQuery({
+    queryKey: ['booking', bookingId],
+    queryFn: async () => {
+      if (!bookingId) throw new Error('Booking ID is required')
+      const response = await call(`/api/v1/bookings/${bookingId}`)
+      return response as Booking
+    },
+    enabled: !!bookingId,
+  })
+}
+
+/**
+ * Hook to create a new booking
+ */
+export function useCreateBooking(siteId: string | null) {
+  const { call } = useApi()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (data: {
+      slotId: string
+      clientName: string
+      clientEmail: string
+      clientPhone?: string
+      notes?: string
+    }) => {
+      if (!siteId) throw new Error('Site ID is required')
+      return await call(`/api/v1/sites/${siteId}/bookings`, {
+        method: 'POST',
+        body: data,
+      })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bookings', 'me'] })
+      if (siteId) {
+        queryClient.invalidateQueries({ queryKey: ['bookings', 'site', siteId] })
+      }
+    },
+  })
+}
+
+/**
+ * Hook to confirm a booking
+ */
+export function useConfirmBooking() {
+  const { call } = useApi()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (bookingId: string) => {
+      return await call(`/api/v1/bookings/${bookingId}/confirm`, {
+        method: 'PUT',
+      })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bookings'] })
+    },
+  })
+}
+
+/**
+ * Hook to cancel a booking
+ */
+export function useCancelBooking() {
+  const { call } = useApi()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (bookingId: string) => {
+      return await call(`/api/v1/bookings/${bookingId}/cancel`, {
+        method: 'PUT',
+      })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bookings'] })
+    },
+  })
+}
+
+/**
+ * Hook to get available slots for a site
+ */
+export function useAvailableSlots(siteId: string | null, date: string | null) {
+  const { call } = useApi()
+
+  return useQuery({
+    queryKey: ['availableSlots', siteId, date],
+    queryFn: async () => {
+      if (!siteId || !date) throw new Error('Site ID and date are required')
+      const response = await call(
+        `/api/v1/sites/${siteId}/availability/available?date=${date}`
+      )
+      return response.data as Shift[]
+    },
+    enabled: !!siteId && !!date,
+  })
+}
+
+/**
+ * Hook to get all availability slots for a site
+ */
+export function useAvailabilitySlots(siteId: string | null) {
+  const { call } = useApi()
+
+  return useQuery({
+    queryKey: ['availabilitySlots', siteId],
+    queryFn: async () => {
+      if (!siteId) throw new Error('Site ID is required')
+      const response = await call(`/api/v1/sites/${siteId}/availability`)
+      return response.data as Shift[]
+    },
+    enabled: !!siteId,
+  })
+}
+
+/**
+ * Hook to create an availability slot
+ */
+export function useCreateAvailability(siteId: string | null) {
+  const { call } = useApi()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (data: {
+      startTime: string
+      endTime: string
+      capacity: number
+      title?: string
+      notes?: string
+    }) => {
+      if (!siteId) throw new Error('Site ID is required')
+      return await call(`/api/v1/sites/${siteId}/availability`, {
+        method: 'POST',
+        body: data,
+      })
+    },
+    onSuccess: () => {
+      if (siteId) {
+        queryClient.invalidateQueries({ queryKey: ['availabilitySlots', siteId] })
+      }
+    },
+  })
+}
