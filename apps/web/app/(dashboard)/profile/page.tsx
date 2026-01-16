@@ -76,6 +76,9 @@ export default function ProfilePage() {
 
   if (!user) return null
 
+  const displayName = user.name?.trim() || user.email || 'User'
+  const initial = displayName.charAt(0).toUpperCase()
+
   return (
     <div className="container mt-12">
       <div className="max-w-2xl mx-auto">
@@ -90,11 +93,11 @@ export default function ProfilePage() {
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
                 <span className="text-2xl font-bold text-primary-600">
-                  {user.name.charAt(0).toUpperCase()}
+                  {initial}
                 </span>
               </div>
               <div className="text-white">
-                <h2 className="text-2xl font-semibold">{user.name}</h2>
+                <h2 className="text-2xl font-semibold">{displayName}</h2>
                 <p className="opacity-90">{user.email}</p>
               </div>
             </div>
@@ -133,7 +136,7 @@ export default function ProfilePage() {
                 Roles
               </label>
               <div className="flex flex-wrap gap-2">
-                {user.roles.map((role) => (
+                {(user.roles || []).map((role) => (
                   <span
                     key={role}
                     className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-800"

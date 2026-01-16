@@ -59,7 +59,7 @@ export default function DashboardPage() {
     )
   }
 
-  const isAdmin = user.roles.includes('ADMIN')
+  const isAdmin = (user.roles || []).includes('ADMIN')
 
   return (
     <div className="container mt-12">
@@ -161,28 +161,34 @@ export default function DashboardPage() {
       {/* Feature Preview */}
       <div className="bg-white shadow-md rounded-lg p-6">
         <h2 className="text-xl font-semibold text-neutral-800 mb-4">
-          Coming Soon
+          Feature Shortcuts
         </h2>
-        <ul className="space-y-2 text-neutral-600">
-          <li className="flex items-center">
-            <span className="text-primary-600 mr-2">✓</span>
-            Client scheduling and appointments
+        <ul className="space-y-3 text-neutral-600">
+          <li className="flex items-center justify-between">
+            <span>Client scheduling and appointments</span>
+            <Link className="text-primary-600 hover:text-primary-700 font-medium" href="/bookings">
+              Open →
+            </Link>
           </li>
-          <li className="flex items-center">
-            <span className="text-primary-600 mr-2">✓</span>
-            Volunteer management and shift scheduling
+          <li className="flex items-center justify-between">
+            <span>Volunteer management and shift scheduling</span>
+            <Link className="text-primary-600 hover:text-primary-700 font-medium" href="/volunteers">
+              Open →
+            </Link>
           </li>
-          <li className="flex items-center">
-            <span className="text-primary-600 mr-2">✓</span>
-            SMS reminders via Twilio
+          <li className="flex items-center justify-between">
+            <span>SMS reminders via Twilio</span>
+            <Link className="text-primary-600 hover:text-primary-700 font-medium" href="/reminders">
+              Configure →
+            </Link>
           </li>
-          <li className="flex items-center">
-            <span className="text-primary-600 mr-2">✓</span>
-            Offline-first data synchronization
+          <li className="flex items-center justify-between">
+            <span>Offline-first data synchronization</span>
+            <span className="text-xs text-neutral-400">Planned</span>
           </li>
-          <li className="flex items-center">
-            <span className="text-primary-600 mr-2">✓</span>
-            Multi-site support and resource management
+          <li className="flex items-center justify-between">
+            <span>Multi-site support and resource management</span>
+            <span className="text-xs text-neutral-400">In progress</span>
           </li>
         </ul>
       </div>

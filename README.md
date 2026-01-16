@@ -1,17 +1,34 @@
-# SheduleRight By James Knox — Master Plan & Implementation Guide
+# ScheduleRight
 
-SheduleRight is an offline-first PWA and Node API for non-profit Pregnancy Care Centers to manage clients, staff, volunteers, scheduling, and messaging (Twilio), with an embeddable client-facing booking widget and a public API. This document aligns vision, scope, architecture, milestones, and next steps before we scaffold code.
+> **Offline-first scheduling platform for non-profit pregnancy care centers**
 
-## Vision & Goals
-- Empower centers offering free services to manage client care with privacy, consent, and flexibility.
-- Offline-first operation with seamless online sync across devices/sites.
-- Highly customizable data fields and forms driven by JSON Schema.
-- Modern scheduling with variable durations, buffers, capacity, recurring rules, and exceptions.
-- Two-way messaging and reminders via Twilio with full opt-in/out compliance.
-- Embeddable booking widget and public API for partner websites.
-- Multi-tenant, secure, auditable, and easy to operate.
+![Node.js](https://img.shields.io/badge/Node.js-20.x-green)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
+![Next.js](https://img.shields.io/badge/Next.js-14.x-black)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-## Architecture Overview
+## 🎯 Overview
+
+ScheduleRight is an open-source scheduling platform designed specifically for non-profit pregnancy care centers. It enables seamless appointment scheduling, volunteer management, and client communication with an emphasis on privacy, reliability, and offline-first data synchronization.
+
+## 🎯 Overview
+
+ScheduleRight is an open-source scheduling platform designed specifically for non-profit pregnancy care centers. It enables seamless appointment scheduling, volunteer management, and client communication with an emphasis on privacy, reliability, and offline-first data synchronization.
+
+**Key Features:**
+- 📅 **Smart Scheduling**: Availability slots with recurring patterns, automatic conflict detection
+- 👥 **Client Bookings**: Public booking interface with capacity management
+- 👨‍💼 **Staff Management**: Multi-role access control (ADMIN, STAFF, CLIENT), organization-wide sites
+- 💬 **SMS Reminders**: Twilio integration for automated appointment reminders
+- 👤 **Volunteer Coordination**: Volunteer profiles, shift management, and assignments
+- 🔐 **Secure Authentication**: JWT-based auth with refresh tokens, RBAC enforcement
+- 📱 **Offline-First**: Progressive Web App (PWA) with local data sync (PouchDB)
+- 🗄️ **Flexible Storage**: MySQL or CouchDB backend (configurable)
+
+---
+
+## 🚀 Quick Start
 - PWA: Next.js (App Router), TypeScript, React; Workbox service worker for caching and Background Sync.
 - Local data: PouchDB (IndexedDB) with outbox/inbox and conflict handling.
 - Server API: Node (Express/Fastify), TypeScript. JWT + refresh in HttpOnly cookies, RBAC, multi-tenancy.

@@ -21,7 +21,7 @@ export default function OrganizationsPage() {
   }, [mounted, userLoading, user, router])
 
   // Only admins can view all organizations
-  if (user && !user.roles.includes('ADMIN')) {
+  if (user && !(user.roles || []).includes('ADMIN')) {
     return (
       <div className="container mt-12">
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
@@ -102,7 +102,7 @@ export default function OrganizationsPage() {
                 <div className="flex items-start justify-between mb-4">
                   <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
                     <span className="text-primary-600 font-bold">
-                      {org.name.charAt(0).toUpperCase()}
+                      {(org.name || 'Org').charAt(0).toUpperCase()}
                     </span>
                   </div>
                   <span className="text-xs font-medium text-neutral-500 bg-neutral-100 px-2 py-1 rounded">
@@ -111,7 +111,7 @@ export default function OrganizationsPage() {
                 </div>
 
                 <h3 className="text-lg font-semibold text-neutral-900 mb-2">
-                  {org.name}
+                  {org.name || 'Untitled Organization'}
                 </h3>
 
                 {org.settings?.timezone && (

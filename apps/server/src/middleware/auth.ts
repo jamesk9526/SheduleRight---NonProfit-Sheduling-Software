@@ -92,15 +92,25 @@ export async function authMiddleware(
  * RBAC middleware - requires specific role(s)
  */
 export function requireRole(...roles: string[]) {
-  return async (request: FastifyRequest, _reply: FastifyReply) => {
+  return async (request: FastifyRequest, reply: FastifyReply) => {
     if (!request.user) {
-      return
+      return reply.status(401).send({
+        error: 'Authentication required',
+        code: 'UNAUTHORIZED',
+        statusCode: 401,
+        timestamp: new Date().toISOString(),
+      })
     }
 
     const hasRole = request.user.roles.some((r: string) => roles.includes(r))
 
     if (!hasRole) {
-      return
+      return reply.status(403).send({
+        error: 'Insufficient permissions',
+        code: 'FORBIDDEN',
+        statusCode: 403,
+        timestamp: new Date().toISOString(),
+      })
     }
   }
 }

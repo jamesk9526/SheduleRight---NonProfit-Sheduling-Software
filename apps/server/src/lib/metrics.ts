@@ -165,16 +165,22 @@ class MetricsService {
 export const metricsService = new MetricsService()
 
 /**
- * Middleware to track request metrics
+ * Middleware to track request metrics - onRequest hook
+ * Stores start time for duration calculation
  */
 export async function metricsMiddleware(request: any, reply: any) {
   const startTime = Date.now()
+  // Store start time for response hook
+  ;(request as any).metricsStartTime = startTime
+}
 
-  reply.addHook('onResponse', (request: any, reply: any, done: any) => {
-    const duration = Date.now() - startTime
-    const endpoint = `${request.method} ${request.routeOptions.url || request.url}`
-    
-    metricsService.recordRequest(endpoint, duration)
-    done()
-  })
+/**
+ * Metrics response hook - records request metrics
+ */
+export async function metricsResponseHook(request: any, reply: any) {
+  const startTime = (request as any).metricsStartTime || Date.now()
+  const duration = Date.now() - startTime
+  const endpoint = `${request.method} ${request.routeOptions?.url || request.url}`
+  
+  metricsService.recordRequest(endpoint, duration)
 }

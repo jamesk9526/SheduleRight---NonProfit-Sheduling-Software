@@ -1,12 +1,45 @@
-# ScheduleRight - GitHub Copilot TODO List
+to API
+- [x] Add reminders API + settings UI wiring (Twilio send still pending)
+
+### 1) Admin Bootstrap (First-Run Setup)
+- [x] Add `system:bootstrap` document and enforce initialization lock
+- [x] Create `POST /api/v1/bootstrap` to create org + admin user
+- [x] Block all other routes until bootstrap completes
+
+### 2) Auto DB Setup (Defaults + Indexes)
+- [x] Create DB if missing on startup (CouchDB + MySQL)
+- [x] Create indexes on startup (CouchDB)
+- [x] Create `system:config` defaults
+
+### 3) MySQL Support (Preferred)# ScheduleRight - GitHub Copilot TODO List
 
 **Last Updated:** January 16, 2026  
-**Project Status:** 75% Complete (9 of 12 todos done)  
-**Current Focus:** Todo #10 - Multi-tenancy & Production Polish
+**Project Status:** Core features complete; pending bootstrap + MySQL support + production hardening  
+**Current Focus:** UI feature sprint (volunteers + reminders), admin bootstrap, auto DB config
 
 ---
 
-## ✅ COMPLETED TODOS (9/12)
+## 🚧 CURRENT NEXT STEPS (NEW)
+
+### 0) UI Feature Sprint (Client Scheduling + Volunteers + SMS)
+- [x] Replace dashboard “Coming Soon” list with live shortcuts
+- [x] Add Volunteers dashboard page with empty state
+- [x] Add Volunteer Shifts page (calendar placeholder)
+- [x] Add SMS Reminders settings page (UI-only)
+- [x] Add volunteers + shifts API endpoints
+- [x] Wire volunteer list + shift data 
+- [x] Add `DB_PROVIDER` config (`couchdb | mysql`)
+- [x] Introduce repository interface and implement MySQL store (documents table bridge)
+- [x] Add versioned MySQL migrations and expanded schema (documents indexes + users/org indexes + volunteers/shifts tables)
+
+### 4) Production Hardening
+- [ ] Remove auth debug logging
+- [ ] Lock metrics endpoint
+- [ ] Verify backups + DR runbook
+
+See [INSTRUCTIONS_NEXT_STEPS.md](INSTRUCTIONS_NEXT_STEPS.md) for full details.
+
+## ✅ COMPLETED TODOS (Core Feature Set)
 
 ### ✅ Todo #1: Auth System with JWT
 **Status:** ✅ COMPLETE  

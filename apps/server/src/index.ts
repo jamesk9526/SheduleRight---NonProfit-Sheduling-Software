@@ -4,26 +4,88 @@ import fastifyHelmet from '@fastify/helmet'
 import fastifyCors from '@fastify/cors'
 import nano from 'nano'
 import { config, getSanitizedConfig } from './config.js'
+import fs from 'fs/promises'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import mysql from 'mysql2/promise'
 import { logger } from './logger.js'
 import { createAuthService } from './services/auth.service.js'
+import { createMySqlPool, testMySqlConnection } from './db/mysql.js'
+import { createCouchDbAdapter, createMySqlAdapter } from './db/adapter.js'
 import { createOrgService } from './services/org.service.js'
 import { createAvailabilityService } from './services/availability.service.js'
 import { createBookingService } from './services/booking.service.js'
 import { createHealthService } from './services/health.service.js'
 import { createAuditService } from './services/audit.service.js'
+import { createReminderService } from './services/reminder.service.js'
+import { createBootstrapService } from './services/bootstrap.service.js'
 import { registerAuthRoutes } from './routes/auth.js'
 import { registerOrgRoutes } from './routes/orgs.js'
 import { registerSiteRoutes } from './routes/sites.js'
 import { registerAvailabilityRoutes } from './routes/availability.js'
 import { registerBookingRoutes } from './routes/booking.js'
+import { registerAuditRoutes } from './routes/audit.js'
+import { registerReminderRoutes } from './routes/reminders.js'
+import { registerBootstrapRoutes } from './routes/bootstrap.js'
 import { securityHeaders, requestId, httpsEnforcement } from './middleware/security.js'
-import { standardRateLimit, authRateLimit } from './middleware/rate-limit.js'
-import { requestLogger } from './middleware/request-logger.js'
+import { standardRateLimit, authRateLimit, rateLimitResponseHook } from './middleware/rate-limit.js'
+import { createVolunteerService } from './services/volunteer.service.js'
+import { registerVolunteerRoutes } from './routes/volunteers.js'
+import { requestLogger, responseLogger } from './middleware/request-logger.js'
 import { errorHandler } from './middleware/error-handler.js'
-import { metricsService, metricsMiddleware } from './lib/metrics.js'
+import { metricsService, metricsMiddleware, metricsResponseHook } from './lib/metrics.js'
+import { createIndexes } from './db/indexes.js'
+import { runMysqlMigrations } from './db/mysql/migrate.js'
 
 const PORT = config.port
 const HOST = '0.0.0.0'
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+async function ensureMysqlSchema() {
+  const schemaPath = path.join(__dirname, 'db', 'mysql', 'schema.sql')
+  const sql = await fs.readFile(schemaPath, 'utf8')
+
+  const adminPool = mysql.createPool({
+    host: config.mysql.host,
+    port: config.mysql.port,
+    user: config.mysql.user,
+    password: config.mysql.password,
+    waitForConnections: true,
+    connectionLimit: 2,
+    queueLimit: 0,
+  })
+
+  await adminPool.query(`CREATE DATABASE IF NOT EXISTS \`${config.mysql.database}\``)
+  await adminPool.end()
+
+  const pool = mysql.createPool({
+    host: config.mysql.host,
+    port: config.mysql.port,
+    database: config.mysql.database,
+    user: config.mysql.user,
+    password: config.mysql.password,
+    waitForConnections: true,
+    connectionLimit: 5,
+    queueLimit: 0,
+    multipleStatements: true,
+  })
+
+  try {
+    await pool.query(sql)
+    console.log('✅ MySQL schema ensured')
+  } finally {
+    await pool.end()
+  }
+}
+
+async function ensureCouchDbExists(dbClient: any, dbName: string) {
+  const dbs = await dbClient.db.list()
+  if (!dbs.includes(dbName)) {
+    await dbClient.db.create(dbName)
+    console.log(`✅ Created CouchDB database: ${dbName}`)
+  }
+}
 
 // Log configuration on startup (without secrets)
 console.log('🔧 Server Configuration:')
@@ -35,17 +97,67 @@ export async function createServer() {
     trustProxy: true,
   })
 
-  // Initialize CouchDB connection
-  const db = nano(config.couchdbUrl)
-  const scheduleDb = db.use('scheduleright')
+  // Initialize database connections
+  let scheduleDb: any = null
+  let mysqlPool = null as any
+  let dbAdapter: any = null
+
+  if (config.dbProvider === 'mysql') {
+    await ensureMysqlSchema()
+    await runMysqlMigrations()
+    mysqlPool = createMySqlPool()
+    try {
+      await testMySqlConnection(mysqlPool)
+      console.log('✅ MySQL connected:', `${config.mysql.host}:${config.mysql.port}/${config.mysql.database}`)
+    } catch (error) {
+      console.error('❌ MySQL connection failed:', error)
+    }
+    dbAdapter = createMySqlAdapter(mysqlPool)
+  } else {
+    const db = nano({
+      url: config.couchdbUrl,
+      requestDefaults: {
+        auth: {
+          username: config.couchdbUser,
+          password: config.couchdbPassword,
+        },
+      },
+    })
+    console.log('🔐 CouchDB URL:', config.couchdbUrl)
+    await ensureCouchDbExists(db, 'scheduleright')
+    scheduleDb = db.use('scheduleright')
+
+    // Test database connection
+    try {
+      const dbInfo = await scheduleDb.info()
+      console.log('✅ CouchDB connected:', dbInfo.db_name, `(${dbInfo.doc_count} docs)`)
+    } catch (error) {
+      console.error('❌ CouchDB connection failed:', error)
+    }
+    dbAdapter = createCouchDbAdapter(scheduleDb)
+
+    try {
+      await createIndexes()
+    } catch (error) {
+      console.error('⚠️ Failed to ensure CouchDB indexes:', error)
+    }
+  }
 
   // Initialize services
-  const authService = createAuthService(scheduleDb)
-  const orgService = createOrgService(scheduleDb)
-  const availabilityService = createAvailabilityService(scheduleDb)
-  const bookingService = createBookingService(scheduleDb)
-  const healthService = createHealthService(scheduleDb)
-  const auditService = createAuditService(scheduleDb)
+  const authService = createAuthService(dbAdapter)
+  const orgService = createOrgService(dbAdapter)
+  const availabilityService = createAvailabilityService(dbAdapter)
+  const bookingService = createBookingService(dbAdapter)
+  const healthService = createHealthService({
+    provider: config.dbProvider,
+    couchDb: scheduleDb,
+    mysqlPool,
+  })
+  const auditService = createAuditService(dbAdapter)
+  const reminderService = createReminderService(dbAdapter)
+  const volunteerService = createVolunteerService(dbAdapter)
+  const bootstrapService = createBootstrapService(dbAdapter)
+  await bootstrapService.ensureConfigDefaults()
 
   // Plugins
   await fastify.register(fastifyHelmet, {
@@ -74,9 +186,31 @@ export async function createServer() {
   // Apply standard rate limiting to all routes
   fastify.addHook('onRequest', standardRateLimit)
 
+  // Block all routes until bootstrap completes (allow health + bootstrap endpoints)
+  fastify.addHook('onRequest', async (request, reply) => {
+    const allowList = ['/api/v1/bootstrap', '/api/v1/bootstrap/status', '/health', '/readiness', '/status', '/metrics']
+    const path = request.routerPath || request.url
+    if (allowList.some((p) => path.startsWith(p))) {
+      return
+    }
+
+    const ready = await bootstrapService.isBootstrapped()
+    if (!ready) {
+      return reply.status(503).send({
+        error: 'System not initialized. Run /api/v1/bootstrap first.',
+        code: 'BOOTSTRAP_REQUIRED',
+        statusCode: 503,
+        timestamp: new Date().toISOString(),
+      })
+    }
+  })
+
   // Monitoring Middleware
   fastify.addHook('onRequest', requestLogger)
   fastify.addHook('onRequest', metricsMiddleware)
+  fastify.addHook('onResponse', responseLogger)
+  fastify.addHook('onResponse', metricsResponseHook)
+  fastify.addHook('onResponse', rateLimitResponseHook)
 
   // Error Handler (must be set after routes)
   fastify.setErrorHandler(errorHandler)
@@ -122,8 +256,14 @@ export async function createServer() {
     let dbStatus = 'disconnected'
     let dbInfo: any = null
     try {
-      dbInfo = await scheduleDb.info()
-      dbStatus = 'connected'
+      if (config.dbProvider === 'mysql') {
+        const [rows] = await mysqlPool.query('SELECT 1 as ok')
+        dbInfo = { provider: 'mysql', ok: (rows as any[])[0]?.ok }
+        dbStatus = 'connected'
+      } else if (scheduleDb) {
+        dbInfo = await scheduleDb.info()
+        dbStatus = 'connected'
+      }
     } catch (error) {
       dbStatus = 'error: ' + (error instanceof Error ? error.message : 'unknown')
     }
@@ -182,7 +322,7 @@ export async function createServer() {
 
       <div class="status-card">
         <div class="status-header">
-          <strong>Database (CouchDB)</strong>
+          <strong>Database (${config.dbProvider === 'mysql' ? 'MySQL' : 'CouchDB'})</strong>
           <span class="badge ${dbStatus === 'connected' ? 'badge-connected' : 'badge-disconnected'}">
             ${dbStatus === 'connected' ? 'Connected' : 'Disconnected'}
           </span>
@@ -255,6 +395,9 @@ export async function createServer() {
     return reply.header('Content-Type', 'text/html').send(html)
   })
 
+  // Register bootstrap routes
+  await registerBootstrapRoutes(fastify, bootstrapService)
+
   // Register auth routes
   await registerAuthRoutes(fastify, authService)
 
@@ -270,6 +413,15 @@ export async function createServer() {
   // Register booking routes
   await registerBookingRoutes(fastify, bookingService, availabilityService)
 
+  // Register audit routes
+  await registerAuditRoutes(fastify, auditService)
+
+  // Register reminder routes
+  await registerReminderRoutes(fastify, reminderService)
+
+  // Register volunteer routes
+  await registerVolunteerRoutes(fastify, volunteerService)
+
   return fastify
 }
 
@@ -277,13 +429,15 @@ export async function main() {
   try {
     const fastify = await createServer()
     await fastify.listen({ host: HOST, port: PORT })
-    console.log(`Server running on http://${HOST}:${PORT}`)
+    console.log(`✅ Server running on http://${HOST}:${PORT}`)
   } catch (error) {
     logger.error(error)
     process.exit(1)
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
-  main()
-}
+// Run if this is the main module
+main().catch((error) => {
+  console.error('Failed to start server:', error)
+  process.exit(1)
+})

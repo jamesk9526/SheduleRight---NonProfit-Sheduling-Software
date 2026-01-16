@@ -128,7 +128,8 @@ export function createAuthService(db: Nano) {
         const user = users[0]
 
         // Verify password
-        if (!comparePassword(password, user.passwordHash)) {
+        const passwordMatch = comparePassword(password, user.passwordHash)
+        if (!passwordMatch) {
           throw new Error('Invalid email or password')
         }
 

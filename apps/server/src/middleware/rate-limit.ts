@@ -72,15 +72,24 @@ export function createRateLimiter(options: RateLimitOptions) {
       })
     }
 
-    // If configured, decrement count on successful response
+    // Store rate limit info for potential rollback on successful responses
     if (skipSuccessfulRequests) {
-      reply.addHook('onResponse', (request, reply, done) => {
-        if (reply.statusCode < 400) {
-          store[key].count--
-        }
-        done()
-      })
+      ;(request as any).rateLimitKey = key
+      ;(request as any).rateLimitStore = store
     }
+  }
+}
+
+/**
+ * Response hook to decrement rate limit count for successful requests
+ * Only used when skipSuccessfulRequests is true
+ */
+export async function rateLimitResponseHook(request: any, reply: any) {
+  const key = (request as any).rateLimitKey
+  const store = (request as any).rateLimitStore
+  
+  if (key && store && store[key] && reply.statusCode < 400) {
+    store[key].count--
   }
 }
 

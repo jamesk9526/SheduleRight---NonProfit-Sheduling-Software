@@ -86,7 +86,8 @@ export default function OrgDetailPage() {
     )
   }
 
-  const isAdmin = user?.roles.includes('ADMIN')
+  const isAdmin = (user?.roles || []).includes('ADMIN')
+  const orgDisplayName = org.name || 'Untitled Organization'
 
   return (
     <div className="container mt-12">
@@ -100,7 +101,7 @@ export default function OrgDetailPage() {
         </button>
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-4xl font-bold text-primary-600">{org.name}</h1>
+            <h1 className="text-4xl font-bold text-primary-600">{orgDisplayName}</h1>
             <p className="mt-2 text-neutral-600">ID: {org._id}</p>
           </div>
           <button
@@ -123,7 +124,7 @@ export default function OrgDetailPage() {
                 <label className="block text-sm font-medium text-neutral-700 mb-1">
                   Organization Name
                 </label>
-                <p className="text-neutral-900 font-medium">{org.name}</p>
+                <p className="text-neutral-900 font-medium">{orgDisplayName}</p>
               </div>
 
               {org.settings?.timezone && (

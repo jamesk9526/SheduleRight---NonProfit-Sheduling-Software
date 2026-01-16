@@ -12,6 +12,8 @@
     "seed": "tsx src/seeds/seed.ts",
     "db:indexes": "tsx src/db/indexes.ts",
     "db:indexes:list": "tsx src/db/indexes.ts list",
+    "db:mysql:init": "tsx src/db/mysql-init.ts",
+    "db:mysql:migrate": "tsx src/db/mysql/migrate.ts",
     "lint": "eslint src",
     "type-check": "tsc --noEmit",
     "test": "vitest",
@@ -28,6 +30,7 @@
     "dotenv": "^16.3.1",
     "jsonwebtoken": "^9.0.3",
     "nano": "^10.1.0",
+    "mysql2": "^3.11.3",
     "bullmq": "^5.3.2",
     "redis": "^4.6.12",
     "twilio": "^4.10.0"

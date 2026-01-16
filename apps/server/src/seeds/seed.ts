@@ -1,5 +1,7 @@
 import nano from 'nano'
 import { config } from '../config.js'
+import { createCouchDbAdapter, createMySqlAdapter } from '../db/adapter.js'
+import { createMySqlPool } from '../db/mysql.js'
 import { hashPassword } from '../services/auth.service.js'
 
 /**
@@ -11,17 +13,34 @@ async function seed() {
   try {
     console.log('🌱 Starting database seed...')
 
-    // Connect to CouchDB
-    const db = nano(config.couchdbUrl)
+    let adapter: any = null
 
-    // Create database if it doesn't exist
-    const databases = await db.db.list()
-    if (!databases.includes('scheduleright')) {
-      console.log('📦 Creating scheduleright database...')
-      await db.db.create('scheduleright')
+    if (config.dbProvider === 'mysql') {
+      const pool = createMySqlPool()
+      adapter = createMySqlAdapter(pool)
+      console.log('✅ MySQL adapter ready')
+    } else {
+      // Connect to CouchDB with authentication
+      const db = nano({
+        url: config.couchdbUrl,
+        requestDefaults: {
+          auth: {
+            username: config.couchdbUser,
+            password: config.couchdbPassword,
+          },
+        },
+      })
+
+      // Create database if it doesn't exist
+      const databases = await db.db.list()
+      if (!databases.includes('scheduleright')) {
+        console.log('📦 Creating scheduleright database...')
+        await db.db.create('scheduleright')
+      }
+
+      const scheduleDb = db.use('scheduleright')
+      adapter = createCouchDbAdapter(scheduleDb)
     }
-
-    const scheduleDb = db.use('scheduleright')
 
     // Create test organization
     const org = {
@@ -37,7 +56,7 @@ async function seed() {
     }
 
     try {
-      await scheduleDb.insert(org)
+      await adapter.insert(org)
       console.log('✅ Organization created: Test Community Center')
     } catch (error: any) {
       if (error.statusCode === 409) {
@@ -105,7 +124,7 @@ async function seed() {
 
     for (const user of users) {
       try {
-        await scheduleDb.insert(user)
+        await adapter.insert(user)
         console.log(`✅ User created: ${user.email}`)
       } catch (error: any) {
         if (error.statusCode === 409) {
@@ -129,7 +148,7 @@ async function seed() {
     }
 
     try {
-      await scheduleDb.insert(site)
+      await adapter.insert(site)
       console.log('✅ Site created: Main Campus')
     } catch (error: any) {
       if (error.statusCode === 409) {

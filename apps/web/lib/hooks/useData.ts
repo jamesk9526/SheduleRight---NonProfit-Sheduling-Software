@@ -33,6 +33,44 @@ export interface User {
   active: boolean
 }
 
+export interface Volunteer {
+  _id: string
+  name: string
+  email: string
+  phone?: string
+  orgId: string
+  skills?: string[]
+  notes?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Shift {
+  _id: string
+  title: string
+  siteId?: string
+  orgId: string
+  start: string
+  end: string
+  capacity: number
+  location?: string
+  notes?: string
+  assignedVolunteerIds: string[]
+  status: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ReminderSettings {
+  _id: string
+  orgId: string
+  enabled: boolean
+  leadTimeHours: number
+  template: string
+  createdAt: string
+  updatedAt: string
+}
+
 /**
  * Hook to fetch current user
  */
@@ -136,6 +174,84 @@ export function useCreateSite(orgId: string | null) {
       if (orgId) {
         queryClient.invalidateQueries({ queryKey: ['sites', orgId] })
       }
+    },
+  })
+}
+
+export function useVolunteers() {
+  const { call } = useApi()
+
+  return useQuery({
+    queryKey: ['volunteers'],
+    queryFn: async () => {
+      const response = await call('/api/v1/volunteers')
+      return response.data as Volunteer[]
+    },
+  })
+}
+
+export function useCreateVolunteer() {
+  const { call } = useApi()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (payload: { name: string; email: string; phone?: string; skills?: string[]; notes?: string }) => {
+      return await call('/api/v1/volunteers', { method: 'POST', body: payload })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['volunteers'] })
+    },
+  })
+}
+
+export function useShifts() {
+  const { call } = useApi()
+
+  return useQuery({
+    queryKey: ['shifts'],
+    queryFn: async () => {
+      const response = await call('/api/v1/shifts')
+      return response.data as Shift[]
+    },
+  })
+}
+
+export function useCreateShift() {
+  const { call } = useApi()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (payload: { title: string; start: string; end: string; siteId?: string; capacity?: number; location?: string; notes?: string }) => {
+      return await call('/api/v1/shifts', { method: 'POST', body: payload })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['shifts'] })
+    },
+  })
+}
+
+export function useReminderSettings() {
+  const { call } = useApi()
+
+  return useQuery({
+    queryKey: ['reminderSettings'],
+    queryFn: async () => {
+      const response = await call('/api/v1/reminders/settings')
+      return response as ReminderSettings
+    },
+  })
+}
+
+export function useUpdateReminderSettings() {
+  const { call } = useApi()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (payload: { enabled: boolean; leadTimeHours: number; template: string }) => {
+      return await call('/api/v1/reminders/settings', { method: 'PUT', body: payload })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['reminderSettings'] })
     },
   })
 }

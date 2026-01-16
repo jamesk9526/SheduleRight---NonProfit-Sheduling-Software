@@ -86,7 +86,15 @@ export async function createIndexes() {
   console.log('🔍 Creating database indexes...\n')
 
   try {
-    const dbClient = nano(config.couchdbUrl)
+    const dbClient = nano({
+      url: config.couchdbUrl,
+      requestDefaults: {
+        auth: {
+          username: config.couchdbUser,
+          password: config.couchdbPassword,
+        },
+      },
+    })
     const db = dbClient.use('scheduleright')
 
     let successCount = 0
@@ -133,7 +141,8 @@ export async function createIndexes() {
     }
   } catch (error) {
     console.error('❌ Fatal error creating indexes:', error)
-    process.exit(1)
+    // Do not exit when imported; let caller decide
+    throw error
   }
 }
 
@@ -142,7 +151,15 @@ export async function createIndexes() {
  */
 export async function listIndexes() {
   try {
-    const dbClient = nano(config.couchdbUrl)
+    const dbClient = nano({
+      url: config.couchdbUrl,
+      requestDefaults: {
+        auth: {
+          username: config.couchdbUser,
+          password: config.couchdbPassword,
+        },
+      },
+    })
     const db = dbClient.use('scheduleright')
 
     const result = await db.listIndex()
@@ -162,13 +179,15 @@ export async function listIndexes() {
   }
 }
 
-// Run if executed directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Run only when executed directly via node/tsx
+const isDirect = process.argv[1] && (process.argv[1].endsWith('indexes.ts') || process.argv[1].endsWith('indexes.js'))
+if (isDirect) {
   const command = process.argv[2]
-
   if (command === 'list') {
     listIndexes()
   } else {
     createIndexes()
+      .then(() => process.exit(0))
+      .catch(() => process.exit(1))
   }
 }

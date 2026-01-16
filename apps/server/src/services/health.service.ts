@@ -1,4 +1,5 @@
 import type { ServerScope } from 'nano'
+import type { MySqlPool } from '../db/mysql.js'
 import { config } from '../config.js'
 
 export interface HealthCheck {
@@ -29,14 +30,26 @@ export interface HealthStatus {
  * Health Check Service
  * Provides detailed health status for monitoring and load balancers
  */
-export function createHealthService(db: ServerScope) {
+export function createHealthService(options: { provider: 'couchdb' | 'mysql'; couchDb?: ServerScope; mysqlPool?: MySqlPool }) {
   /**
    * Check database connectivity
    */
   async function checkDatabase(): Promise<HealthCheck> {
     const start = Date.now()
     try {
-      await db.info()
+      if (options.provider === 'mysql') {
+        if (!options.mysqlPool) throw new Error('MySQL pool not initialized')
+        await options.mysqlPool.query('SELECT 1')
+        return {
+          name: 'database',
+          status: 'healthy',
+          message: 'MySQL connection successful',
+          responseTime: Date.now() - start,
+        }
+      }
+
+      if (!options.couchDb) throw new Error('CouchDB client not initialized')
+      await options.couchDb.info()
       return {
         name: 'database',
         status: 'healthy',
