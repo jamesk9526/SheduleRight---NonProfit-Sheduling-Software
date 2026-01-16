@@ -2,6 +2,7 @@ import Fastify from 'fastify'
 import fastifyCookie from '@fastify/cookie'
 import fastifyHelmet from '@fastify/helmet'
 import fastifyCors from '@fastify/cors'
+import fastifyFormbody from '@fastify/formbody'
 import nano from 'nano'
 import { config, getSanitizedConfig } from './config.js'
 import fs from 'fs/promises'
@@ -19,6 +20,9 @@ import { createHealthService } from './services/health.service.js'
 import { createAuditService } from './services/audit.service.js'
 import { createReminderService } from './services/reminder.service.js'
 import { createBootstrapService } from './services/bootstrap.service.js'
+import { createMessagingService } from './services/messaging.service.js'
+import { createEmbedConfigService } from './services/embed-config.service.js'
+import { createPropertyService } from './services/property.service.js'
 import { registerAuthRoutes } from './routes/auth.js'
 import { registerOrgRoutes } from './routes/orgs.js'
 import { registerSiteRoutes } from './routes/sites.js'
@@ -27,7 +31,14 @@ import { registerBookingRoutes } from './routes/booking.js'
 import { registerAuditRoutes } from './routes/audit.js'
 import { registerReminderRoutes } from './routes/reminders.js'
 import { registerBootstrapRoutes } from './routes/bootstrap.js'
+import { registerMessagingRoutes } from './routes/messaging.js'
+import { registerPublicRoutes } from './routes/public.js'
+import { registerClientRoutes } from './routes/clients.js'
+import { registerEmbedConfigRoutes } from './routes/embed-configs.js'
+import { registerEmbedPublicRoutes } from './routes/embed-public.js'
+import { registerPropertyRoutes } from './routes/properties.js'
 import { securityHeaders, requestId, httpsEnforcement } from './middleware/security.js'
+import { authMiddleware, requireRole } from './middleware/auth.js'
 import { standardRateLimit, authRateLimit, rateLimitResponseHook } from './middleware/rate-limit.js'
 import { createVolunteerService } from './services/volunteer.service.js'
 import { registerVolunteerRoutes } from './routes/volunteers.js'
@@ -157,6 +168,9 @@ export async function createServer() {
   const reminderService = createReminderService(dbAdapter)
   const volunteerService = createVolunteerService(dbAdapter)
   const bootstrapService = createBootstrapService(dbAdapter)
+  const messagingService = createMessagingService(dbAdapter)
+  const embedConfigService = createEmbedConfigService(dbAdapter)
+  const propertyService = createPropertyService(dbAdapter)
   await bootstrapService.ensureConfigDefaults()
 
   // Plugins
@@ -175,6 +189,7 @@ export async function createServer() {
   })
 
   await fastify.register(fastifyCookie)
+  await fastify.register(fastifyFormbody)
 
   // Security Middleware
   fastify.addHook('onRequest', requestId)
@@ -189,7 +204,7 @@ export async function createServer() {
   // Block all routes until bootstrap completes (allow health + bootstrap endpoints)
   fastify.addHook('onRequest', async (request, reply) => {
     const allowList = ['/api/v1/bootstrap', '/api/v1/bootstrap/status', '/health', '/readiness', '/status', '/metrics']
-    const path = request.routerPath || request.url
+    const path = request.routeOptions?.url || request.url
     if (allowList.some((p) => path.startsWith(p))) {
       return
     }
@@ -234,7 +249,7 @@ export async function createServer() {
   })
 
   // Performance metrics endpoint
-  fastify.get('/metrics', async (_request, reply) => {
+  fastify.get('/metrics', { preHandler: [authMiddleware, requireRole('ADMIN')] }, async (_request, reply) => {
     const metrics = metricsService.getAllMetrics()
     return reply.status(200).send({
       timestamp: new Date().toISOString(),
@@ -398,6 +413,12 @@ export async function createServer() {
   // Register bootstrap routes
   await registerBootstrapRoutes(fastify, bootstrapService)
 
+  // Register public routes (embed + public booking)
+  await registerPublicRoutes(fastify, orgService, availabilityService, bookingService, embedConfigService)
+
+  // Register public embed config routes
+  await registerEmbedPublicRoutes(fastify, embedConfigService, orgService)
+
   // Register auth routes
   await registerAuthRoutes(fastify, authService)
 
@@ -419,8 +440,23 @@ export async function createServer() {
   // Register reminder routes
   await registerReminderRoutes(fastify, reminderService)
 
+  // Start reminder scheduler (runs every 15 minutes)
+  reminderService.startReminderScheduler(15)
+
+  // Register messaging routes
+  await registerMessagingRoutes(fastify, bookingService, messagingService)
+
+  // Register client routes
+  await registerClientRoutes(fastify, bookingService)
+
   // Register volunteer routes
   await registerVolunteerRoutes(fastify, volunteerService)
+
+  // Register embed config routes
+  await registerEmbedConfigRoutes(fastify, embedConfigService, auditService)
+
+  // Register custom property routes
+  await registerPropertyRoutes(fastify, propertyService)
 
   return fastify
 }

@@ -38,7 +38,7 @@ const ConfigSchema = z.object({
   REFRESH_TOKEN_EXPIRY: z.string().default('604800').transform(Number),
 
   // CORS
-  CORS_ORIGIN: z.string().default('http://localhost:3000,http://localhost:3001'),
+  CORS_ORIGIN: z.string().default('http://localhost:3000,http://localhost:3001,http://localhost:3003'),
 
   // Optional: Twilio
   TWILIO_ACCOUNT_SID: z.string().optional(),
@@ -78,6 +78,14 @@ const ConfigSchema = z.object({
         path: ['DB_PROVIDER'],
       })
     }
+  }
+
+  if (val.NODE_ENV === 'production' && val.CORS_ORIGIN.split(',').map((o) => o.trim()).includes('*')) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'CORS_ORIGIN cannot include "*" in production',
+      path: ['CORS_ORIGIN'],
+    })
   }
 })
 

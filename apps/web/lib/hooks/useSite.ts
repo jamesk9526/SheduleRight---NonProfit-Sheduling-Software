@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
 export interface SiteContextType {
   currentSiteId: string | null
@@ -14,11 +14,11 @@ const SiteContext = createContext<SiteContextType | undefined>(undefined)
  * Provider component for site context
  * Manages current site selection across the app
  */
-export function SiteProvider({ children }: { children: ReactNode }) {
+export function SiteProvider(props: { children: ReactNode }) {
+  const { children } = props
   const [currentSiteId, setCurrentSiteId] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
 
-  // Load saved site from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem('currentSiteId')
     if (saved) {
@@ -37,12 +37,20 @@ export function SiteProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('currentSiteId')
   }
 
-  if (!mounted) return children
+  if (!mounted) {
+    return null
+  }
 
-  return (
-    <SiteContext.Provider value={{ currentSiteId, setSiteId, clearSiteId }}>
-      {children}
-    </SiteContext.Provider>
+  const contextValue: SiteContextType = {
+    currentSiteId,
+    setSiteId,
+    clearSiteId,
+  }
+
+  return React.createElement(
+    SiteContext.Provider,
+    { value: contextValue },
+    children
   )
 }
 

@@ -124,7 +124,11 @@ export default function VolunteerShiftsPage() {
             <div className="mb-3 rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>
           )}
           <div className="space-y-3">
+            <label htmlFor="shift-title" className="block text-sm font-medium text-neutral-700">
+              Title
+            </label>
             <input
+              id="shift-title"
               className="w-full border border-neutral-200 rounded-lg px-3 py-2"
               placeholder="Title"
               value={form.title}
@@ -132,29 +136,49 @@ export default function VolunteerShiftsPage() {
               disabled={!canManageShifts || createShift.isPending}
             />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <input
-                type="datetime-local"
-                className="border border-neutral-200 rounded-lg px-3 py-2"
-                value={form.start}
-                onChange={(e) => setForm((f) => ({ ...f, start: e.target.value }))}
-                disabled={!canManageShifts || createShift.isPending}
-              />
-              <input
-                type="datetime-local"
-                className="border border-neutral-200 rounded-lg px-3 py-2"
-                value={form.end}
-                onChange={(e) => setForm((f) => ({ ...f, end: e.target.value }))}
-                disabled={!canManageShifts || createShift.isPending}
-              />
+              <div className="space-y-1">
+                <label htmlFor="shift-start" className="block text-sm font-medium text-neutral-700">
+                  Start
+                </label>
+                <input
+                  id="shift-start"
+                  type="datetime-local"
+                  className="w-full border border-neutral-200 rounded-lg px-3 py-2"
+                  value={form.start}
+                  onChange={(e) => setForm((f) => ({ ...f, start: e.target.value }))}
+                  disabled={!canManageShifts || createShift.isPending}
+                />
+              </div>
+              <div className="space-y-1">
+                <label htmlFor="shift-end" className="block text-sm font-medium text-neutral-700">
+                  End
+                </label>
+                <input
+                  id="shift-end"
+                  type="datetime-local"
+                  className="w-full border border-neutral-200 rounded-lg px-3 py-2"
+                  value={form.end}
+                  onChange={(e) => setForm((f) => ({ ...f, end: e.target.value }))}
+                  disabled={!canManageShifts || createShift.isPending}
+                />
+              </div>
             </div>
+            <label htmlFor="shift-location" className="block text-sm font-medium text-neutral-700">
+              Location (optional)
+            </label>
             <input
+              id="shift-location"
               className="w-full border border-neutral-200 rounded-lg px-3 py-2"
               placeholder="Location (optional)"
               value={form.location}
               onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))}
               disabled={!canManageShifts || createShift.isPending}
             />
+            <label htmlFor="shift-capacity" className="block text-sm font-medium text-neutral-700">
+              Capacity
+            </label>
             <input
+              id="shift-capacity"
               type="number"
               min={1}
               className="w-full border border-neutral-200 rounded-lg px-3 py-2"

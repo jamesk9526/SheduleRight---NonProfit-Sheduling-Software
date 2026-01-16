@@ -106,10 +106,11 @@ export default function ProfilePage() {
           <div className="px-6 py-6 space-y-6">
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
+              <label htmlFor="profile-email" className="block text-sm font-medium text-neutral-700 mb-2">
                 Email Address
               </label>
               <input
+                id="profile-email"
                 type="email"
                 value={user.email}
                 disabled
@@ -119,10 +120,11 @@ export default function ProfilePage() {
 
             {/* Full Name */}
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
+              <label htmlFor="profile-name" className="block text-sm font-medium text-neutral-700 mb-2">
                 Full Name
               </label>
               <input
+                id="profile-name"
                 type="text"
                 value={user.name}
                 disabled
@@ -149,10 +151,11 @@ export default function ProfilePage() {
 
             {/* Organization ID */}
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
+              <label htmlFor="profile-org" className="block text-sm font-medium text-neutral-700 mb-2">
                 Organization ID
               </label>
               <input
+                id="profile-org"
                 type="text"
                 value={user.orgId}
                 disabled

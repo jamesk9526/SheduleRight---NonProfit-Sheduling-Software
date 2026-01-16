@@ -130,6 +130,7 @@ export default function RemindersPage() {
               <p className="text-sm text-neutral-600">Enable or disable automated SMS reminders.</p>
             </div>
             <label className="inline-flex items-center cursor-pointer">
+              <span className="sr-only">Enable SMS reminders</span>
               <input
                 type="checkbox"
                 className="sr-only"
@@ -145,8 +146,9 @@ export default function RemindersPage() {
 
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-2">Reminder Lead Time (hours)</label>
+              <label htmlFor="reminder-lead-time" className="block text-sm font-medium text-neutral-700 mb-2">Reminder Lead Time (hours)</label>
               <select
+                id="reminder-lead-time"
                 value={leadTime}
                 onChange={(e) => setLeadTime(e.target.value)}
                 className="w-full border border-neutral-200 rounded-lg px-3 py-2"
@@ -161,8 +163,9 @@ export default function RemindersPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-2">SMS Template</label>
+              <label htmlFor="reminder-template" className="block text-sm font-medium text-neutral-700 mb-2">SMS Template</label>
               <textarea
+                id="reminder-template"
                 value={template}
                 onChange={(e) => setTemplate(e.target.value)}
                 rows={5}

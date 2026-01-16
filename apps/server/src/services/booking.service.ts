@@ -15,6 +15,7 @@ export interface Booking {
   siteId: string
   orgId: string
   slotId: string // Reference to AvailabilitySlot
+  timestamp?: string
   
   // Client information
   clientId?: string // Reference to user if registered
@@ -38,6 +39,7 @@ export interface Booking {
   confirmedAt?: string // When staff confirmed the booking
   cancelledAt?: string
   cancelReason?: string
+  reminderSentAt?: string
   
   createdAt: string
   updatedAt: string
@@ -93,6 +95,7 @@ export function createBookingService(db: ServerScope) {
           siteId,
           orgId,
           slotId,
+          timestamp: slotInfo.startTime,
           clientId: clientData.clientId,
           clientName: clientData.clientName,
           clientEmail: clientData.clientEmail,
@@ -235,6 +238,47 @@ export function createBookingService(db: ServerScope) {
         return result.docs as Booking[]
       } catch (error) {
         console.error('Error getting bookings for site:', error)
+        throw new Error('Failed to retrieve bookings')
+      }
+    },
+
+    /**
+     * Get all bookings for an organization
+     */
+    async getBookingsForOrg(orgId: string): Promise<Booking[]> {
+      try {
+        const result = await db.find({
+          selector: {
+            type: 'booking',
+            orgId,
+          },
+          limit: 10000,
+        })
+
+        return result.docs as Booking[]
+      } catch (error) {
+        console.error('Error getting bookings for org:', error)
+        throw new Error('Failed to retrieve bookings')
+      }
+    },
+
+    /**
+     * Get bookings for a client within an organization
+     */
+    async getBookingsForOrgClient(orgId: string, clientEmail: string): Promise<Booking[]> {
+      try {
+        const result = await db.find({
+          selector: {
+            type: 'booking',
+            orgId,
+            clientEmail,
+          },
+          limit: 1000,
+        })
+
+        return result.docs as Booking[]
+      } catch (error) {
+        console.error('Error getting bookings for org client:', error)
         throw new Error('Failed to retrieve bookings')
       }
     },

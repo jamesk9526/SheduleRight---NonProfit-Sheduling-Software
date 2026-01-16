@@ -38,7 +38,7 @@ export default function ManageBookingsPage() {
       <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
         <p className="text-red-800 font-medium">Access Denied</p>
         <p className="text-sm text-red-700 mt-2">Only staff members can manage bookings.</p>
-        <Link href="/dashboard/bookings" className="inline-block mt-4 text-indigo-600 hover:text-indigo-700 font-medium">
+        <Link href="/bookings" className="inline-block mt-4 text-indigo-600 hover:text-indigo-700 font-medium">
           ← Back to Bookings
         </Link>
       </div>
@@ -50,7 +50,7 @@ export default function ManageBookingsPage() {
     queryKey: ['sites', user?.orgId],
     queryFn: async () => {
       if (!user?.orgId) return []
-      const response = await api.get(`/orgs/${user.orgId}/sites`)
+      const response = await api.get(`/api/v1/orgs/${user.orgId}/sites`)
       return response.data || []
     },
     enabled: !!user?.orgId,
@@ -61,7 +61,7 @@ export default function ManageBookingsPage() {
     queryKey: ['bookings', 'manage', selectedSite],
     queryFn: async () => {
       if (!selectedSite) return []
-      const response = await api.get(`/sites/${selectedSite}/bookings`)
+      const response = await api.get(`/api/v1/sites/${selectedSite}/bookings`)
       return response.data || []
     },
     enabled: !!selectedSite,
@@ -97,17 +97,15 @@ export default function ManageBookingsPage() {
     try {
       const endpoint =
         type === 'confirm'
-          ? `/bookings/${actionDialog.booking.id}/confirm`
+          ? `/api/v1/bookings/${actionDialog.booking.id}/confirm`
           : type === 'complete'
-            ? `/bookings/${actionDialog.booking.id}/complete`
-            : `/bookings/${actionDialog.booking.id}/no-show`
+            ? `/api/v1/bookings/${actionDialog.booking.id}/complete`
+            : `/api/v1/bookings/${actionDialog.booking.id}/no-show`
 
-      const response = await api.put(endpoint, {})
+      await api.put(endpoint, {})
 
-      if (response.ok) {
-        setActionDialog({ type: null, booking: null })
-        refetch()
-      }
+      setActionDialog({ type: null, booking: null })
+      refetch()
     } catch (err) {
       console.error('Failed to perform action')
     } finally {
@@ -120,15 +118,13 @@ export default function ManageBookingsPage() {
     setActionLoading(true)
 
     try {
-      const response = await api.put(`/bookings/${actionDialog.booking.id}/staff-notes`, {
-        staffNotes,
+      await api.put(`/api/v1/bookings/${actionDialog.booking.id}/notes`, {
+        notes: staffNotes,
       })
 
-      if (response.ok) {
-        setActionDialog({ type: null, booking: null })
-        setStaffNotes('')
-        refetch()
-      }
+      setActionDialog({ type: null, booking: null })
+      setStaffNotes('')
+      refetch()
     } catch (err) {
       console.error('Failed to save notes')
     } finally {
@@ -161,7 +157,7 @@ export default function ManageBookingsPage() {
           <h1 className="text-3xl font-bold text-gray-900">Manage Bookings</h1>
           <p className="mt-2 text-gray-600">Review and manage all bookings</p>
         </div>
-        <Link href="/dashboard/bookings" className="text-indigo-600 hover:text-indigo-700 font-medium">
+        <Link href="/bookings" className="text-indigo-600 hover:text-indigo-700 font-medium">
           ← Back
         </Link>
       </div>
@@ -171,8 +167,9 @@ export default function ManageBookingsPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Site Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Site</label>
+            <label htmlFor="manage-site" className="block text-sm font-medium text-gray-700 mb-2">Site</label>
             <select
+              id="manage-site"
               value={selectedSite}
               onChange={(e) => setSelectedSite(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
@@ -188,8 +185,9 @@ export default function ManageBookingsPage() {
 
           {/* Search */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+            <label htmlFor="manage-search" className="block text-sm font-medium text-gray-700 mb-2">Search</label>
             <input
+              id="manage-search"
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -200,8 +198,9 @@ export default function ManageBookingsPage() {
 
           {/* Status Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+            <label htmlFor="manage-status" className="block text-sm font-medium text-gray-700 mb-2">Status</label>
             <select
+              id="manage-status"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
@@ -259,7 +258,7 @@ export default function ManageBookingsPage() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
                         <Link
-                          href={`/dashboard/bookings/${booking.id}`}
+                          href={`/bookings/${booking.id}`}
                           className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded text-sm hover:bg-indigo-100 transition"
                         >
                           View

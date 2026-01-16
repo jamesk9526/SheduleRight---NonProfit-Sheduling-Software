@@ -464,6 +464,39 @@ pnpm build
 - [**API_CONTRACTS.md**](./API_CONTRACTS.md) - Complete API reference with request/response examples
 - [**TROUBLESHOOTING.md**](./TROUBLESHOOTING.md) - Common issues & solutions
 
+---
+
+## 🧩 Embed Widget (Booking)
+
+The admin Embed Code Generator lets staff create a tokenized embed configuration that can be used on any website to book into ScheduleRight.
+
+### How it works
+- Create an embed config in the admin UI (Bookings → Embed Code Generator).
+- Copy the iframe snippet and paste it into your site.
+- The widget loads availability and creates bookings through the public API using the token.
+
+### Example embed snippet
+```html
+<iframe
+    src="https://embed.yourdomain.com?token=YOUR_TOKEN"
+    style="width:100%;min-height:680px;border:0;"
+    title="ScheduleRight Booking Widget"
+></iframe>
+```
+
+### Optional configuration
+Embed configs can include:
+- Theme color
+- Button label
+- Default service (slot title filter)
+- Locale
+- Timezone
+- Allowed domains (if set, the widget requires Origin/Referer to match)
+
+### Security notes
+- Tokens are required for embeds and can be archived at any time.
+- If allowed domains are set, requests without Origin/Referer are rejected.
+
 ### Operations & Deployment
 - [**DEPLOYMENT.md**](./DEPLOYMENT.md) - Docker and Kubernetes deployment
 - [**OPERATIONS.md**](./OPERATIONS.md) - Operational runbook

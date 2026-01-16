@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useSite } from '@/lib/hooks/useSite'
-import { useAvailabilitySlots, useCreateAvailability } from '@/lib/hooks/useData'
+import { useAvailabilitySlots, useCreateAvailability, useDeleteAvailability } from '@/lib/hooks/useData'
 import { useQuery } from '@tanstack/react-query'
 import { useApi } from '@/lib/hooks/useApi'
 
@@ -25,6 +25,7 @@ export default function AvailabilityPage() {
 
   const { data: slots, isLoading: slotsLoading } = useAvailabilitySlots(currentSiteId)
   const { mutate: createSlot, isPending: isCreating } = useCreateAvailability(currentSiteId)
+  const { mutate: deleteSlot, isPending: isDeleting } = useDeleteAvailability(currentSiteId)
   const { call } = useApi()
 
   // Get site name
@@ -66,13 +67,18 @@ export default function AvailabilityPage() {
       return
     }
 
+    const durationMinutes = Math.floor((endDateTime.getTime() - startDateTime.getTime()) / 60000)
+
     createSlot(
       {
-        startTime: startDateTime.toISOString(),
-        endTime: endDateTime.toISOString(),
+        startTime,
+        endTime,
+        recurrence: 'once',
+        specificDate: selectedDate,
+        durationMinutes,
         capacity: parseInt(capacity),
         title: slotTitle || `Availability Slot`,
-        notes: slotNotes,
+        notesForClients: slotNotes,
       },
       {
         onSuccess: () => {
@@ -86,6 +92,12 @@ export default function AvailabilityPage() {
         },
       }
     )
+  }
+
+  const handleDeleteSlot = (slotId: string) => {
+    const confirmed = window.confirm('Deactivate this availability slot?')
+    if (!confirmed) return
+    deleteSlot(slotId)
   }
 
   if (!mounted) return null
@@ -163,10 +175,11 @@ export default function AvailabilityPage() {
           <form onSubmit={handleCreateSlot} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                <label htmlFor="availability-date" className="block text-sm font-medium text-neutral-700 mb-2">
                   Date *
                 </label>
                 <input
+                  id="availability-date"
                   type="date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
@@ -176,10 +189,11 @@ export default function AvailabilityPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                <label htmlFor="availability-title" className="block text-sm font-medium text-neutral-700 mb-2">
                   Slot Title
                 </label>
                 <input
+                  id="availability-title"
                   type="text"
                   value={slotTitle}
                   onChange={(e) => setSlotTitle(e.target.value)}
@@ -189,10 +203,11 @@ export default function AvailabilityPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                <label htmlFor="availability-start" className="block text-sm font-medium text-neutral-700 mb-2">
                   Start Time *
                 </label>
                 <input
+                  id="availability-start"
                   type="time"
                   value={startTime}
                   onChange={(e) => setStartTime(e.target.value)}
@@ -202,10 +217,11 @@ export default function AvailabilityPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                <label htmlFor="availability-end" className="block text-sm font-medium text-neutral-700 mb-2">
                   End Time *
                 </label>
                 <input
+                  id="availability-end"
                   type="time"
                   value={endTime}
                   onChange={(e) => setEndTime(e.target.value)}
@@ -215,10 +231,11 @@ export default function AvailabilityPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                <label htmlFor="availability-capacity" className="block text-sm font-medium text-neutral-700 mb-2">
                   Capacity (Number of Slots) *
                 </label>
                 <input
+                  id="availability-capacity"
                   type="number"
                   value={capacity}
                   onChange={(e) => setCapacity(e.target.value)}
@@ -231,10 +248,11 @@ export default function AvailabilityPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
+              <label htmlFor="availability-notes" className="block text-sm font-medium text-neutral-700 mb-2">
                 Notes
               </label>
               <textarea
+                id="availability-notes"
                 value={slotNotes}
                 onChange={(e) => setSlotNotes(e.target.value)}
                 placeholder="Any additional notes about this time slot..."
@@ -353,11 +371,18 @@ export default function AvailabilityPage() {
                 <div className="flex gap-2">
                   {canManage && (
                     <>
-                      <button className="px-3 py-1 text-sm bg-primary-100 text-primary-700 rounded hover:bg-primary-200 transition">
+                      <button
+                        className="px-3 py-1 text-sm bg-primary-100 text-primary-700 rounded hover:bg-primary-200 transition"
+                        disabled
+                      >
                         Edit
                       </button>
-                      <button className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 transition">
-                        Delete
+                      <button
+                        onClick={() => handleDeleteSlot(slot._id)}
+                        className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 transition disabled:opacity-60"
+                        disabled={isDeleting}
+                      >
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                       </button>
                     </>
                   )}

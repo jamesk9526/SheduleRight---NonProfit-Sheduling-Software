@@ -1,0 +1,99 @@
+Date : 2026-01-16 13:48:46
+Directory : c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software
+Total : 42 files,  5401 codes, 86 comments, 1261 blanks, all 6748 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| Markdown           |         13 |      4,050 |          0 |      1,090 |      5,140 |
+| TypeScript         |         15 |        798 |         70 |        112 |        980 |
+| TypeScript JSX     |          6 |        486 |          7 |         49 |        542 |
+| MS SQL             |          3 |         57 |          8 |          8 |         73 |
+| JavaScript         |          1 |         18 |          1 |          2 |         21 |
+| JSON with Comments |          1 |          1 |          0 |          0 |          1 |
+| JSON               |          3 |         -9 |          0 |          0 |         -9 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                                      | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                                         |         42 |      5,401 |         86 |      1,261 |      6,748 |
+| . (Files)                                                                                                                                 |         14 |      4,051 |          0 |      1,090 |      5,141 |
+| apps                                                                                                                                      |         28 |      1,350 |         86 |        171 |      1,607 |
+| apps\server                                                                                                                               |         14 |        559 |         31 |         70 |        660 |
+| apps\server (Files)                                                                                                                       |          1 |          2 |          0 |          0 |          2 |
+| apps\server\src                                                                                                                           |         13 |        557 |         31 |         70 |        658 |
+| apps\server\src (Files)                                                                                                                   |          1 |          9 |          2 |          2 |         13 |
+| apps\server\src\db                                                                                                                        |          5 |         64 |          9 |          7 |         80 |
+| apps\server\src\db (Files)                                                                                                                |          2 |          7 |          1 |         -1 |          7 |
+| apps\server\src\db\mysql                                                                                                                  |          3 |         57 |          8 |          8 |         73 |
+| apps\server\src\db\mysql\migrations                                                                                                       |          3 |         57 |          8 |          8 |         73 |
+| apps\server\src\routes                                                                                                                    |          3 |        307 |         20 |         33 |        360 |
+| apps\server\src\services                                                                                                                  |          4 |        177 |          0 |         28 |        205 |
+| apps\web                                                                                                                                  |         14 |        791 |         55 |        101 |        947 |
+| apps\web (Files)                                                                                                                          |          3 |         31 |          1 |          7 |         39 |
+| apps\web\app                                                                                                                              |          6 |        486 |          7 |         49 |        542 |
+| apps\web\app (Files)                                                                                                                      |          2 |          9 |          0 |          1 |         10 |
+| apps\web\app\(dashboard)                                                                                                                  |          4 |        477 |          7 |         48 |        532 |
+| apps\web\app\(dashboard)\availability                                                                                                     |          1 |        335 |          6 |         32 |        373 |
+| apps\web\app\(dashboard)\orgs                                                                                                             |          2 |         81 |          0 |         11 |         92 |
+| apps\web\app\(dashboard)\orgs\[orgId]                                                                                                     |          2 |         81 |          0 |         11 |         92 |
+| apps\web\app\(dashboard)\orgs\[orgId] (Files)                                                                                             |          1 |         10 |          0 |          2 |         12 |
+| apps\web\app\(dashboard)\orgs\[orgId]\sites                                                                                               |          1 |         71 |          0 |          9 |         80 |
+| apps\web\app\(dashboard)\orgs\[orgId]\sites\[siteId]                                                                                      |          1 |         71 |          0 |          9 |         80 |
+| apps\web\app\(dashboard)\reminders                                                                                                        |          1 |         61 |          1 |          5 |         67 |
+| apps\web\lib                                                                                                                              |          4 |        286 |         47 |         45 |        378 |
+| apps\web\lib\hooks                                                                                                                        |          4 |        286 |         47 |         45 |        378 |
+| apps\web\public                                                                                                                           |          1 |        -12 |          0 |          0 |        -12 |
++-------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                                                                  | language           | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\COMPLETION_REPORT.md                                          | Markdown           |        336 |          0 |         94 |        430 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\FIXES_SESSION.md                                              | Markdown           |        136 |          0 |         45 |        181 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\IMPLEMENTATION_PLAN.md                                        | Markdown           |        202 |          0 |         52 |        254 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\MONITORING_OBSERVABILITY.md                                   | Markdown           |        699 |          0 |        158 |        857 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\NEXT_STEPS.md                                                 | Markdown           |        288 |          0 |         75 |        363 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\PRODUCTION_HARDENING.md                                       | Markdown           |        690 |          0 |        164 |        854 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\PROGRESS_REPORT.md                                            | Markdown           |        219 |          0 |         63 |        282 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\PROJECT_COMPLETION.md                                         | Markdown           |        504 |          0 |        129 |        633 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\README.md                                                     | Markdown           |        199 |          0 |         91 |        290 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\SESSION_SUMMARY.md                                            | Markdown           |        149 |          0 |         47 |        196 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\SESSION_SUMMARY_BOOKINGS.md                                   | Markdown           |        296 |          0 |         79 |        375 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\TODO_FROM_SERVER_LOG.md                                       | Markdown           |         33 |          0 |         10 |         43 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\TWILIO_SMS_GUIDE.md                                           | Markdown           |        299 |          0 |         83 |        382 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\package.json                                      | JSON               |          2 |          0 |          0 |          2 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\db\adapter.ts                                 | TypeScript         |          2 |          0 |          0 |          2 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\db\indexes.ts                                 | TypeScript         |          5 |          1 |         -1 |          5 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\db\mysql\migrations\002_users_orgs.sql        | MS SQL             |        -18 |          2 |          0 |        -16 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\db\mysql\migrations\003_volunteers_shifts.sql | MS SQL             |         47 |          1 |          4 |         52 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\db\mysql\migrations\004_seed_test_data.sql    | MS SQL             |         28 |          5 |          4 |         37 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\index.ts                                      | TypeScript         |          9 |          2 |          2 |         13 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\routes\bootstrap.ts                           | TypeScript         |         23 |          2 |          3 |         28 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\routes\messaging.ts                           | TypeScript         |        179 |          0 |         20 |        199 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\routes\reminders.ts                           | TypeScript         |        105 |         18 |         10 |        133 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\services\booking.service.ts                   | TypeScript         |          3 |          0 |          0 |          3 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\services\messaging.service.ts                 | TypeScript         |         91 |          0 |         12 |        103 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\services\org.service.ts                       | TypeScript         |          1 |          0 |          0 |          1 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\services\reminder.service.ts                  | TypeScript         |         82 |          0 |         16 |         98 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\availability\page.tsx                | TypeScript JSX     |        335 |          6 |         32 |        373 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\orgs\[orgId]\page.tsx                | TypeScript JSX     |         10 |          0 |          2 |         12 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\orgs\[orgId]\sites\[siteId]\page.tsx | TypeScript JSX     |         71 |          0 |          9 |         80 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\reminders\page.tsx                   | TypeScript JSX     |         61 |          1 |          5 |         67 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\app\layout.tsx                                       | TypeScript JSX     |          4 |          0 |          1 |          5 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\app\providers.tsx                                    | TypeScript JSX     |          5 |          0 |          0 |          5 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\lib\hooks\useApi.ts                                  | TypeScript         |          5 |          0 |          1 |          6 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\lib\hooks\useAuth.ts                                 | TypeScript         |         47 |          7 |         10 |         64 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\lib\hooks\useData.ts                                 | TypeScript         |        186 |         33 |         22 |        241 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\lib\hooks\useSite.ts                                 | TypeScript         |         48 |          7 |         12 |         67 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\middleware.ts                                        | TypeScript         |         12 |          0 |          5 |         17 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\next.config.mjs                                      | JavaScript         |         18 |          1 |          2 |         21 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\public\manifest.json                                 | JSON               |        -12 |          0 |          0 |        -12 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\tsconfig.json                                        | JSON with Comments |          1 |          0 |          0 |          1 |
+| c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\package.json                                                  | JSON               |          1 |          0 |          0 |          1 |
+| Total                                                                                                                                     |                    |      5,401 |         86 |      1,261 |      6,748 |
++-------------------------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

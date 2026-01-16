@@ -64,7 +64,8 @@ export async function registerBootstrapRoutes(
 
   // Optional protection: block bootstrap call if already initialized
   fastify.addHook('preHandler', async (request, reply) => {
-    if (request.routerPath?.startsWith('/api/v1/bootstrap')) {
+    const routeUrl = request.routeOptions?.url || request.url
+    if (routeUrl.startsWith('/api/v1/bootstrap')) {
       const done = await bootstrapService.isBootstrapped()
       if (done) {
         return reply.status(409).send({

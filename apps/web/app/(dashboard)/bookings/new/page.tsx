@@ -39,7 +39,7 @@ export default function CreateBookingPage() {
     queryKey: ['sites', user?.orgId],
     queryFn: async () => {
       if (!user?.orgId) return []
-      const response = await api.get(`/orgs/${user.orgId}/sites`)
+      const response = await api.get(`/api/v1/orgs/${user.orgId}/sites`)
       return response.data || []
     },
     enabled: !!user?.orgId,
@@ -50,7 +50,7 @@ export default function CreateBookingPage() {
     queryKey: ['availability', selectedSite],
     queryFn: async () => {
       if (!selectedSite) return []
-      const response = await api.get(`/sites/${selectedSite}/availability`)
+      const response = await api.get(`/api/v1/sites/${selectedSite}/availability`)
       return response.data || []
     },
     enabled: !!selectedSite,
@@ -83,7 +83,7 @@ export default function CreateBookingPage() {
     setLoading(true)
 
     try {
-      const response = await api.post(`/sites/${selectedSite}/bookings`, {
+      await api.post(`/api/v1/sites/${selectedSite}/bookings`, {
         slotId: selectedSlot,
         clientName: formData.clientName,
         clientEmail: formData.clientEmail,
@@ -91,14 +91,10 @@ export default function CreateBookingPage() {
         notes: formData.notes,
       })
 
-      if (response.ok) {
-        setSuccess(true)
-        setTimeout(() => {
-          router.push('/dashboard/bookings/my')
-        }, 1500)
-      } else {
-        setError(response.error?.message || 'Failed to create booking')
-      }
+      setSuccess(true)
+      setTimeout(() => {
+        router.push('/bookings/my')
+      }, 1500)
     } catch (err) {
       setError('An error occurred. Please try again.')
     } finally {
@@ -114,7 +110,7 @@ export default function CreateBookingPage() {
           <h1 className="text-3xl font-bold text-gray-900">Create Booking</h1>
           <p className="mt-2 text-gray-600">Schedule a new appointment</p>
         </div>
-        <Link href="/dashboard/bookings" className="text-indigo-600 hover:text-indigo-700 font-medium">
+        <Link href="/bookings" className="text-indigo-600 hover:text-indigo-700 font-medium">
           ← Back
         </Link>
       </div>
@@ -139,8 +135,9 @@ export default function CreateBookingPage() {
         <div className="bg-white border border-gray-200 rounded-lg p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">1. Select Location</h2>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Site *</label>
+            <label htmlFor="booking-site" className="block text-sm font-medium text-gray-700 mb-2">Site *</label>
             <select
+              id="booking-site"
               value={selectedSite}
               onChange={(e) => {
                 setSelectedSite(e.target.value)
@@ -208,8 +205,9 @@ export default function CreateBookingPage() {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">3. Your Information</h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+              <label htmlFor="clientName" className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
               <input
+                id="clientName"
                 type="text"
                 name="clientName"
                 value={formData.clientName}
@@ -221,8 +219,9 @@ export default function CreateBookingPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email Address *</label>
+              <label htmlFor="clientEmail" className="block text-sm font-medium text-gray-700 mb-1">Email Address *</label>
               <input
+                id="clientEmail"
                 type="email"
                 name="clientEmail"
                 value={formData.clientEmail}
@@ -234,8 +233,9 @@ export default function CreateBookingPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+              <label htmlFor="clientPhone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
               <input
+                id="clientPhone"
                 type="tel"
                 name="clientPhone"
                 value={formData.clientPhone}
@@ -246,8 +246,9 @@ export default function CreateBookingPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
+              <label htmlFor="clientNotes" className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
               <textarea
+                id="clientNotes"
                 name="notes"
                 value={formData.notes}
                 onChange={handleInputChange}

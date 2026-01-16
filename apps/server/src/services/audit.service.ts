@@ -163,4 +163,9 @@ export const AuditActions = {
   USER_UPDATE: 'user.update',
   USER_DELETE: 'user.delete',
   USER_ROLE_CHANGE: 'user.role.change',
+
+  // Embed configs
+  EMBED_CONFIG_CREATE: 'embed.config.create',
+  EMBED_CONFIG_UPDATE: 'embed.config.update',
+  EMBED_CONFIG_ARCHIVE: 'embed.config.archive',
 } as const

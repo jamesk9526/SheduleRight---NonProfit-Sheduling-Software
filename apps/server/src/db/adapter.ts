@@ -53,6 +53,9 @@ function extractIndexFields(doc: any) {
     slot_id: doc.slotId || null,
     client_email: doc.clientEmail || null,
     timestamp: doc.timestamp ? new Date(doc.timestamp) : null,
+    entity_type: doc.entityType || null,
+    entity_id: doc.entityId || null,
+    property_id: doc.propertyId || null,
   }
 
   return base
@@ -135,8 +138,8 @@ export function createMySqlAdapter(pool: MySqlPool): DbAdapter {
 
       await pool.query(
         `INSERT INTO documents
-          (id, type, data, org_id, site_id, email, status, slot_id, client_email, timestamp, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          (id, type, data, org_id, site_id, email, status, slot_id, client_email, timestamp, entity_type, entity_id, property_id, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
           data = VALUES(data),
           org_id = VALUES(org_id),
@@ -146,6 +149,9 @@ export function createMySqlAdapter(pool: MySqlPool): DbAdapter {
           slot_id = VALUES(slot_id),
           client_email = VALUES(client_email),
           timestamp = VALUES(timestamp),
+          entity_type = VALUES(entity_type),
+          entity_id = VALUES(entity_id),
+          property_id = VALUES(property_id),
           updated_at = VALUES(updated_at)`,
         [
           id,
@@ -158,6 +164,9 @@ export function createMySqlAdapter(pool: MySqlPool): DbAdapter {
           indexFields.slot_id,
           indexFields.client_email,
           indexFields.timestamp,
+          indexFields.entity_type,
+          indexFields.entity_id,
+          indexFields.property_id,
           createdAt,
           updatedAt,
         ]
@@ -195,6 +204,8 @@ function mapSelectorKey(key: string): string {
       return 'client_email'
     case 'slotId':
       return 'slot_id'
+    case 'bookingId':
+      return 'slot_id'
     case 'timestamp':
       return 'timestamp'
     case 'email':
@@ -203,6 +214,12 @@ function mapSelectorKey(key: string): string {
       return 'status'
     case 'id':
       return 'id'
+    case 'entityType':
+      return 'entity_type'
+    case 'entityId':
+      return 'entity_id'
+    case 'propertyId':
+      return 'property_id'
     default:
       return key
   }

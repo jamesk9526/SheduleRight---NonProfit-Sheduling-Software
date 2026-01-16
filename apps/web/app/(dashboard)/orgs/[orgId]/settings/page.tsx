@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tantml:parameter>
-<parameter name="useApi } from '@/lib/hooks/useApi'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useApi } from '@/lib/hooks/useApi'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -117,7 +117,7 @@ export default function OrgSettingsPage() {
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
         <p className="text-red-800 font-medium">Organization Not Found</p>
-        <Link href="/dashboard/orgs" className="inline-block mt-4 text-indigo-600 hover:text-indigo-700 font-medium">
+        <Link href="/orgs" className="inline-block mt-4 text-indigo-600 hover:text-indigo-700 font-medium">
           ← Back to Organizations
         </Link>
       </div>
@@ -133,7 +133,7 @@ export default function OrgSettingsPage() {
           <p className="mt-2 text-gray-600">{org.name}</p>
         </div>
         <Link
-          href={`/dashboard/orgs/${orgId}`}
+          href={`/orgs/${orgId}`}
           className="text-indigo-600 hover:text-indigo-700 font-medium"
         >
           ← Back to Organization
@@ -258,7 +258,7 @@ export default function OrgSettingsPage() {
                 {updateMutation.isPending ? 'Saving...' : 'Save Branding'}
               </button>
               <Link
-                href={`/dashboard/orgs/${orgId}`}
+                href={`/orgs/${orgId}`}
                 className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
               >
                 Cancel
@@ -295,8 +295,7 @@ export default function OrgSettingsPage() {
               <div>
                 <p className="text-sm font-medium text-gray-700 mb-2">Primary Color</p>
                 <div
-                  className="h-16 rounded-lg border border-gray-300 flex items-center justify-center text-white font-semibold shadow-sm"
-                  style={{ backgroundColor: formData.primaryColor }}
+                  className="h-16 rounded-lg border border-gray-300 flex items-center justify-center text-white font-semibold shadow-sm preview-primary"
                 >
                   {formData.primaryColor}
                 </div>
@@ -305,8 +304,7 @@ export default function OrgSettingsPage() {
               <div>
                 <p className="text-sm font-medium text-gray-700 mb-2">Secondary Color</p>
                 <div
-                  className="h-16 rounded-lg border border-gray-300 flex items-center justify-center text-white font-semibold shadow-sm"
-                  style={{ backgroundColor: formData.secondaryColor }}
+                  className="h-16 rounded-lg border border-gray-300 flex items-center justify-center text-white font-semibold shadow-sm preview-secondary"
                 >
                   {formData.secondaryColor}
                 </div>
@@ -317,13 +315,24 @@ export default function OrgSettingsPage() {
                 <p className="text-sm font-medium text-gray-700 mb-2">Button Preview</p>
                 <button
                   type="button"
-                  className="w-full py-3 rounded-lg text-white font-medium shadow-sm"
-                  style={{ backgroundColor: formData.primaryColor }}
+                  className="w-full py-3 rounded-lg text-white font-medium shadow-sm preview-primary-button"
                 >
                   Book Appointment
                 </button>
               </div>
             </div>
+
+            <style jsx>{`
+              .preview-primary {
+                background-color: ${formData.primaryColor};
+              }
+              .preview-secondary {
+                background-color: ${formData.secondaryColor};
+              }
+              .preview-primary-button {
+                background-color: ${formData.primaryColor};
+              }
+            `}</style>
 
             {/* Custom Domain Preview */}
             {formData.customDomain && (

@@ -72,10 +72,11 @@ export default function NewOrgPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Organization Name */}
             <div>
-              <label className="block text-sm font-semibold text-neutral-700 mb-2">
+              <label htmlFor="org-name" className="block text-sm font-semibold text-neutral-700 mb-2">
                 Organization Name *
               </label>
               <input
+                id="org-name"
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -90,10 +91,11 @@ export default function NewOrgPage() {
 
             {/* Timezone */}
             <div>
-              <label className="block text-sm font-semibold text-neutral-700 mb-2">
+              <label htmlFor="org-timezone" className="block text-sm font-semibold text-neutral-700 mb-2">
                 Default Timezone
               </label>
               <select
+                id="org-timezone"
                 value={formData.timezone}
                 onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
                 className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-neutral-900"

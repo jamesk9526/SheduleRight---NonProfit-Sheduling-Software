@@ -73,5 +73,11 @@ export function useApi() {
     }
   }, [API_BASE_URL])
 
-  return { call, API_BASE_URL }
+  const get = useCallback((endpoint: string) => call(endpoint, { method: 'GET' }), [call])
+  const post = useCallback((endpoint: string, body: any) => call(endpoint, { method: 'POST', body }), [call])
+  const put = useCallback((endpoint: string, body: any) => call(endpoint, { method: 'PUT', body }), [call])
+  const del = useCallback((endpoint: string) => call(endpoint, { method: 'DELETE' }), [call])
+  const patch = useCallback((endpoint: string, body: any) => call(endpoint, { method: 'PATCH', body }), [call])
+
+  return { call, get, post, put, delete: del, patch, API_BASE_URL }
 }

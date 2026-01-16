@@ -27,7 +27,7 @@ export default function BookingDetailsPage() {
   const { data: booking, isLoading } = useQuery({
     queryKey: ['booking', bookingId],
     queryFn: async () => {
-      const response = await api.get(`/bookings/${bookingId}`)
+      const response = await api.get(`/api/v1/bookings/${bookingId}`)
       return response.data
     },
     enabled: !!bookingId,
@@ -64,7 +64,7 @@ export default function BookingDetailsPage() {
       <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
         <p className="text-red-800 font-medium">Booking Not Found</p>
         <p className="text-sm text-red-700 mt-2">The booking you're looking for doesn't exist.</p>
-        <Link href="/dashboard/bookings" className="inline-block mt-4 text-indigo-600 hover:text-indigo-700 font-medium">
+        <Link href="/bookings" className="inline-block mt-4 text-indigo-600 hover:text-indigo-700 font-medium">
           ← Back to Bookings
         </Link>
       </div>
@@ -79,7 +79,7 @@ export default function BookingDetailsPage() {
           <h1 className="text-3xl font-bold text-gray-900">Booking Details</h1>
           <p className="mt-2 text-gray-600">Booking ID: {booking.id}</p>
         </div>
-        <Link href="/dashboard/bookings" className="text-indigo-600 hover:text-indigo-700 font-medium">
+        <Link href="/bookings" className="text-indigo-600 hover:text-indigo-700 font-medium">
           ← Back
         </Link>
       </div>
@@ -193,16 +193,22 @@ export default function BookingDetailsPage() {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex gap-4 justify-center">
+      <div className="flex gap-4 justify-center flex-wrap">
         <Link
-          href="/dashboard/bookings/my"
+          href="/bookings/my"
           className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
         >
           Back to My Bookings
         </Link>
+        <Link
+          href={`/bookings/${bookingId}/messages`}
+          className="px-6 py-3 border border-indigo-200 text-indigo-700 rounded-lg hover:bg-indigo-50 transition font-medium"
+        >
+          View Messages
+        </Link>
         {booking.status === 'pending' && (
           <Link
-            href={`/dashboard/bookings/${bookingId}/edit`}
+            href={`/bookings/${bookingId}/edit`}
             className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium"
           >
             Edit Booking

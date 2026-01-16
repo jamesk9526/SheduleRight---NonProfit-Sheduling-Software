@@ -71,6 +71,30 @@ export interface ReminderSettings {
   updatedAt: string
 }
 
+export interface Booking {
+  _id: string
+  siteId: string
+  slotId: string
+  clientName: string
+  clientEmail: string
+  clientPhone?: string
+  status: 'pending' | 'confirmed' | 'cancelled'
+  notes?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Message {
+  _id: string
+  bookingId: string
+  phoneNumber: string
+  message: string
+  status: string
+  senderRole: string
+  createdAt: string
+  updatedAt: string
+}
+
 /**
  * Hook to fetch current user
  */
@@ -132,6 +156,23 @@ export function useSites(orgId: string | null) {
       return response.data as Site[]
     },
     enabled: !!orgId,
+  })
+}
+
+/**
+ * Hook to fetch single site details
+ */
+export function useSiteDetails(siteId: string | null) {
+  const { call } = useApi()
+
+  return useQuery({
+    queryKey: ['site', siteId],
+    queryFn: async () => {
+      if (!siteId) throw new Error('Site ID is required')
+      const response = await call(`/api/v1/sites/${siteId}`)
+      return response as Site
+    },
+    enabled: !!siteId,
   })
 }
 
@@ -392,6 +433,43 @@ export function useAvailabilitySlots(siteId: string | null) {
 }
 
 /**
+ * Hook to fetch message history for a booking
+ */
+export function useClientMessages(bookingId: string | null) {
+  const { call } = useApi()
+
+  return useQuery({
+    queryKey: ['messages', bookingId],
+    queryFn: async () => {
+      if (!bookingId) throw new Error('Booking ID is required')
+      const response = await call(`/api/v1/bookings/${bookingId}/messages`)
+      return response.data as Message[]
+    },
+    enabled: !!bookingId,
+  })
+}
+
+/**
+ * Hook to send a message for a booking
+ */
+export function useSendClientMessage(bookingId: string | null) {
+  const { call } = useApi()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (payload: { phoneNumber: string; message: string }) => {
+      if (!bookingId) throw new Error('Booking ID is required')
+      return await call(`/api/v1/bookings/${bookingId}/messages`, { method: 'POST', body: payload })
+    },
+    onSuccess: () => {
+      if (bookingId) {
+        queryClient.invalidateQueries({ queryKey: ['messages', bookingId] })
+      }
+    },
+  })
+}
+
+/**
  * Hook to create an availability slot
  */
 export function useCreateAvailability(siteId: string | null) {
@@ -403,13 +481,44 @@ export function useCreateAvailability(siteId: string | null) {
       startTime: string
       endTime: string
       capacity: number
+      durationMinutes: number
+      recurrence: 'daily' | 'weekly' | 'monthly' | 'once'
+      specificDate?: string
+      dayOfWeek?: number
       title?: string
-      notes?: string
+      description?: string
+      notesForClients?: string
+      buffer?: number
     }) => {
       if (!siteId) throw new Error('Site ID is required')
       return await call(`/api/v1/sites/${siteId}/availability`, {
         method: 'POST',
-        body: data,
+        body: {
+          siteId,
+          ...data,
+        },
+      })
+    },
+    onSuccess: () => {
+      if (siteId) {
+        queryClient.invalidateQueries({ queryKey: ['availabilitySlots', siteId] })
+      }
+    },
+  })
+}
+
+/**
+ * Hook to deactivate an availability slot
+ */
+export function useDeleteAvailability(siteId: string | null) {
+  const { call } = useApi()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (slotId: string) => {
+      if (!siteId) throw new Error('Site ID is required')
+      return await call(`/api/v1/sites/${siteId}/availability/${slotId}`, {
+        method: 'DELETE',
       })
     },
     onSuccess: () => {

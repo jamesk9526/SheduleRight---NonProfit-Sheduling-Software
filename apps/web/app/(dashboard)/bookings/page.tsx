@@ -15,7 +15,7 @@ export default function BookingsPage() {
   const { data: bookings, isLoading } = useQuery({
     queryKey: ['bookings', 'me'],
     queryFn: async () => {
-      const response = await api.get('/bookings/me')
+      const response = await api.get('/api/v1/bookings/me')
       return response.data || []
     },
     enabled: !!user,
@@ -35,7 +35,7 @@ export default function BookingsPage() {
         </div>
         {user?.roles?.includes('STAFF') && (
           <Link
-            href="/dashboard/bookings/manage"
+            href="/bookings/manage"
             className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
           >
             Manage All Bookings
@@ -69,7 +69,7 @@ export default function BookingsPage() {
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Link
-            href="/dashboard/bookings/browse"
+            href="/bookings/browse"
             className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-indigo-400 hover:bg-indigo-50 transition"
           >
             <div>
@@ -80,7 +80,7 @@ export default function BookingsPage() {
           </Link>
 
           <Link
-            href="/dashboard/bookings/new"
+            href="/bookings/new"
             className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-green-400 hover:bg-green-50 transition"
           >
             <div>
@@ -91,7 +91,7 @@ export default function BookingsPage() {
           </Link>
 
           <Link
-            href="/dashboard/bookings/my"
+            href="/bookings/my"
             className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition"
           >
             <div>
@@ -103,7 +103,7 @@ export default function BookingsPage() {
 
           {user?.roles?.includes('STAFF') && (
             <Link
-              href="/dashboard/bookings/manage"
+              href="/bookings/manage"
               className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-purple-400 hover:bg-purple-50 transition"
             >
               <div>
@@ -111,6 +111,45 @@ export default function BookingsPage() {
                 <div className="text-sm text-gray-600">Review and manage all bookings</div>
               </div>
               <div className="text-purple-600">→</div>
+            </Link>
+          )}
+
+          {user?.roles?.includes('STAFF') && (
+            <Link
+              href="/clients"
+              className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-amber-400 hover:bg-amber-50 transition"
+            >
+              <div>
+                <div className="font-medium text-gray-900">Client Management</div>
+                <div className="text-sm text-gray-600">View client profiles and history</div>
+              </div>
+              <div className="text-amber-600">→</div>
+            </Link>
+          )}
+
+          {user?.roles?.includes('STAFF') && (
+            <Link
+              href="/embed"
+              className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-sky-400 hover:bg-sky-50 transition"
+            >
+              <div>
+                <div className="font-medium text-gray-900">Embed Code Generator</div>
+                <div className="text-sm text-gray-600">Create booking widgets for other sites</div>
+              </div>
+              <div className="text-sky-600">→</div>
+            </Link>
+          )}
+
+          {user?.roles?.includes('STAFF') && (
+            <Link
+              href="/properties"
+              className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-emerald-400 hover:bg-emerald-50 transition"
+            >
+              <div>
+                <div className="font-medium text-gray-900">Field Library</div>
+                <div className="text-sm text-gray-600">Manage custom properties</div>
+              </div>
+              <div className="text-emerald-600">→</div>
             </Link>
           )}
         </div>

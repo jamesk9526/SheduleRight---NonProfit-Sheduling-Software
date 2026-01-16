@@ -23,7 +23,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        <meta name="theme-color" content="#0284c7" />
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body className="bg-neutral-50 text-neutral-900">

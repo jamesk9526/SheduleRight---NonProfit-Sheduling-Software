@@ -77,6 +77,23 @@ const indexes: IndexDefinition[] = [
     fields: ['type', 'slotId', 'status'],
     ddoc: 'booking-indexes',
   },
+
+  // Property indexes
+  {
+    name: 'property-type-by-org',
+    fields: ['type', 'orgId', 'status'],
+    ddoc: 'property-indexes',
+  },
+  {
+    name: 'property-value-by-entity',
+    fields: ['type', 'orgId', 'entityType', 'entityId', 'status'],
+    ddoc: 'property-indexes',
+  },
+  {
+    name: 'property-value-by-property',
+    fields: ['type', 'orgId', 'propertyId', 'entityType'],
+    ddoc: 'property-indexes',
+  },
 ]
 
 /**

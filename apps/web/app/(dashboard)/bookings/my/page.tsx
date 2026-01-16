@@ -31,7 +31,7 @@ export default function MyBookingsPage() {
   const { data: bookings = [], isLoading, refetch } = useQuery({
     queryKey: ['bookings', 'me'],
     queryFn: async () => {
-      const response = await api.get('/bookings/me')
+      const response = await api.get('/api/v1/bookings/me')
       return response.data || []
     },
     enabled: !!user,
@@ -94,7 +94,7 @@ export default function MyBookingsPage() {
           <h1 className="text-3xl font-bold text-gray-900">My Bookings</h1>
           <p className="mt-2 text-gray-600">View and manage your appointments</p>
         </div>
-        <Link href="/dashboard/bookings" className="text-indigo-600 hover:text-indigo-700 font-medium">
+        <Link href="/bookings" className="text-indigo-600 hover:text-indigo-700 font-medium">
           ← Back
         </Link>
       </div>
@@ -140,7 +140,7 @@ export default function MyBookingsPage() {
               : `You don't have any ${statusFilter} bookings.`}
           </p>
           <Link
-            href="/dashboard/bookings/browse"
+            href="/bookings/browse"
             className="inline-block mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium"
           >
             Browse Availability
@@ -172,7 +172,7 @@ export default function MyBookingsPage() {
                 </div>
                 <div className="flex gap-2 ml-4">
                   <Link
-                    href={`/dashboard/bookings/${booking.id}`}
+                    href={`/bookings/${booking.id}`}
                     className="px-3 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition font-medium text-sm"
                   >
                     View

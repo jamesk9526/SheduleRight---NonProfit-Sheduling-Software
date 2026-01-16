@@ -34,7 +34,7 @@ export default function BrowseAvailabilityPage() {
     queryKey: ['sites', user?.orgId],
     queryFn: async () => {
       if (!user?.orgId) return []
-      const response = await api.get(`/orgs/${user.orgId}/sites`)
+      const response = await api.get(`/api/v1/orgs/${user.orgId}/sites`)
       return response.data || []
     },
     enabled: !!user?.orgId,
@@ -48,7 +48,7 @@ export default function BrowseAvailabilityPage() {
     queryKey: ['availability', siteId],
     queryFn: async () => {
       if (!siteId) return []
-      const response = await api.get(`/sites/${siteId}/availability`)
+      const response = await api.get(`/api/v1/sites/${siteId}/availability`)
       return response.data || []
     },
     enabled: !!siteId,
@@ -74,7 +74,7 @@ export default function BrowseAvailabilityPage() {
           <h1 className="text-3xl font-bold text-gray-900">Browse Availability</h1>
           <p className="mt-2 text-gray-600">Find and book available time slots</p>
         </div>
-        <Link href="/dashboard/bookings" className="text-indigo-600 hover:text-indigo-700 font-medium">
+        <Link href="/bookings" className="text-indigo-600 hover:text-indigo-700 font-medium">
           ← Back
         </Link>
       </div>
@@ -85,8 +85,9 @@ export default function BrowseAvailabilityPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Site Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Location/Site</label>
+            <label htmlFor="browse-site" className="block text-sm font-medium text-gray-700 mb-2">Location/Site</label>
             <select
+              id="browse-site"
               value={selectedSite || ''}
               onChange={(e) => setSelectedSite(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
@@ -102,8 +103,9 @@ export default function BrowseAvailabilityPage() {
 
           {/* Date Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+            <label htmlFor="browse-date" className="block text-sm font-medium text-gray-700 mb-2">Date</label>
             <input
+              id="browse-date"
               type="date"
               value={format(selectedDate, 'yyyy-MM-dd')}
               onChange={(e) => setSelectedDate(new Date(e.target.value))}
@@ -203,7 +205,7 @@ function SlotBookingModal({ slot, onClose, onSuccess }: SlotBookingModalProps) {
     setError(null)
 
     try {
-      const response = await api.post(`/sites/${slot.siteId}/bookings`, {
+      await api.post(`/api/v1/sites/${slot.siteId}/bookings`, {
         slotId: slot.id,
         clientName: name,
         clientEmail: email,
@@ -211,11 +213,7 @@ function SlotBookingModal({ slot, onClose, onSuccess }: SlotBookingModalProps) {
         notes,
       })
 
-      if (response.ok) {
-        onSuccess()
-      } else {
-        setError(response.error?.message || 'Failed to create booking')
-      }
+      onSuccess()
     } catch (err) {
       setError('An error occurred while creating the booking')
     } finally {
@@ -252,8 +250,9 @@ function SlotBookingModal({ slot, onClose, onSuccess }: SlotBookingModalProps) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+            <label htmlFor="slot-booking-name" className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
             <input
+              id="slot-booking-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -264,8 +263,9 @@ function SlotBookingModal({ slot, onClose, onSuccess }: SlotBookingModalProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+            <label htmlFor="slot-booking-email" className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
             <input
+              id="slot-booking-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -276,8 +276,9 @@ function SlotBookingModal({ slot, onClose, onSuccess }: SlotBookingModalProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+            <label htmlFor="slot-booking-phone" className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
             <input
+              id="slot-booking-phone"
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
@@ -287,8 +288,9 @@ function SlotBookingModal({ slot, onClose, onSuccess }: SlotBookingModalProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+            <label htmlFor="slot-booking-notes" className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
             <textarea
+              id="slot-booking-notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"

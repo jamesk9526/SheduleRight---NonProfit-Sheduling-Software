@@ -105,6 +105,9 @@ CREATE TABLE IF NOT EXISTS documents (
   slot_id VARCHAR(64) NULL,
   client_email VARCHAR(255) NULL,
   timestamp DATETIME NULL,
+  entity_type VARCHAR(64) NULL,
+  entity_id VARCHAR(128) NULL,
+  property_id VARCHAR(128) NULL,
   created_at DATETIME NOT NULL,
   updated_at DATETIME NOT NULL,
   INDEX idx_docs_type (type),
@@ -114,5 +117,7 @@ CREATE TABLE IF NOT EXISTS documents (
   INDEX idx_docs_slot (type, slot_id),
   INDEX idx_docs_client (type, client_email),
   INDEX idx_docs_status (type, status),
-  INDEX idx_docs_timestamp (type, timestamp)
+  INDEX idx_docs_timestamp (type, timestamp),
+  INDEX idx_docs_entity (type, entity_type, entity_id),
+  INDEX idx_docs_property (type, property_id)
 );
