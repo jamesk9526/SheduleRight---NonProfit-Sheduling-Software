@@ -4,6 +4,14 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useCurrentUser, useReminderSettings, useUpdateReminderSettings } from '@/lib/hooks/useData'
 
+interface TwilioStatus {
+  twilioConfigured: boolean
+  remindersEnabled: boolean
+  phoneNumber: string | null
+  message: string
+  timestamp: string
+}
+
 export default function RemindersPage() {
   const router = useRouter()
   const { data: user, isLoading } = useCurrentUser()
@@ -14,6 +22,8 @@ export default function RemindersPage() {
   const [leadTime, setLeadTime] = useState('24')
   const [template, setTemplate] = useState('Hello {{name}}, your appointment is scheduled for {{date}} at {{time}}.')
   const [saveError, setSaveError] = useState<string | null>(null)
+  const [twilioStatus, setTwilioStatus] = useState<TwilioStatus | null>(null)
+  const [loadingTwilio, setLoadingTwilio] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -26,6 +36,36 @@ export default function RemindersPage() {
       setTemplate(settings.template)
     }
   }, [settings])
+
+  useEffect(() => {
+    if (mounted && user) {
+      fetchTwilioStatus()
+    }
+  }, [mounted, user])
+
+  const fetchTwilioStatus = async () => {
+    setLoadingTwilio(true)
+    try {
+      const response = await fetch('/api/v1/reminders/twilio-status', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setTwilioStatus(data)
+      } else {
+        console.error('Failed to fetch Twilio status:', response.statusText)
+      }
+    } catch (error) {
+      console.error('Error fetching Twilio status:', error)
+    } finally {
+      setLoadingTwilio(false)
+    }
+  }
 
   useEffect(() => {
     if (mounted && !isLoading && !user) {
@@ -146,22 +186,51 @@ export default function RemindersPage() {
           {saveError && (
             <div className="mb-3 rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{saveError}</div>
           )}
-          <div className="space-y-3 text-sm text-neutral-600">
-            <div className="flex items-center justify-between">
-              <span>Connection</span>
-              <span className="text-neutral-400">Not configured</span>
+          
+          {loadingTwilio ? (
+            <div className="animate-pulse space-y-3">
+              <div className="h-4 bg-neutral-200 rounded w-32"></div>
+              <div className="h-4 bg-neutral-200 rounded w-32"></div>
             </div>
-            <div className="flex items-center justify-between">
-              <span>Sender ID</span>
-              <span className="text-neutral-400">—</span>
+          ) : twilioStatus ? (
+            <div className="space-y-3 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-neutral-700">Connection</span>
+                <div className="flex items-center gap-2">
+                  <span className={`inline-block w-2 h-2 rounded-full ${twilioStatus.twilioConfigured ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                  <span className={twilioStatus.twilioConfigured ? 'text-green-700 font-medium' : 'text-red-700 font-medium'}>
+                    {twilioStatus.twilioConfigured ? 'Connected' : 'Not Configured'}
+                  </span>
+                </div>
+              </div>
+              {twilioStatus.twilioConfigured && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <span className="text-neutral-700">Sender ID</span>
+                    <span className="font-mono text-neutral-600">{twilioStatus.phoneNumber}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-neutral-700">Status</span>
+                    <span className={twilioStatus.remindersEnabled ? 'text-green-700 font-medium' : 'text-amber-700 font-medium'}>
+                      {twilioStatus.remindersEnabled ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
-            <div className="flex items-center justify-between">
-              <span>Last Sent</span>
-              <span className="text-neutral-400">—</span>
+          ) : (
+            <div className="space-y-3 text-sm text-neutral-600">
+              <div className="flex items-center justify-between">
+                <span>Connection</span>
+                <span className="text-neutral-400">Unknown</span>
+              </div>
             </div>
-          </div>
+          )}
+          
           <div className="mt-6 p-3 rounded-lg bg-neutral-50 text-xs text-neutral-600">
-            Configure Twilio credentials in the server .env to enable SMS delivery.
+            {twilioStatus?.twilioConfigured
+              ? 'Twilio is configured and ready to send SMS reminders.'
+              : 'Configure Twilio credentials (TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER) in the server .env to enable SMS delivery.'}
           </div>
         </div>
       </div>
