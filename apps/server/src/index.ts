@@ -7,9 +7,13 @@ import { config } from './config.js'
 import { logger } from './logger.js'
 import { createAuthService } from './services/auth.service.js'
 import { createOrgService } from './services/org.service.js'
+import { createAvailabilityService } from './services/availability.service.js'
+import { createBookingService } from './services/booking.service.js'
 import { registerAuthRoutes } from './routes/auth.js'
 import { registerOrgRoutes } from './routes/orgs.js'
 import { registerSiteRoutes } from './routes/sites.js'
+import { registerAvailabilityRoutes } from './routes/availability.js'
+import { registerBookingRoutes } from './routes/booking.js'
 
 const PORT = config.port
 const HOST = '0.0.0.0'
@@ -26,6 +30,8 @@ export async function createServer() {
   // Initialize services
   const authService = createAuthService(scheduleDb)
   const orgService = createOrgService(scheduleDb)
+  const availabilityService = createAvailabilityService(scheduleDb)
+  const bookingService = createBookingService(scheduleDb)
 
   // Plugins
   await fastify.register(fastifyHelmet, {
@@ -78,8 +84,8 @@ export async function createServer() {
       users: { status: 'ready', endpoint: '/api/v1/users/me' },
       organizations: { status: 'ready', endpoints: ['/api/v1/orgs', '/api/v1/orgs/:orgId'] },
       sites: { status: 'ready', endpoints: ['/api/v1/orgs/:orgId/sites'] },
-      availability: { status: 'TODO', endpoint: '/api/v1/availability' },
-      bookings: { status: 'TODO', endpoint: '/api/v1/bookings' },
+      availability: { status: 'ready', endpoints: ['/api/v1/sites/:siteId/availability', '/api/v1/sites/:siteId/availability/:slotId'] },
+      bookings: { status: 'ready', endpoints: ['/api/v1/sites/:siteId/bookings', '/api/v1/bookings/me', '/api/v1/bookings/:bookingId'] },
     }
 
     let dbStatus = 'disconnected'
@@ -227,14 +233,11 @@ export async function createServer() {
   // Register site routes
   await registerSiteRoutes(fastify, orgService)
 
-  // Route stubs (temporary)
-  fastify.get('/api/v1/availability', async (_request, reply) => {
-    return { message: 'Availability endpoint (TODO)' }
-  })
+  // Register availability routes
+  await registerAvailabilityRoutes(fastify, availabilityService)
 
-  fastify.post('/api/v1/bookings', async (_request, reply) => {
-    return { message: 'Bookings endpoint (TODO)' }
-  })
+  // Register booking routes
+  await registerBookingRoutes(fastify, bookingService, availabilityService)
 
   return fastify
 }
