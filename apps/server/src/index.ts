@@ -10,6 +10,7 @@ import { createOrgService } from './services/org.service.js'
 import { createAvailabilityService } from './services/availability.service.js'
 import { createBookingService } from './services/booking.service.js'
 import { createHealthService } from './services/health.service.js'
+import { createAuditService } from './services/audit.service.js'
 import { registerAuthRoutes } from './routes/auth.js'
 import { registerOrgRoutes } from './routes/orgs.js'
 import { registerSiteRoutes } from './routes/sites.js'
@@ -17,6 +18,9 @@ import { registerAvailabilityRoutes } from './routes/availability.js'
 import { registerBookingRoutes } from './routes/booking.js'
 import { securityHeaders, requestId, httpsEnforcement } from './middleware/security.js'
 import { standardRateLimit, authRateLimit } from './middleware/rate-limit.js'
+import { requestLogger } from './middleware/request-logger.js'
+import { errorHandler } from './middleware/error-handler.js'
+import { metricsService, metricsMiddleware } from './lib/metrics.js'
 
 const PORT = config.port
 const HOST = '0.0.0.0'
@@ -41,6 +45,7 @@ export async function createServer() {
   const availabilityService = createAvailabilityService(scheduleDb)
   const bookingService = createBookingService(scheduleDb)
   const healthService = createHealthService(scheduleDb)
+  const auditService = createAuditService(scheduleDb)
 
   // Plugins
   await fastify.register(fastifyHelmet, {
@@ -69,6 +74,13 @@ export async function createServer() {
   // Apply standard rate limiting to all routes
   fastify.addHook('onRequest', standardRateLimit)
 
+  // Monitoring Middleware
+  fastify.addHook('onRequest', requestLogger)
+  fastify.addHook('onRequest', metricsMiddleware)
+
+  // Error Handler (must be set after routes)
+  fastify.setErrorHandler(errorHandler)
+
   // Health and Status Endpoints
   // Basic health check (for quick liveness probes)
   fastify.get('/health', async (_request, reply) => {
@@ -85,6 +97,15 @@ export async function createServer() {
     const healthStatus = await healthService.performHealthChecks()
     const statusCode = healthStatus.status === 'healthy' ? 200 : 503
     return reply.status(statusCode).send(healthStatus)
+  })
+
+  // Performance metrics endpoint
+  fastify.get('/metrics', async (_request, reply) => {
+    const metrics = metricsService.getAllMetrics()
+    return reply.status(200).send({
+      timestamp: new Date().toISOString(),
+      ...metrics,
+    })
   })
 
   // Detailed status page
