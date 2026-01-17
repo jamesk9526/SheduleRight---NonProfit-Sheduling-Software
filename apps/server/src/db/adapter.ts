@@ -183,7 +183,10 @@ export function createMySqlAdapter(pool: MySqlPool): DbAdapter {
         error.statusCode = 404
         throw error
       }
-      return JSON.parse(row.data)
+      if (typeof row.data === 'string') {
+        return JSON.parse(row.data)
+      }
+      return row.data
     },
 
     async info(): Promise<{ db_name: string; doc_count: number }> {

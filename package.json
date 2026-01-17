@@ -16,6 +16,8 @@
   ],
   "scripts": {
     "dev": "pnpm --parallel -r run dev",
+    "prod:prepare": "pnpm run build && pnpm --filter @scheduleright/server run db:mysql:migrate",
+    "prod:start": "pnpm --parallel -r run start",
     "build": "pnpm --parallel -r run build",
     "type-check": "pnpm --parallel -r run type-check",
     "lint": "pnpm --parallel -r run lint",

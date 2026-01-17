@@ -202,6 +202,18 @@
 
 ---
 
+## Production Run Checklist
+
+- [ ] Pull latest code on server
+- [ ] Install dependencies (pnpm install)
+- [ ] Build all apps (pnpm run build)
+- [ ] Run MySQL migrations (pnpm --filter @scheduleright/server run db:mysql:migrate)
+- [ ] Start production services (pnpm run prod:start)
+- [ ] Verify health endpoint (GET /health)
+- [ ] Verify bootstrap status (GET /api/v1/bootstrap/status)
+
+---
+
 ## Production Hardening
 
 ### Step 10: Security Configuration
