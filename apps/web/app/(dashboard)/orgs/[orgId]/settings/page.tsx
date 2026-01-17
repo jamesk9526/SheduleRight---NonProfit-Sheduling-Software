@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient, useQuery as useQueryHook } from '@tanstack/react-query'
 import { useApi } from '@/lib/hooks/useApi'
 import { useParams, useRouter } from 'next/navigation'
+import { useAuth } from '@/lib/hooks/useAuth'
 import Link from 'next/link'
 
 interface Organization {
@@ -31,6 +32,11 @@ export default function OrgSettingsPage() {
   const orgId = params.orgId as string
   const api = useApi()
   const queryClient = useQueryClient()
+  const { user } = useAuth()
+
+  // Role checks
+  const isStaff = (user?.roles || []).some((role) => role === 'ADMIN' || role === 'STAFF')
+  const isAdmin = (user?.roles || []).includes('ADMIN')
 
   const [formData, setFormData] = useState({
     logoUrl: '',
@@ -297,7 +303,59 @@ export default function OrgSettingsPage() {
 
         {/* Preview Panel */}
         <div className="lg:col-span-1">
-          <div className="space-y-6 sticky top-6">
+          <div className="space-y-4 sticky top-6">
+            {/* Tools Section */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">Organization Tools</h2>
+              <p className="text-sm text-gray-600 mb-4">
+                Quick access to management features
+              </p>
+              <div className="space-y-2">
+                {isStaff && (
+                  <>
+                    <Link
+                      href="/properties"
+                      className="block w-full px-4 py-2 text-left bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition font-medium text-gray-700"
+                    >
+                      🏷️ Field Library
+                    </Link>
+                    <Link
+                      href="/resources"
+                      className="block w-full px-4 py-2 text-left bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition font-medium text-gray-700"
+                    >
+                      📦 Resources
+                    </Link>
+                    <Link
+                      href="/reminders"
+                      className="block w-full px-4 py-2 text-left bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition font-medium text-gray-700"
+                    >
+                      📲 SMS Reminders
+                    </Link>
+                    <Link
+                      href="/clients"
+                      className="block w-full px-4 py-2 text-left bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition font-medium text-gray-700"
+                    >
+                      👥 Client Management
+                    </Link>
+                  </>
+                )}
+                <Link
+                  href="/notifications"
+                  className="block w-full px-4 py-2 text-left bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition font-medium text-gray-700"
+                >
+                  🔔 Notifications
+                </Link>
+                {isAdmin && (
+                  <Link
+                    href="/admin/client-fields"
+                    className="block w-full px-4 py-2 text-left bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-lg transition font-medium text-amber-800"
+                  >
+                    ⚙️ Client Fields (Admin)
+                  </Link>
+                )}
+              </div>
+            </div>
+
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-2">Embed Code Generator</h2>
               <p className="text-sm text-gray-600 mb-4">

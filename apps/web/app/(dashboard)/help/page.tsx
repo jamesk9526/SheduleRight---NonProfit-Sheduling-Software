@@ -99,14 +99,125 @@ export default function HelpPage() {
 
         {/* Quick Links Section */}
         <div className="mt-16 pt-12 border-t border-slate-200">
-          <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">Quick Links</h2>
+          <h2 className="text-2xl font-bold text-slate-900 mb-8 text-center">Navigation Index</h2>
+          
+          {/* Bookings Workflows */}
+          <div className="mb-12">
+            <h3 className="text-xl font-semibold text-slate-800 mb-4 flex items-center gap-2">
+              📅 <span>Bookings & Scheduling</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <QuickLinkCard
+                title="All Bookings"
+                description="View and manage all bookings"
+                icon="📋"
+                href="/bookings"
+              />
+              <QuickLinkCard
+                title="Browse Bookings"
+                description="Search and filter bookings"
+                icon="🔍"
+                href="/bookings/browse"
+              />
+              <QuickLinkCard
+                title="Create Booking"
+                description="Schedule a new appointment"
+                icon="➕"
+                href="/bookings/new"
+              />
+              <QuickLinkCard
+                title="My Bookings"
+                description="View your personal bookings"
+                icon="👤"
+                href="/bookings/my"
+              />
+              <QuickLinkCard
+                title="Manage Bookings"
+                description="Staff booking management"
+                icon="⚙️"
+                href="/bookings/manage"
+              />
+              <QuickLinkCard
+                title="Availability"
+                description="Set your availability schedule"
+                icon="📆"
+                href="/availability"
+              />
+            </div>
+          </div>
+
+          {/* People & Clients */}
+          <div className="mb-12">
+            <h3 className="text-xl font-semibold text-slate-800 mb-4 flex items-center gap-2">
+              👥 <span>People & Clients</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <QuickLinkCard
+                title="All Clients"
+                description="View and manage clients"
+                icon="👥"
+                href="/clients"
+              />
+              <QuickLinkCard
+                title="New Client"
+                description="Add a new client"
+                icon="➕"
+                href="/clients/new"
+              />
+              <QuickLinkCard
+                title="Volunteers"
+                description="Manage volunteer information"
+                icon="🙋"
+                href="/volunteers"
+              />
+              <QuickLinkCard
+                title="Volunteer Shifts"
+                description="Schedule and assign shifts"
+                icon="📋"
+                href="/volunteers/shifts"
+              />
+            </div>
+          </div>
+
+          {/* Organization Management */}
+          <div className="mb-12">
+            <h3 className="text-xl font-semibold text-slate-800 mb-4 flex items-center gap-2">
+              🏢 <span>Organization Management</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <QuickLinkCard
+                title="Organizations"
+                description="View all organizations"
+                icon="🏢"
+                href="/orgs"
+              />
+              <QuickLinkCard
+                title="New Organization"
+                description="Create a new organization"
+                icon="➕"
+                href="/orgs/new"
+              />
+              <QuickLinkCard
+                title="Dashboard"
+                description="Go to main dashboard"
+                icon="🏠"
+                href="/dashboard"
+              />
+              <QuickLinkCard
+                title="Profile"
+                description="Manage your profile settings"
+                icon="👤"
+                href="/profile"
+              />
+            </div>
+          </div>
+
+          {/* Tools & Configuration */}
+          <div className="mb-12">
+            <h3 className="text-xl font-semibold text-slate-800 mb-4 flex items-center gap-2">
+              🔧 <span>Tools & Configuration</span>
+            </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <QuickLinkCard
-              title="API Reference"
-              description="Browse all available API endpoints"
-              icon="🔌"
-              href="/api/v1"
-            />
             <QuickLinkCard
               title="Custom Properties"
               description="Manage custom fields and metadata"
@@ -114,11 +225,51 @@ export default function HelpPage() {
               href="/properties"
             />
             <QuickLinkCard
+              title="Resources"
+              description="Manage resources and equipment"
+              icon="📦"
+              href="/resources"
+            />
+            <QuickLinkCard
+              title="SMS Reminders"
+              description="Configure automated reminders"
+              icon="📲"
+              href="/reminders"
+            />
+            <QuickLinkCard
+              title="Notifications"
+              description="Manage notification preferences"
+              icon="🔔"
+              href="/notifications"
+            />
+            <QuickLinkCard
               title="Embed Widget"
               description="Generate booking widget code"
               icon="🔗"
               href="/embed"
             />
+          </div>
+          </div>
+
+          {/* Admin Tools */}
+          <div className="mb-12">
+            <h3 className="text-xl font-semibold text-slate-800 mb-4 flex items-center gap-2">
+              🔐 <span>Admin Tools</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <QuickLinkCard
+                title="API Health"
+                description="Monitor system health and status"
+                icon="🏥"
+                href="/admin/api-health"
+              />
+              <QuickLinkCard
+                title="Client Fields"
+                description="Configure custom client fields"
+                icon="⚙️"
+                href="/admin/client-fields"
+              />
+            </div>
           </div>
         </div>
       </div>
