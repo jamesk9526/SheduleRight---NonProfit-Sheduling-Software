@@ -297,7 +297,21 @@ export default function OrgSettingsPage() {
 
         {/* Preview Panel */}
         <div className="lg:col-span-1">
-          <div className="bg-white border border-gray-200 rounded-lg p-6 sticky top-6">
+          <div className="space-y-6 sticky top-6">
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">Embed Code Generator</h2>
+              <p className="text-sm text-gray-600 mb-4">
+                Create and manage booking widgets for your website or partner pages.
+              </p>
+              <Link
+                href="/embed"
+                className="inline-flex items-center justify-center w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium"
+              >
+                Open Embed Generator
+              </Link>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Preview</h2>
             
             {/* Logo Preview */}
@@ -371,6 +385,7 @@ export default function OrgSettingsPage() {
                 </p>
               </div>
             )}
+            </div>
           </div>
         </div>
       </div>
