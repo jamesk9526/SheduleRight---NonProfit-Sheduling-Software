@@ -50,14 +50,14 @@ CREATE TABLE IF NOT EXISTS availability (
   start_time DATETIME NOT NULL,
   end_time DATETIME NOT NULL,
   capacity INT NOT NULL DEFAULT 1,
-  created_at DATETIME NOT NULL,,
+  created_at DATETIME NOT NULL,
+  updated_at DATETIME NOT NULL,
+  INDEX idx_availability_site (site_id, status, start_time),
   CONSTRAINT fk_availability_organizations_org_id FOREIGN KEY (org_id) REFERENCES organizations(id)
     ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT fk_availability_sites_site_id FOREIGN KEY (site_id) REFERENCES sites(id)
     ON UPDATE CASCADE ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 updated_at DATETIME NOT NULL,
-  INDEX idx_availability_site (site_id, status, start_time)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS bookings (
   id VARCHAR(64) PRIMARY KEY,
@@ -67,16 +67,16 @@ CREATE TABLE IF NOT EXISTS bookings (
   status VARCHAR(32) NOT NULL,
   client_name VARCHAR(255) NOT NULL,
   client_email VARCHAR(255) NOT NULL,
-  notes TEXT NULL,,
+  notes TEXT NULL,
+  created_at DATETIME NOT NULL,
+  updated_at DATETIME NOT NULL,
+  INDEX idx_bookings_site (site_id, status, created_at),
+  INDEX idx_bookings_client (client_email, created_at),
   CONSTRAINT fk_bookings_organizations_org_id FOREIGN KEY (org_id) REFERENCES organizations(id)
     ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT fk_bookings_sites_site_id FOREIGN KEY (site_id) REFERENCES sites(id)
     ON UPDATE CASCADE ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 created_at DATETIME NOT NULL,
-  updated_at DATETIME NOT NULL,
-  INDEX idx_bookings_site (site_id, status, created_at),
-  INDEX idx_bookings_client (client_email, created_at)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS audit_logs (
   id VARCHAR(128) PRIMARY KEY,
@@ -88,11 +88,11 @@ CREATE TABLE IF NOT EXISTS audit_logs (
   details JSON NULL,
   ip_address VARCHAR(64) NULL,
   user_agent TEXT NULL,
-  ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 success TINYINT(1) NOT NULL DEFAULT 1,
+  success TINYINT(1) NOT NULL DEFAULT 1,
   error_message TEXT NULL,
   created_at DATETIME NOT NULL,
   INDEX idx_audit_org (org_id, action, created_at)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS system_config (
   id VARCHAR(64) PRIMARY KEY,
