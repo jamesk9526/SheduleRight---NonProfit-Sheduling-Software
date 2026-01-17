@@ -10,11 +10,60 @@ import { authMiddleware, requireRole, enforceTenancy } from '../middleware/auth.
  * Endpoints:
  * - GET /api/v1/orgs/:orgId/sites - List sites in org (org members)
  * - POST /api/v1/orgs/:orgId/sites - Create site (STAFF+ only)
+ * - GET /api/v1/sites/:siteId - Get site details (org members)
  */
 export async function registerSiteRoutes(
   fastify: FastifyInstance,
   orgService: OrgService
 ) {
+  /**
+   * GET /api/v1/sites/:siteId
+   * Get site details by ID
+   * RBAC: User must be member of org
+   */
+  fastify.get<{
+    Params: { siteId: string }
+  }>(
+    '/api/v1/sites/:siteId',
+    {
+      preHandler: [authMiddleware],
+    },
+    async (request, reply) => {
+      try {
+        const { siteId } = request.params
+
+        const site = await orgService.getSiteById(siteId)
+        if (!site) {
+          return reply.status(404).send({
+            error: 'Site not found',
+            code: 'SITE_NOT_FOUND',
+            statusCode: 404,
+            timestamp: new Date().toISOString(),
+          })
+        }
+
+        if (request.user && site.orgId !== request.user.orgId) {
+          return reply.status(404).send({
+            error: 'Site not found',
+            code: 'SITE_NOT_FOUND',
+            statusCode: 404,
+            timestamp: new Date().toISOString(),
+          })
+        }
+
+        return reply.status(200).send(site)
+      } catch (error) {
+        console.error('Get site error:', error)
+        return reply.status(500).send({
+          error: 'Failed to retrieve site',
+          code: 'SITE_GET_FAILED',
+          statusCode: 500,
+          timestamp: new Date().toISOString(),
+        })
+      }
+    }
+  )
+
   /**
    * GET /api/v1/orgs/:orgId/sites
    * List all sites in organization

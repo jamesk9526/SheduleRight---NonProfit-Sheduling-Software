@@ -98,14 +98,21 @@ export default function OrgDetailPage() {
     enabled: isStaff && !!orgId,
   })
 
-  const propertyTypes: PropertyType[] = propertyTypesData?.data || []
+  const propertyTypes: PropertyType[] = useMemo(
+    () => propertyTypesData?.data ?? [],
+    [propertyTypesData?.data]
+  )
+  const propertyValues: PropertyValue[] = useMemo(
+    () => propertyValuesData?.data ?? [],
+    [propertyValuesData?.data]
+  )
   const orgPropertyTypes = useMemo(
     () => propertyTypes.filter((type) => type.appliesTo.includes('org')),
     [propertyTypes]
   )
 
   useEffect(() => {
-    const values: PropertyValue[] = propertyValuesData?.data || []
+    const values: PropertyValue[] = propertyValues
     const initial: Record<string, any> = {}
     orgPropertyTypes.forEach((type) => {
       const match = values.find((value) => value.propertyId === type.propertyId)
@@ -117,7 +124,7 @@ export default function OrgDetailPage() {
     })
     setCustomValues(initial)
     setCustomSaved(false)
-  }, [propertyValuesData, orgPropertyTypes])
+  }, [propertyValues, orgPropertyTypes])
 
   const handleSaveCustomFields = async () => {
     setSavingCustom(true)
