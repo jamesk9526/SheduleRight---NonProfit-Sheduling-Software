@@ -122,7 +122,12 @@ export function createMySqlAdapter(pool: MySqlPool): DbAdapter {
         params
       )
 
-      const docs = (rows as any[]).map((row) => JSON.parse(row.data))
+      const docs = (rows as any[]).map((row) => {
+        if (typeof row.data === 'string') {
+          return JSON.parse(row.data)
+        }
+        return row.data
+      })
       return { docs }
     },
 
