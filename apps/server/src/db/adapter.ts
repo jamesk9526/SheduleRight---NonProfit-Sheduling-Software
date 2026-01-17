@@ -129,9 +129,9 @@ export function createMySqlAdapter(pool: MySqlPool): DbAdapter {
       const id = doc.id || doc._id || `${doc.type}:${randomUUID()}`
       doc.id = doc.id || id
       doc._id = doc._id || id
-      const now = new Date().toISOString()
-      const createdAt = doc.createdAt || now
-      const updatedAt = doc.updatedAt || now
+      const now = new Date()
+      const createdAt = formatMySqlDateTime(doc.createdAt ?? now)
+      const updatedAt = formatMySqlDateTime(doc.updatedAt ?? now)
       const indexFields = extractIndexFields(doc)
 
       const payload = JSON.stringify(doc)
@@ -192,6 +192,14 @@ export function createMySqlAdapter(pool: MySqlPool): DbAdapter {
       return { db_name: 'mysql', doc_count: Number(count) }
     },
   }
+}
+
+function formatMySqlDateTime(value: string | Date): string {
+  const date = value instanceof Date ? value : new Date(value)
+  if (Number.isNaN(date.getTime())) {
+    return new Date().toISOString().replace('T', ' ').replace('Z', '')
+  }
+  return date.toISOString().replace('T', ' ').replace('Z', '')
 }
 
 function mapSelectorKey(key: string): string {
