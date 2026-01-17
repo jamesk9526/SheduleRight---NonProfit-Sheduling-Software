@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'SheduleRight Admin',
-  description: 'Admin dashboard for SheduleRight scheduling software',
+  title: 'scheduleright Admin',
+  description: 'Admin dashboard for scheduleright scheduling software',
 }
 
 export default function RootLayout({

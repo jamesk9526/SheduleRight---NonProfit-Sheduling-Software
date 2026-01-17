@@ -23,6 +23,8 @@ import { createBootstrapService } from './services/bootstrap.service.js'
 import { createMessagingService } from './services/messaging.service.js'
 import { createEmbedConfigService } from './services/embed-config.service.js'
 import { createPropertyService } from './services/property.service.js'
+import { createNotificationService } from './services/notification.service.js'
+import { createClientProfileService } from './services/client-profile.service.js'
 import { registerAuthRoutes } from './routes/auth.js'
 import { registerOrgRoutes } from './routes/orgs.js'
 import { registerSiteRoutes } from './routes/sites.js'
@@ -37,8 +39,11 @@ import { registerClientRoutes } from './routes/clients.js'
 import { registerEmbedConfigRoutes } from './routes/embed-configs.js'
 import { registerEmbedPublicRoutes } from './routes/embed-public.js'
 import { registerPropertyRoutes } from './routes/properties.js'
+import { registerNotificationRoutes } from './routes/notifications.js'
+import { registerClientProfileRoutes } from './routes/client-profiles.js'
 import { securityHeaders, requestId, httpsEnforcement } from './middleware/security.js'
 import { authMiddleware, requireRole } from './middleware/auth.js'
+import { createSubdomainMiddleware, overrideOrgFromSubdomain } from './middleware/subdomain.js'
 import { standardRateLimit, authRateLimit, rateLimitResponseHook } from './middleware/rate-limit.js'
 import { createVolunteerService } from './services/volunteer.service.js'
 import { registerVolunteerRoutes } from './routes/volunteers.js'
@@ -165,12 +170,17 @@ export async function createServer() {
     mysqlPool,
   })
   const auditService = createAuditService(dbAdapter)
-  const reminderService = createReminderService(dbAdapter)
+  const reminderService = createReminderService(dbAdapter, null) // Will be set after notification service
   const volunteerService = createVolunteerService(dbAdapter)
   const bootstrapService = createBootstrapService(dbAdapter)
   const messagingService = createMessagingService(dbAdapter)
   const embedConfigService = createEmbedConfigService(dbAdapter)
   const propertyService = createPropertyService(dbAdapter)
+  const notificationService = createNotificationService(dbAdapter)
+  const clientProfileService = createClientProfileService(dbAdapter)
+  
+  // Re-create reminderService with notificationService available
+  const reminderServiceWithNotifications = createReminderService(dbAdapter, notificationService)
   await bootstrapService.ensureConfigDefaults()
 
   // Plugins
@@ -197,6 +207,10 @@ export async function createServer() {
   if (config.nodeEnv === 'production') {
     fastify.addHook('onRequest', httpsEnforcement)
   }
+
+  // Subdomain middleware - extract organization from subdomain if present
+  const subdomainMiddleware = await createSubdomainMiddleware(dbAdapter)
+  fastify.addHook('onRequest', subdomainMiddleware)
 
   // Apply standard rate limiting to all routes
   fastify.addHook('onRequest', standardRateLimit)
@@ -423,7 +437,7 @@ export async function createServer() {
   await registerAuthRoutes(fastify, authService)
 
   // Register org routes
-  await registerOrgRoutes(fastify, orgService)
+  await registerOrgRoutes(fastify, orgService, dbAdapter)
 
   // Register site routes
   await registerSiteRoutes(fastify, orgService)
@@ -438,10 +452,10 @@ export async function createServer() {
   await registerAuditRoutes(fastify, auditService)
 
   // Register reminder routes
-  await registerReminderRoutes(fastify, reminderService)
+  await registerReminderRoutes(fastify, reminderServiceWithNotifications)
 
   // Start reminder scheduler (runs every 15 minutes)
-  reminderService.startReminderScheduler(15)
+  reminderServiceWithNotifications.startReminderScheduler(15)
 
   // Register messaging routes
   await registerMessagingRoutes(fastify, bookingService, messagingService)
@@ -457,6 +471,12 @@ export async function createServer() {
 
   // Register custom property routes
   await registerPropertyRoutes(fastify, propertyService)
+
+  // Register notification routes
+  await registerNotificationRoutes(fastify, notificationService)
+
+  // Register client profile routes
+  await registerClientProfileRoutes(fastify, clientProfileService)
 
   return fastify
 }

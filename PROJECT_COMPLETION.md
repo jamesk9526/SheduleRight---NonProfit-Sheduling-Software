@@ -288,8 +288,8 @@ audit_logs (id, action, userId, timestamp, details)
 
 ```bash
 # 1. Clone and install
-git clone https://github.com/your-org/SheduleRight.git
-cd SheduleRight
+git clone https://github.com/your-org/scheduleright.git
+cd scheduleright
 pnpm install
 
 # 2. Start services

@@ -144,7 +144,7 @@ export default function Home() {
   if (!resolvedSiteId) {
     return (
       <main className="p-8">
-        <h1 className="text-2xl font-bold">SheduleRight Embed Widget</h1>
+        <h1 className="text-2xl font-bold">scheduleright Embed Widget</h1>
         <p className="mt-2 text-gray-600">Missing siteId or token query parameter.</p>
       </main>
     )

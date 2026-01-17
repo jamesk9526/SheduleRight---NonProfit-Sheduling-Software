@@ -78,6 +78,14 @@ export async function authMiddleware(
     // Attach user to request
     request.user = decoded
     request.orgId = decoded.orgId
+
+    // Override orgId from subdomain if present
+    // This ensures users accessing via a subdomain only see that org's data
+    const subdomainOrgId = (request as any).subdomainOrgId
+    if (subdomainOrgId) {
+      request.user.orgId = subdomainOrgId
+      request.orgId = subdomainOrgId
+    }
   } catch (error) {
     return reply.status(401).send({
       error: 'Authentication failed',

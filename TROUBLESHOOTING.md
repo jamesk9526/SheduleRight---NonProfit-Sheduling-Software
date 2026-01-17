@@ -38,21 +38,21 @@ sudo systemctl start couchdb
 
 2. **Verify CouchDB is accessible:**
 ```bash
-curl http://localhost:5984
+curl http://localhost:5713
 # Should return: {"couchdb":"Welcome","version":"3.3.x"}
 ```
 
 3. **Check credentials:**
 ```bash
 # Test admin access
-curl http://admin:password@localhost:5984/_all_dbs
+curl http://admin:password@localhost:5713/_all_dbs
 # Should return list of databases
 ```
 
 4. **Verify COUCHDB_URL in .env:**
 ```env
 # Should be:
-COUCHDB_URL=http://localhost:5984
+COUCHDB_URL=http://localhost:5713
 COUCHDB_USER=admin
 COUCHDB_PASSWORD=your-password
 ```
@@ -74,12 +74,12 @@ sudo tail -f /var/log/couchdb/couchdb.log
 
 1. **Create database manually:**
 ```bash
-curl -X PUT http://admin:password@localhost:5984/scheduleright
+curl -X PUT http://admin:password@localhost:5713/scheduleright
 ```
 
 2. **Verify database exists:**
 ```bash
-curl http://admin:password@localhost:5984/_all_dbs
+curl http://admin:password@localhost:5713/_all_dbs
 # Should include "scheduleright"
 ```
 
@@ -102,12 +102,12 @@ npm run db:indexes
 
 1. **Check database size:**
 ```bash
-curl http://admin:password@localhost:5984/scheduleright | jq '.disk_size'
+curl http://admin:password@localhost:5713/scheduleright | jq '.disk_size'
 ```
 
 2. **Compact database:**
 ```bash
-curl -X POST http://admin:password@localhost:5984/scheduleright/_compact \
+curl -X POST http://admin:password@localhost:5713/scheduleright/_compact \
   -H "Content-Type: application/json"
 ```
 
@@ -177,7 +177,7 @@ REFRESH_TOKEN_EXPIRY=604800  # 7 days
 
 1. **Check user exists:**
 ```bash
-curl http://admin:password@localhost:5984/scheduleright/_find \
+curl http://admin:password@localhost:5713/scheduleright/_find \
   -H "Content-Type: application/json" \
   -d '{
     "selector": {
@@ -223,7 +223,7 @@ npm run seed
 
 1. **Check metrics:**
 ```bash
-curl http://localhost:3001/metrics | jq '.endpoints | to_entries | sort_by(.value.avgDuration) | reverse | .[0:5]'
+curl http://localhost:5710/metrics | jq '.endpoints | to_entries | sort_by(.value.avgDuration) | reverse | .[0:5]'
 # Shows top 5 slowest endpoints
 ```
 
@@ -236,7 +236,7 @@ npm run db:indexes:list
 
 3. **Check database performance:**
 ```bash
-curl http://admin:password@localhost:5984/scheduleright | jq '{doc_count, disk_size}'
+curl http://admin:password@localhost:5713/scheduleright | jq '{doc_count, disk_size}'
 ```
 
 4. **Monitor system resources:**
@@ -293,7 +293,7 @@ max_memory_restart: '1G',  // Restart if exceeds 1GB
 pm2 monit
 
 # Check heap snapshots
-curl http://localhost:3001/metrics | jq '.system.memory'
+curl http://localhost:5710/metrics | jq '.system.memory'
 ```
 
 ---
@@ -404,7 +404,7 @@ pm2 logs scheduleright-server --err --lines 100
 
 2. **Verify database connection:**
 ```bash
-curl http://localhost:3001/health
+curl http://localhost:5710/health
 # Should return: {"status":"healthy"}
 ```
 
@@ -569,7 +569,7 @@ pnpm build
 pm2 reload all
 
 # 5. Check health
-curl http://localhost:3001/health
+curl http://localhost:5710/health
 ```
 
 2. **Check for git conflicts:**
@@ -606,10 +606,10 @@ sudo nginx -t  # Test configuration
 2. **Verify upstream servers:**
 ```bash
 # Check if backend is running
-curl http://localhost:3001/health
+curl http://localhost:5710/health
 
 # Check if frontend is running
-curl http://localhost:3000
+curl http://localhost:5711
 ```
 
 3. **Check nginx logs:**
@@ -655,7 +655,7 @@ pm2 logs scheduleright-server | grep 'requestId":"<uuid>"'
 ### Check Audit Logs
 
 ```bash
-curl http://admin:password@localhost:5984/scheduleright/_find \
+curl http://admin:password@localhost:5713/scheduleright/_find \
   -H "Content-Type: application/json" \
   -d '{
     "selector": {
@@ -671,13 +671,13 @@ curl http://admin:password@localhost:5984/scheduleright/_find \
 
 ```bash
 # Get all metrics
-curl http://localhost:3001/metrics | jq
+curl http://localhost:5710/metrics | jq
 
 # Get summary (top 10 endpoints)
-curl http://localhost:3001/metrics | jq '.summary'
+curl http://localhost:5710/metrics | jq '.summary'
 
 # Get specific endpoint
-curl http://localhost:3001/metrics | jq '.endpoints["/api/v1/bookings"]'
+curl http://localhost:5710/metrics | jq '.endpoints["/api/v1/bookings"]'
 ```
 
 ---
@@ -691,8 +691,8 @@ curl http://localhost:3001/metrics | jq '.endpoints["/api/v1/bookings"]'
 pm2 stop all
 
 # Reset database
-curl -X DELETE http://admin:password@localhost:5984/scheduleright
-curl -X PUT http://admin:password@localhost:5984/scheduleright
+curl -X DELETE http://admin:password@localhost:5713/scheduleright
+curl -X PUT http://admin:password@localhost:5713/scheduleright
 
 # Recreate indexes
 cd /opt/scheduleright/apps/server
@@ -729,10 +729,10 @@ pm2 logs --err
 pm2 status
 
 # Check health endpoint
-curl http://localhost:3001/health
+curl http://localhost:5710/health
 
 # Check readiness
-curl http://localhost:3001/readiness | jq
+curl http://localhost:5710/readiness | jq
 ```
 
 ---
@@ -762,11 +762,11 @@ echo "=== Service Logs (last 50 lines) ==="
 pm2 logs --lines 50 --nostream
 
 echo "=== Database Status ==="
-curl http://localhost:5984
+curl http://localhost:5713
 
 echo "=== Health Check ==="
-curl http://localhost:3001/health
-curl http://localhost:3001/readiness
+curl http://localhost:5710/health
+curl http://localhost:5710/readiness
 
 echo "=== Recent Errors ==="
 pm2 logs --err --lines 20 --nostream
@@ -785,6 +785,6 @@ When reporting issues, include:
 
 ## Support Resources
 
-- **GitHub Issues:** https://github.com/jamesk9526/SheduleRight---NonProfit-Sheduling-Software/issues
+- **GitHub Issues:** https://github.com/jamesk9526/scheduleright---NonProfit-Sheduling-Software/issues
 - **Documentation:** All `.md` files in repository root
 - **Logs Location:** `/var/log/scheduleright/` (PM2) and console logs via `pm2 logs`

@@ -5,11 +5,15 @@ import { useEffect } from 'react'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useSites } from '@/lib/hooks/useData'
 import { useSite } from '@/lib/hooks/useSite'
+import { useHelpShortcut } from '@/lib/hooks/useHelpShortcut'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user } = useAuth()
   const { currentSiteId, setSiteId, clearSiteId } = useSite()
   const { data: sites = [] } = useSites(user?.orgId || null)
+  
+  // Enable help keyboard shortcuts
+  useHelpShortcut()
 
   useEffect(() => {
     if (!currentSiteId && sites.length > 0) {
@@ -23,9 +27,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="text-xl font-semibold text-neutral-900">
-              SheduleRight
+              scheduleright
             </Link>
             <span className="text-sm text-neutral-500">Dashboard</span>
+            <Link
+              href="/help"
+              className="ml-2 p-2 text-slate-600 hover:text-primary-600 hover:bg-slate-100 rounded-lg transition"
+              title="Help Center (? or Ctrl+K)"
+            >
+              <span className="text-xl">❓</span>
+            </Link>
           </div>
 
           {user && (

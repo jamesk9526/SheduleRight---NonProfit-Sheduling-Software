@@ -13,8 +13,8 @@ const ConfigSchema = z.object({
 
   // Server
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  SERVER_PORT: z.string().default('3001').transform(Number),
-  SERVER_URL: z.string().url().default('http://localhost:3001'),
+  SERVER_PORT: z.string().default('5710').transform(Number),
+  SERVER_URL: z.string().url().default('http://localhost:5710'),
   API_VERSION: z.string().default('v1'),
 
   // Database (CouchDB)
@@ -30,7 +30,7 @@ const ConfigSchema = z.object({
   MYSQL_PASSWORD: z.string().optional(),
 
   // Redis
-  REDIS_URL: z.string().url().default('redis://redis:6379'),
+  REDIS_URL: z.string().url().default('redis://redis:5714'),
 
   // Authentication
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters for security'),
@@ -38,7 +38,7 @@ const ConfigSchema = z.object({
   REFRESH_TOKEN_EXPIRY: z.string().default('604800').transform(Number),
 
   // CORS
-  CORS_ORIGIN: z.string().default('http://localhost:3000,http://localhost:3001,http://localhost:3003'),
+  CORS_ORIGIN: z.string().default('http://localhost:5711,http://localhost:5710,http://localhost:5712'),
 
   // Optional: Twilio
   TWILIO_ACCOUNT_SID: z.string().optional(),

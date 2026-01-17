@@ -13,7 +13,7 @@ This document provides a comprehensive guide to deploying ScheduleRight safely a
 ```bash
 # Server
 NODE_ENV=production
-SERVER_PORT=3001
+SERVER_PORT=5710
 SERVER_URL=https://api.scheduleright.org  # Your domain
 
 # Database (MySQL recommended for production)
@@ -25,7 +25,7 @@ MYSQL_USER=scheduleright_user
 MYSQL_PASSWORD=<STRONG_PASSWORD_64_CHARS>
 
 # Redis (for caching and job queues)
-REDIS_URL=redis://redis.internal.example.com:6379
+REDIS_URL=redis://redis.internal.example.com:5714
 
 # JWT (generate secure random keys)
 JWT_SECRET=<RANDOM_256_BIT_KEY>            # 32+ char random string
@@ -86,7 +86,7 @@ server {
   ssl_session_timeout 10m;
 
   location / {
-    proxy_pass http://localhost:3001;
+    proxy_pass http://localhost:5710;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -297,7 +297,7 @@ const CreateBookingSchema = z.object({
 **Test with malicious input:**
 ```bash
 # SQL injection attempt
-curl -X POST http://localhost:3001/api/v1/auth/login \
+curl -X POST http://localhost:5710/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin'\''--","password":"x"}'
 
@@ -314,18 +314,18 @@ curl -X POST http://localhost:3001/api/v1/auth/login \
 
 1. **Liveness Probe** (`/health`) - Is server running?
    ```bash
-   curl http://localhost:3001/health
+   curl http://localhost:5710/health
    ```
 
 2. **Readiness Probe** (`/readiness`) - Is server ready to handle traffic?
    ```bash
-   curl http://localhost:3001/readiness
+   curl http://localhost:5710/readiness
    # Checks database, Redis, external services
    ```
 
 3. **Status Dashboard** (`/status`) - Detailed service information
    ```bash
-   curl http://localhost:3001/status
+   curl http://localhost:5710/status
    ```
 
 **Kubernetes configuration:**
@@ -395,7 +395,7 @@ export const logger = pino(
 scrape_configs:
   - job_name: 'scheduleright-api'
     static_configs:
-      - targets: ['localhost:3001']
+      - targets: ['localhost:5710']
     metrics_path: '/metrics'
     scrape_interval: 15s
 ```
@@ -429,7 +429,7 @@ USER nodejs
 EXPOSE 3001
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3001/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+  CMD node -e "require('http').get('http://localhost:5710/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
 
 CMD ["node", "dist/index.js"]
 ```
@@ -462,7 +462,7 @@ services:
     networks:
       - scheduleright
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:5710/health"]
       interval: 30s
       timeout: 3s
       retries: 3
@@ -681,13 +681,13 @@ spec:
 docker logs scheduleright-api | tail -100
 
 # 2. Health check
-curl -s http://localhost:3001/readiness | jq
+curl -s http://localhost:5710/readiness | jq
 
 # 3. Restart service
 docker-compose restart api
 
 # 4. Verify recovery
-curl http://localhost:3001/health
+curl http://localhost:5710/health
 ```
 
 **Database Connection Lost**

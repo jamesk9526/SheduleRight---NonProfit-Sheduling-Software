@@ -1,7 +1,7 @@
 {
   "name": "@scheduleright/web",
   "version": "0.0.1",
-  "description": "SheduleRight PWA - Client-facing web app",
+  "description": "scheduleright PWA - Client-facing web app",
   "private": true,
   "scripts": {
     "dev": "next dev",

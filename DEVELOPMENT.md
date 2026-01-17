@@ -1,4 +1,4 @@
-# SheduleRight Development Environment - Setup Complete ✅
+# scheduleright Development Environment - Setup Complete ✅
 
 ## Current Status
 
@@ -184,14 +184,14 @@ Copy `.env.example` to `.env.local` and fill in values:
 ```bash
 # Server
 NODE_ENV=development
-PORT=3001
-COUCHDB_URL=http://localhost:5984
-REDIS_URL=redis://localhost:6379
+PORT=5710
+COUCHDB_URL=http://localhost:5713
+REDIS_URL=redis://localhost:5714
 JWT_SECRET=your-super-secret-key
 JWT_EXPIRY=7d
 
 # Web
-NEXT_PUBLIC_API_URL=http://localhost:3001
+NEXT_PUBLIC_API_URL=http://localhost:5710
 
 # Twilio (when adding SMS)
 TWILIO_ACCOUNT_SID=...

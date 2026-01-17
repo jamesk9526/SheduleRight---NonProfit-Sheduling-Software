@@ -3,12 +3,12 @@ import './globals.css'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {
-  title: 'SheduleRight By James Knox',
+  title: 'scheduleright By James Knox',
   description: 'Offline-first scheduling for non-profit pregnancy care centers',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'SheduleRight',
+    title: 'scheduleright',
   },
   manifest: '/manifest.json',
 }

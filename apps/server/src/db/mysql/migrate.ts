@@ -25,7 +25,23 @@ async function listApplied(pool: mysql.Pool): Promise<Set<string>> {
 }
 
 async function applyMigration(pool: mysql.Pool, name: string, sql: string) {
-  await pool.query(sql)
+  // Split SQL by semicolon and filter out empty statements
+  const statements = sql
+    .split(';')
+    .map(stmt => stmt.trim())
+    .filter(stmt => stmt.length > 0 && !stmt.startsWith('--'))
+
+  // Execute each statement separately
+  for (const statement of statements) {
+    try {
+      await pool.query(statement)
+    } catch (error: any) {
+      // Log the error with context
+      console.error(`Error executing statement:\n${statement}`)
+      throw error
+    }
+  }
+
   await pool.query('INSERT INTO migrations (name) VALUES (?)', [name])
   console.log(`  ✓ Applied migration: ${name}`)
 }

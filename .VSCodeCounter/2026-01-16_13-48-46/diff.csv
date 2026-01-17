@@ -1,44 +1,44 @@
 "filename", "language", "Markdown", "JSON with Comments", "JSON", "JavaScript", "TypeScript", "MS SQL", "TypeScript JSX", "comment", "blank", "total"
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\COMPLETION_REPORT.md", "Markdown", 336, 0, 0, 0, 0, 0, 0, 0, 94, 430
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\FIXES_SESSION.md", "Markdown", 136, 0, 0, 0, 0, 0, 0, 0, 45, 181
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\IMPLEMENTATION_PLAN.md", "Markdown", 202, 0, 0, 0, 0, 0, 0, 0, 52, 254
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\MONITORING_OBSERVABILITY.md", "Markdown", 699, 0, 0, 0, 0, 0, 0, 0, 158, 857
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\NEXT_STEPS.md", "Markdown", 288, 0, 0, 0, 0, 0, 0, 0, 75, 363
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\PRODUCTION_HARDENING.md", "Markdown", 690, 0, 0, 0, 0, 0, 0, 0, 164, 854
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\PROGRESS_REPORT.md", "Markdown", 219, 0, 0, 0, 0, 0, 0, 0, 63, 282
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\PROJECT_COMPLETION.md", "Markdown", 504, 0, 0, 0, 0, 0, 0, 0, 129, 633
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\README.md", "Markdown", 199, 0, 0, 0, 0, 0, 0, 0, 91, 290
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\SESSION_SUMMARY.md", "Markdown", 149, 0, 0, 0, 0, 0, 0, 0, 47, 196
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\SESSION_SUMMARY_BOOKINGS.md", "Markdown", 296, 0, 0, 0, 0, 0, 0, 0, 79, 375
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\TODO_FROM_SERVER_LOG.md", "Markdown", 33, 0, 0, 0, 0, 0, 0, 0, 10, 43
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\TWILIO_SMS_GUIDE.md", "Markdown", 299, 0, 0, 0, 0, 0, 0, 0, 83, 382
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\package.json", "JSON", 0, 0, 2, 0, 0, 0, 0, 0, 0, 2
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\db\adapter.ts", "TypeScript", 0, 0, 0, 0, 2, 0, 0, 0, 0, 2
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\db\indexes.ts", "TypeScript", 0, 0, 0, 0, 5, 0, 0, 1, -1, 5
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\db\mysql\migrations\002_users_orgs.sql", "MS SQL", 0, 0, 0, 0, 0, -18, 0, 2, 0, -16
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\db\mysql\migrations\003_volunteers_shifts.sql", "MS SQL", 0, 0, 0, 0, 0, 47, 0, 1, 4, 52
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\db\mysql\migrations\004_seed_test_data.sql", "MS SQL", 0, 0, 0, 0, 0, 28, 0, 5, 4, 37
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\index.ts", "TypeScript", 0, 0, 0, 0, 9, 0, 0, 2, 2, 13
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\routes\bootstrap.ts", "TypeScript", 0, 0, 0, 0, 23, 0, 0, 2, 3, 28
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\routes\messaging.ts", "TypeScript", 0, 0, 0, 0, 179, 0, 0, 0, 20, 199
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\routes\reminders.ts", "TypeScript", 0, 0, 0, 0, 105, 0, 0, 18, 10, 133
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\services\booking.service.ts", "TypeScript", 0, 0, 0, 0, 3, 0, 0, 0, 0, 3
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\services\messaging.service.ts", "TypeScript", 0, 0, 0, 0, 91, 0, 0, 0, 12, 103
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\services\org.service.ts", "TypeScript", 0, 0, 0, 0, 1, 0, 0, 0, 0, 1
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\server\src\services\reminder.service.ts", "TypeScript", 0, 0, 0, 0, 82, 0, 0, 0, 16, 98
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\availability\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 335, 6, 32, 373
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\orgs\[orgId]\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 10, 0, 2, 12
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\orgs\[orgId]\sites\[siteId]\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 71, 0, 9, 80
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\reminders\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 61, 1, 5, 67
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\app\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 4, 0, 1, 5
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\app\providers.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 5, 0, 0, 5
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\lib\hooks\useApi.ts", "TypeScript", 0, 0, 0, 0, 5, 0, 0, 0, 1, 6
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\lib\hooks\useAuth.ts", "TypeScript", 0, 0, 0, 0, 47, 0, 0, 7, 10, 64
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\lib\hooks\useData.ts", "TypeScript", 0, 0, 0, 0, 186, 0, 0, 33, 22, 241
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\lib\hooks\useSite.ts", "TypeScript", 0, 0, 0, 0, 48, 0, 0, 7, 12, 67
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\middleware.ts", "TypeScript", 0, 0, 0, 0, 12, 0, 0, 0, 5, 17
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\next.config.mjs", "JavaScript", 0, 0, 0, 18, 0, 0, 0, 1, 2, 21
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\public\manifest.json", "JSON", 0, 0, -12, 0, 0, 0, 0, 0, 0, -12
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\apps\web\tsconfig.json", "JSON with Comments", 0, 1, 0, 0, 0, 0, 0, 0, 0, 1
-"c:\Users\James\Documents\GitHub\SheduleRight---NonProfit-Sheduling-Software\package.json", "JSON", 0, 0, 1, 0, 0, 0, 0, 0, 0, 1
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\COMPLETION_REPORT.md", "Markdown", 336, 0, 0, 0, 0, 0, 0, 0, 94, 430
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\FIXES_SESSION.md", "Markdown", 136, 0, 0, 0, 0, 0, 0, 0, 45, 181
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\IMPLEMENTATION_PLAN.md", "Markdown", 202, 0, 0, 0, 0, 0, 0, 0, 52, 254
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\MONITORING_OBSERVABILITY.md", "Markdown", 699, 0, 0, 0, 0, 0, 0, 0, 158, 857
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\NEXT_STEPS.md", "Markdown", 288, 0, 0, 0, 0, 0, 0, 0, 75, 363
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\PRODUCTION_HARDENING.md", "Markdown", 690, 0, 0, 0, 0, 0, 0, 0, 164, 854
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\PROGRESS_REPORT.md", "Markdown", 219, 0, 0, 0, 0, 0, 0, 0, 63, 282
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\PROJECT_COMPLETION.md", "Markdown", 504, 0, 0, 0, 0, 0, 0, 0, 129, 633
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\README.md", "Markdown", 199, 0, 0, 0, 0, 0, 0, 0, 91, 290
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\SESSION_SUMMARY.md", "Markdown", 149, 0, 0, 0, 0, 0, 0, 0, 47, 196
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\SESSION_SUMMARY_BOOKINGS.md", "Markdown", 296, 0, 0, 0, 0, 0, 0, 0, 79, 375
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\TODO_FROM_SERVER_LOG.md", "Markdown", 33, 0, 0, 0, 0, 0, 0, 0, 10, 43
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\TWILIO_SMS_GUIDE.md", "Markdown", 299, 0, 0, 0, 0, 0, 0, 0, 83, 382
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\package.json", "JSON", 0, 0, 2, 0, 0, 0, 0, 0, 0, 2
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\db\adapter.ts", "TypeScript", 0, 0, 0, 0, 2, 0, 0, 0, 0, 2
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\db\indexes.ts", "TypeScript", 0, 0, 0, 0, 5, 0, 0, 1, -1, 5
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\db\mysql\migrations\002_users_orgs.sql", "MS SQL", 0, 0, 0, 0, 0, -18, 0, 2, 0, -16
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\db\mysql\migrations\003_volunteers_shifts.sql", "MS SQL", 0, 0, 0, 0, 0, 47, 0, 1, 4, 52
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\db\mysql\migrations\004_seed_test_data.sql", "MS SQL", 0, 0, 0, 0, 0, 28, 0, 5, 4, 37
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\index.ts", "TypeScript", 0, 0, 0, 0, 9, 0, 0, 2, 2, 13
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\routes\bootstrap.ts", "TypeScript", 0, 0, 0, 0, 23, 0, 0, 2, 3, 28
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\routes\messaging.ts", "TypeScript", 0, 0, 0, 0, 179, 0, 0, 0, 20, 199
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\routes\reminders.ts", "TypeScript", 0, 0, 0, 0, 105, 0, 0, 18, 10, 133
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\services\booking.service.ts", "TypeScript", 0, 0, 0, 0, 3, 0, 0, 0, 0, 3
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\services\messaging.service.ts", "TypeScript", 0, 0, 0, 0, 91, 0, 0, 0, 12, 103
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\services\org.service.ts", "TypeScript", 0, 0, 0, 0, 1, 0, 0, 0, 0, 1
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\services\reminder.service.ts", "TypeScript", 0, 0, 0, 0, 82, 0, 0, 0, 16, 98
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\availability\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 335, 6, 32, 373
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\orgs\[orgId]\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 10, 0, 2, 12
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\orgs\[orgId]\sites\[siteId]\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 71, 0, 9, 80
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\reminders\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 61, 1, 5, 67
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 4, 0, 1, 5
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\providers.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 5, 0, 0, 5
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\lib\hooks\useApi.ts", "TypeScript", 0, 0, 0, 0, 5, 0, 0, 0, 1, 6
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\lib\hooks\useAuth.ts", "TypeScript", 0, 0, 0, 0, 47, 0, 0, 7, 10, 64
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\lib\hooks\useData.ts", "TypeScript", 0, 0, 0, 0, 186, 0, 0, 33, 22, 241
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\lib\hooks\useSite.ts", "TypeScript", 0, 0, 0, 0, 48, 0, 0, 7, 12, 67
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\middleware.ts", "TypeScript", 0, 0, 0, 0, 12, 0, 0, 0, 5, 17
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\next.config.mjs", "JavaScript", 0, 0, 0, 18, 0, 0, 0, 1, 2, 21
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\public\manifest.json", "JSON", 0, 0, -12, 0, 0, 0, 0, 0, 0, -12
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\tsconfig.json", "JSON with Comments", 0, 1, 0, 0, 0, 0, 0, 0, 0, 1
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\package.json", "JSON", 0, 0, 1, 0, 0, 0, 0, 0, 0, 1
 "Total", "-", 4050, 1, -9, 18, 798, 57, 486, 86, 1261, 6748

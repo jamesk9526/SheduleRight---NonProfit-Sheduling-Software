@@ -43,17 +43,17 @@ Regular backups are **critical** for data protection and disaster recovery. Sche
 
 ```bash
 # Setup continuous replication
-curl -X POST http://admin:password@localhost:5984/_replicate \
+curl -X POST http://admin:password@localhost:5713/_replicate \
   -H "Content-Type: application/json" \
   -d '{
-    "source": "http://admin:password@localhost:5984/scheduleright",
+    "source": "http://admin:password@localhost:5713/scheduleright",
     "target": "http://admin:password@backup-server:5984/scheduleright",
     "continuous": true,
     "create_target": true
   }'
 
 # Check replication status
-curl http://admin:password@localhost:5984/_active_tasks
+curl http://admin:password@localhost:5713/_active_tasks
 ```
 
 **Advantages:**
@@ -74,7 +74,7 @@ curl http://admin:password@localhost:5984/_active_tasks
 
 ```bash
 # Full database export
-curl http://admin:password@localhost:5984/scheduleright/_all_docs?include_docs=true \
+curl http://admin:password@localhost:5713/scheduleright/_all_docs?include_docs=true \
   > backup-$(date +%Y%m%d-%H%M%S).json
 
 # Compress backup
@@ -112,7 +112,7 @@ mkdir -p $BACKUP_DIR
 
 # Backup database
 echo "Backing up database: $DB_NAME"
-curl -s http://$COUCHDB_USER:$COUCHDB_PASSWORD@localhost:5984/$DB_NAME/_all_docs?include_docs=true \
+curl -s http://$COUCHDB_USER:$COUCHDB_PASSWORD@localhost:5713/$DB_NAME/_all_docs?include_docs=true \
   > $BACKUP_DIR/db-$TIMESTAMP.json
 
 # Compress backup
@@ -143,7 +143,7 @@ ls -lh $BACKUP_DIR/db-$TIMESTAMP.json.gz
 
 ```bash
 # Backup single document type (e.g., bookings only)
-curl http://admin:password@localhost:5984/scheduleright/_find \
+curl http://admin:password@localhost:5713/scheduleright/_find \
   -H "Content-Type: application/json" \
   -d '{
     "selector": {"type": "booking"},
@@ -191,7 +191,7 @@ BACKUP_FILE="$BACKUP_DIR/scheduleright-$TIMESTAMP.json"
 
 # Backup database
 log "Backing up database: $DB_NAME"
-if curl -sf http://$COUCHDB_USER:$COUCHDB_PASSWORD@localhost:5984/$DB_NAME/_all_docs?include_docs=true > $BACKUP_FILE; then
+if curl -sf http://$COUCHDB_USER:$COUCHDB_PASSWORD@localhost:5713/$DB_NAME/_all_docs?include_docs=true > $BACKUP_FILE; then
     log "✅ Database backup successful"
 else
     log "❌ Database backup failed"
@@ -300,11 +300,11 @@ pm2 stop all
 
 # Delete current database
 echo "Deleting current database..."
-curl -X DELETE http://$COUCHDB_USER:$COUCHDB_PASSWORD@localhost:5984/$DB_NAME
+curl -X DELETE http://$COUCHDB_USER:$COUCHDB_PASSWORD@localhost:5713/$DB_NAME
 
 # Create new database
 echo "Creating new database..."
-curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@localhost:5984/$DB_NAME
+curl -X PUT http://$COUCHDB_USER:$COUCHDB_PASSWORD@localhost:5713/$DB_NAME
 
 # Decompress backup if needed
 if [[ $BACKUP_FILE == *.gz ]]; then
@@ -324,7 +324,7 @@ jq -r '.rows[].doc' $BACKUP_FILE | while read doc; do
     
     # Remove _rev field for new insert
     echo "$doc" | jq 'del(._rev)' | \
-    curl -X POST http://$COUCHDB_USER:$COUCHDB_PASSWORD@localhost:5984/$DB_NAME \
+    curl -X POST http://$COUCHDB_USER:$COUCHDB_PASSWORD@localhost:5713/$DB_NAME \
         -H "Content-Type: application/json" \
         -d @-
 done
@@ -356,7 +356,7 @@ rm -f /tmp/restore-temp.json
 jq -r '.rows[].doc | select(.type == "booking")' backup.json | \
 while read doc; do
     echo "$doc" | jq 'del(._rev)' | \
-    curl -X POST http://admin:password@localhost:5984/scheduleright \
+    curl -X POST http://admin:password@localhost:5713/scheduleright \
         -H "Content-Type: application/json" \
         -d @-
 done
@@ -457,7 +457,7 @@ cp -r /var/lib/couchdb /var/lib/couchdb.corrupt.$(date +%s)
 4. **If backup is also corrupted:**
 ```bash
 # Try CouchDB compact
-curl -X POST http://admin:password@localhost:5984/scheduleright/_compact
+curl -X POST http://admin:password@localhost:5713/scheduleright/_compact
 
 # Or rebuild from replication source
 ```
@@ -480,7 +480,7 @@ BACKUP_FILE="/var/backups/scheduleright/scheduleright-latest.json.gz"
 echo "Testing restore to $TEST_DB..."
 
 # Create test database
-curl -X PUT http://admin:password@localhost:5984/$TEST_DB
+curl -X PUT http://admin:password@localhost:5713/$TEST_DB
 
 # Restore to test database
 gunzip -c $BACKUP_FILE | jq -r '.rows[].doc' | while read doc; do
@@ -488,14 +488,14 @@ gunzip -c $BACKUP_FILE | jq -r '.rows[].doc' | while read doc; do
         continue
     fi
     echo "$doc" | jq 'del(._rev)' | \
-    curl -s -X POST http://admin:password@localhost:5984/$TEST_DB \
+    curl -s -X POST http://admin:password@localhost:5713/$TEST_DB \
         -H "Content-Type: application/json" \
         -d @- > /dev/null
 done
 
 # Verify document count
-ORIGINAL_COUNT=$(curl -s http://admin:password@localhost:5984/scheduleright | jq '.doc_count')
-RESTORED_COUNT=$(curl -s http://admin:password@localhost:5984/$TEST_DB | jq '.doc_count')
+ORIGINAL_COUNT=$(curl -s http://admin:password@localhost:5713/scheduleright | jq '.doc_count')
+RESTORED_COUNT=$(curl -s http://admin:password@localhost:5713/$TEST_DB | jq '.doc_count')
 
 echo "Original database: $ORIGINAL_COUNT documents"
 echo "Restored database: $RESTORED_COUNT documents"
@@ -507,7 +507,7 @@ else
 fi
 
 # Cleanup
-curl -X DELETE http://admin:password@localhost:5984/$TEST_DB
+curl -X DELETE http://admin:password@localhost:5713/$TEST_DB
 ```
 
 ### Backup Checklist

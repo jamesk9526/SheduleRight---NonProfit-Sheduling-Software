@@ -3,7 +3,7 @@
 # Run with: pwsh test-auth-endpoints.ps1
 
 param(
-    [string]$ApiUrl = "http://localhost:3001",
+    [string]$ApiUrl = "http://localhost:5710",
     [switch]$Verbose = $false
 )
 

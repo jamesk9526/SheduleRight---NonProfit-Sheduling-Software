@@ -43,6 +43,9 @@ export default function PropertyLibraryPage() {
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
+  const [selectedEntity, setSelectedEntity] = useState('client')
+  const [dragId, setDragId] = useState<string | null>(null)
+  const [ordering, setOrdering] = useState(false)
 
   const [form, setForm] = useState({
     propertyId: '',
@@ -88,6 +91,10 @@ export default function PropertyLibraryPage() {
       return a.label.localeCompare(b.label)
     })
   }, [propertyTypes])
+
+  const filteredTypes = useMemo(() => {
+    return sortedTypes.filter((type) => type.appliesTo.includes(selectedEntity))
+  }, [sortedTypes, selectedEntity])
 
   const renderPreview = (dataType: string, enumOptions: string[]) => {
     if (dataType === 'boolean') {
@@ -217,6 +224,28 @@ export default function PropertyLibraryPage() {
     }
   }
 
+  const reorderTypes = async (items: PropertyType[]) => {
+    setOrdering(true)
+    try {
+      await Promise.all(
+        items.map((type, index) =>
+          api.put(`/api/v1/properties/${type._id}`, {
+            ui: {
+              ...(type.ui || {}),
+              order: index + 1,
+            },
+          })
+        )
+      )
+      queryClient.invalidateQueries({ queryKey: ['property-types'] })
+    } catch (err: any) {
+      setError(err?.message || 'Failed to update ordering.')
+    } finally {
+      setOrdering(false)
+      setDragId(null)
+    }
+  }
+
   if (!isStaff) {
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
@@ -229,12 +258,16 @@ export default function PropertyLibraryPage() {
     )
   }
 
+  const enumEnabled = form.dataType === 'enum' || form.dataType === 'multiEnum'
+  const editEnumEnabled = editForm.dataType === 'enum' || editForm.dataType === 'multiEnum'
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Field Library</h1>
           <p className="mt-2 text-gray-600">Define reusable custom properties for clients, sites, staff, and more.</p>
+          <p className="mt-1 text-sm text-gray-500">Tip: Create the field here, then fill it on each entity detail page.</p>
         </div>
         <Link href="/bookings" className="text-indigo-600 hover:text-indigo-700 font-medium">
           ← Back to Bookings
@@ -245,11 +278,12 @@ export default function PropertyLibraryPage() {
         <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{error}</div>
       )}
 
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Create Property</h2>
+      <div className="bg-white border border-gray-200 rounded-lg p-6" id="create-property">
+        <h2 className="text-lg font-semibold text-gray-900 mb-2">Create Property</h2>
+        <p className="text-sm text-gray-500 mb-4">Fields with an asterisk are required.</p>
         <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="property-id" className="block text-sm font-medium text-gray-700 mb-1">Property ID</label>
+            <label htmlFor="property-id" className="block text-sm font-medium text-gray-700 mb-1">Property ID *</label>
             <input
               id="property-id"
               value={form.propertyId}
@@ -258,9 +292,10 @@ export default function PropertyLibraryPage() {
               placeholder="preferred_contact_method"
               required
             />
+            <p className="mt-1 text-xs text-gray-500">Use snake_case. This becomes the stable key.</p>
           </div>
           <div>
-            <label htmlFor="property-label" className="block text-sm font-medium text-gray-700 mb-1">Label</label>
+            <label htmlFor="property-label" className="block text-sm font-medium text-gray-700 mb-1">Label *</label>
             <input
               id="property-label"
               value={form.label}
@@ -277,6 +312,7 @@ export default function PropertyLibraryPage() {
               value={form.description}
               onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
               className="w-full border border-gray-300 rounded-md px-3 py-2"
+              placeholder="Shown as helper text on the entry form"
             />
           </div>
           <div>
@@ -313,6 +349,7 @@ export default function PropertyLibraryPage() {
               onChange={(e) => setForm((prev) => ({ ...prev, defaultValue: e.target.value }))}
               className="w-full border border-gray-300 rounded-md px-3 py-2"
             />
+            <p className="mt-1 text-xs text-gray-500">Optional. Applied when no value is set.</p>
           </div>
           <div>
             <label htmlFor="property-enum" className="block text-sm font-medium text-gray-700 mb-1">Enum Options (comma)</label>
@@ -322,7 +359,9 @@ export default function PropertyLibraryPage() {
               onChange={(e) => setForm((prev) => ({ ...prev, enumOptions: e.target.value }))}
               className="w-full border border-gray-300 rounded-md px-3 py-2"
               placeholder="Email, SMS, Phone"
+              disabled={!enumEnabled}
             />
+            <p className="mt-1 text-xs text-gray-500">Only used for enum and multiEnum data types.</p>
           </div>
           <div>
             <label htmlFor="property-order" className="block text-sm font-medium text-gray-700 mb-1">Order</label>
@@ -389,14 +428,53 @@ export default function PropertyLibraryPage() {
 
       <div className="bg-white border border-gray-200 rounded-lg p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Existing Properties</h2>
-        {sortedTypes.length === 0 ? (
-          <p className="text-gray-600">No properties defined yet.</p>
+        <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+          <div>
+            <label htmlFor="property-entity-filter" className="block text-sm font-medium text-gray-700 mb-1">Entity Type</label>
+            <select
+              id="property-entity-filter"
+              value={selectedEntity}
+              onChange={(e) => setSelectedEntity(e.target.value)}
+              className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+            >
+              {ENTITY_TYPES.map((entity) => (
+                <option key={entity} value={entity}>{entity}</option>
+              ))}
+            </select>
+          </div>
+          <div className="text-xs text-gray-500">
+            Showing {filteredTypes.length} fields. Drag cards to reorder for {selectedEntity}. {ordering ? 'Saving order...' : ''}
+          </div>
+        </div>
+        {filteredTypes.length === 0 ? (
+          <div className="rounded-lg border border-dashed border-gray-300 p-4 text-sm text-gray-600">
+            <p>No properties defined for {selectedEntity}.</p>
+            <Link href="#create-property" className="mt-2 inline-flex text-indigo-600 hover:text-indigo-700 font-medium">
+              Create your first field →
+            </Link>
+          </div>
         ) : (
           <div className="space-y-4">
-            {sortedTypes.map((type) => {
+            {filteredTypes.map((type) => {
               const isEditing = editId === type._id
               return (
-                <div key={type._id} className="border border-gray-200 rounded-lg p-4">
+                <div
+                  key={type._id}
+                  className="border border-gray-200 rounded-lg p-4"
+                  draggable
+                  onDragStart={() => setDragId(type._id)}
+                  onDragOver={(event) => event.preventDefault()}
+                  onDrop={() => {
+                    if (!dragId || dragId === type._id) return
+                    const current = [...filteredTypes]
+                    const dragIndex = current.findIndex((item) => item._id === dragId)
+                    const dropIndex = current.findIndex((item) => item._id === type._id)
+                    if (dragIndex < 0 || dropIndex < 0) return
+                    const [moved] = current.splice(dragIndex, 1)
+                    current.splice(dropIndex, 0, moved)
+                    reorderTypes(current)
+                  }}
+                >
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                     <div>
                       <div className="font-medium text-gray-900">{type.label}</div>
@@ -497,7 +575,9 @@ export default function PropertyLibraryPage() {
                           value={editForm.enumOptions}
                           onChange={(e) => setEditForm((prev) => ({ ...prev, enumOptions: e.target.value }))}
                           className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                          disabled={!editEnumEnabled}
                         />
+                        <p className="mt-1 text-xs text-gray-500">Used only for enum and multiEnum.</p>
                       </div>
                       <div>
                         <label htmlFor={`edit-property-order-${type._id}`} className="block text-xs font-medium text-gray-700 mb-1">Order</label>

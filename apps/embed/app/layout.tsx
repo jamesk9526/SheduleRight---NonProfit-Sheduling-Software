@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'SheduleRight Widget',
-  description: 'Embeddable schedule widget for SheduleRight',
+  title: 'scheduleright Widget',
+  description: 'Embeddable schedule widget for scheduleright',
 }
 
 export default function RootLayout({

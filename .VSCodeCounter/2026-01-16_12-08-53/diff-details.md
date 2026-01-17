@@ -2,7 +2,7 @@
 
 Date : 2026-01-16 12:08:53
 
-Directory c:\\Users\\James\\Documents\\GitHub\\SheduleRight---NonProfit-Sheduling-Software
+Directory c:\\Users\\James\\Documents\\GitHub\\scheduleright---NonProfit-Sheduling-Software
 
 Total : 0 files,  0 codes, 0 comments, 0 blanks, all 0 lines
 

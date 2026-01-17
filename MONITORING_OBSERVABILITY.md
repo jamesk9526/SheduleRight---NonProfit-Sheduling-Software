@@ -200,7 +200,7 @@ LOG_LEVEL=trace
 The application exposes metrics at `/metrics`:
 
 ```bash
-curl http://localhost:3001/metrics | jq
+curl http://localhost:5710/metrics | jq
 ```
 
 **Example output:**
@@ -260,7 +260,7 @@ global:
 scrape_configs:
   - job_name: 'scheduleright-api'
     static_configs:
-      - targets: ['localhost:3001']
+      - targets: ['localhost:5710']
     metrics_path: '/metrics'
     scrape_interval: 15s
     
@@ -302,7 +302,7 @@ export const prometheusMetrics = () => register.metrics()
 ### 2.3 Grafana Dashboards
 
 **Add Prometheus data source:**
-1. Go to Grafana UI (http://localhost:3000)
+1. Go to Grafana UI (http://localhost:5711)
 2. Configuration > Data Sources
 3. Add Prometheus: `http://prometheus:9090`
 
@@ -587,7 +587,7 @@ groups:
 **Endpoint:** `GET /health`
 
 ```bash
-curl -s http://localhost:3001/health | jq
+curl -s http://localhost:5710/health | jq
 ```
 
 **Response:**
@@ -614,7 +614,7 @@ livenessProbe:
 **Endpoint:** `GET /readiness`
 
 ```bash
-curl -s http://localhost:3001/readiness | jq
+curl -s http://localhost:5710/readiness | jq
 ```
 
 **Response:**
@@ -743,7 +743,7 @@ curl -s "http://prometheus:9090/api/v1/query_range?query=rate(http_requests_tota
 
 ```bash
 # Check database performance
-curl http://localhost:3001/metrics | jq '.performance'
+curl http://localhost:5710/metrics | jq '.performance'
 
 # Check slow queries
 mysql -e "SELECT * FROM mysql.slow_log ORDER BY query_time DESC LIMIT 10;"
@@ -771,7 +771,7 @@ docker restart scheduleright-api
 
 ```bash
 # Check error logs
-curl http://localhost:3001/metrics | jq '.errors.byType'
+curl http://localhost:5710/metrics | jq '.errors.byType'
 
 # Check authentication failures
 docker logs --tail=1000 scheduleright-api | grep UNAUTHORIZED
@@ -832,7 +832,7 @@ pnpm --filter @scheduleright/server run dev
 
 # 4. Access dashboards
 # Prometheus: http://localhost:9090
-# Grafana: http://localhost:3000
+# Grafana: http://localhost:5711
 # Jaeger: http://localhost:16686
 # Kibana: http://localhost:5601
 ```

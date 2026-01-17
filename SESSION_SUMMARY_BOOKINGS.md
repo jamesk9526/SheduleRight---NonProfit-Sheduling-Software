@@ -289,7 +289,7 @@ $body = @{
   message = "Hello from Twilio!"
 } | ConvertTo-Json
 
-Invoke-WebRequest -Uri 'http://localhost:3001/api/v1/reminders/send' `
+Invoke-WebRequest -Uri 'http://localhost:5710/api/v1/reminders/send' `
   -Method POST `
   -Headers @{'Authorization'="Bearer $token"} `
   -Body $body

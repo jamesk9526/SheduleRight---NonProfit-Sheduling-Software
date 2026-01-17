@@ -3,6 +3,7 @@ import { authMiddleware, requireRole } from '../middleware/auth.js'
 import type { createPropertyService } from '../services/property.service.js'
 import { PropertyTypeSchema, PropertyValueSchema } from '../services/property.service.js'
 import { z } from 'zod'
+import { logger } from '../logger.js'
 
 const BulkValuesSchema = z.object({
   values: z.array(PropertyValueSchema).min(1),
@@ -15,6 +16,9 @@ export async function registerPropertyRoutes(
   fastify.get('/api/v1/properties', { preHandler: [authMiddleware, requireRole('ADMIN', 'STAFF')] }, async (request, reply) => {
     try {
       const orgId = request.user?.orgId
+      const roles = request.user?.roles || []
+      const isAdmin = roles.includes('ADMIN')
+
       if (!orgId) {
         return reply.status(400).send({
           error: 'Missing organization context',
@@ -25,7 +29,10 @@ export async function registerPropertyRoutes(
       }
 
       const types = await propertyService.listPropertyTypes(orgId)
-      return reply.status(200).send({ data: types, total: types.length })
+      const allowedVisibilities = isAdmin ? ['public', 'staff', 'admin'] : ['public', 'staff']
+      const filteredTypes = types.filter((type) => allowedVisibilities.includes(type.visibility || 'staff'))
+
+      return reply.status(200).send({ data: filteredTypes, total: filteredTypes.length })
     } catch (error) {
       console.error('List property types error:', error)
       return reply.status(500).send({
@@ -60,6 +67,13 @@ export async function registerPropertyRoutes(
       }
 
       const type = await propertyService.createPropertyType(orgId, parsed.data)
+      logger.info({
+        event: 'property_type_created',
+        orgId,
+        propertyId: type.propertyId,
+        propertyTypeId: type._id,
+        userId: request.user?.userId,
+      }, 'Property type created')
       return reply.status(201).send(type)
     } catch (error) {
       console.error('Create property type error:', error)
@@ -97,6 +111,13 @@ export async function registerPropertyRoutes(
       }
 
       const updated = await propertyService.updatePropertyType(orgId, propertyTypeId, parsed.data)
+      logger.info({
+        event: 'property_type_updated',
+        orgId,
+        propertyId: updated.propertyId,
+        propertyTypeId,
+        userId: request.user?.userId,
+      }, 'Property type updated')
       return reply.status(200).send(updated)
     } catch (error: any) {
       const status = error?.statusCode === 404 ? 404 : 500
@@ -124,6 +145,13 @@ export async function registerPropertyRoutes(
       }
 
       const archived = await propertyService.archivePropertyType(orgId, propertyTypeId)
+      logger.info({
+        event: 'property_type_archived',
+        orgId,
+        propertyId: archived.propertyId,
+        propertyTypeId,
+        userId: request.user?.userId,
+      }, 'Property type archived')
       return reply.status(200).send(archived)
     } catch (error: any) {
       const status = error?.statusCode === 404 ? 404 : 500
@@ -139,6 +167,8 @@ export async function registerPropertyRoutes(
   fastify.get('/api/v1/entities/:entityType/:entityId/properties', { preHandler: [authMiddleware, requireRole('ADMIN', 'STAFF')] }, async (request, reply) => {
     try {
       const orgId = request.user?.orgId
+      const roles = request.user?.roles || []
+      const isAdmin = roles.includes('ADMIN')
       const { entityType, entityId } = request.params as { entityType: string; entityId: string }
 
       if (!orgId) {
@@ -150,8 +180,21 @@ export async function registerPropertyRoutes(
         })
       }
 
-      const values = await propertyService.listPropertyValues(orgId, entityType, entityId)
-      return reply.status(200).send({ data: values, total: values.length })
+      const [values, types] = await Promise.all([
+        propertyService.listPropertyValues(orgId, entityType, entityId),
+        propertyService.listPropertyTypes(orgId),
+      ])
+
+      const allowedVisibilities = isAdmin ? ['public', 'staff', 'admin'] : ['public', 'staff']
+      const allowedPropertyIds = new Set(
+        types
+          .filter((type) => allowedVisibilities.includes(type.visibility || 'staff'))
+          .map((type) => type.propertyId)
+      )
+
+      const filteredValues = values.filter((value) => allowedPropertyIds.has(value.propertyId))
+
+      return reply.status(200).send({ data: filteredValues, total: filteredValues.length })
     } catch (error) {
       console.error('List property values error:', error)
       return reply.status(500).send({
@@ -234,6 +277,14 @@ export async function registerPropertyRoutes(
         parsed.data.values,
         request.user?.userId
       )
+      logger.info({
+        event: 'property_values_upserted',
+        orgId,
+        entityType,
+        entityId,
+        propertyIds: parsed.data.values.map((v) => v.propertyId),
+        userId: request.user?.userId,
+      }, 'Property values upserted')
       return reply.status(200).send({ data: values, total: values.length })
     } catch (error) {
       console.error('Upsert property values error:', error)
@@ -269,6 +320,15 @@ export async function registerPropertyRoutes(
           timestamp: new Date().toISOString(),
         })
       }
+
+      logger.info({
+        event: 'property_value_archived',
+        orgId,
+        entityType,
+        entityId,
+        propertyId,
+        userId: request.user?.userId,
+      }, 'Property value archived')
 
       return reply.status(200).send(archived)
     } catch (error) {

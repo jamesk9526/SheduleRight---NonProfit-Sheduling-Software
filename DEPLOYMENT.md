@@ -72,7 +72,7 @@ sudo chown $USER:$USER /opt/scheduleright
 
 # Clone repository
 cd /opt/scheduleright
-git clone https://github.com/jamesk9526/SheduleRight---NonProfit-Sheduling-Software.git .
+git clone https://github.com/jamesk9526/scheduleright---NonProfit-Sheduling-Software.git .
 
 # Install dependencies
 pnpm install
@@ -98,17 +98,17 @@ nano .env
 
 ```env
 NODE_ENV=production
-SERVER_PORT=3001
+SERVER_PORT=5710
 SERVER_URL=https://your-domain.com
 API_VERSION=v1
 
 # Database
-COUCHDB_URL=http://localhost:5984
+COUCHDB_URL=http://localhost:5713
 COUCHDB_USER=admin
 COUCHDB_PASSWORD=<your-secure-password>
 
 # Redis
-REDIS_URL=redis://localhost:6379
+REDIS_URL=redis://localhost:5714
 
 # Authentication - GENERATE STRONG SECRET!
 # Generate with: openssl rand -base64 32
@@ -128,7 +128,7 @@ OTEL_ENABLED=false
 
 ```bash
 # Create CouchDB database
-curl -X PUT http://admin:password@localhost:5984/scheduleright
+curl -X PUT http://admin:password@localhost:5713/scheduleright
 
 # Create indexes
 cd /opt/scheduleright/apps/server
@@ -230,7 +230,7 @@ server {
 
     # API routes
     location /api/ {
-        proxy_pass http://localhost:3001;
+        proxy_pass http://localhost:5710;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -248,14 +248,14 @@ server {
 
     # Health checks (no SSL redirect)
     location ~ ^/(health|readiness|metrics|status)$ {
-        proxy_pass http://localhost:3001;
+        proxy_pass http://localhost:5710;
         proxy_set_header Host $host;
         access_log off;
     }
 
     # Web application
     location / {
-        proxy_pass http://localhost:3000;
+        proxy_pass http://localhost:5711;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -265,7 +265,7 @@ server {
 
     # Static files cache
     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
-        proxy_pass http://localhost:3000;
+        proxy_pass http://localhost:5711;
         expires 1y;
         add_header Cache-Control "public, immutable";
     }
@@ -354,7 +354,7 @@ pm2 reload ecosystem.config.js --update-env
 # Health check
 echo "🏥 Checking health..."
 sleep 5
-curl -f http://localhost:3001/health || {
+curl -f http://localhost:5710/health || {
     echo "❌ Health check failed!"
     pm2 logs --err --lines 50
     exit 1
@@ -494,5 +494,5 @@ See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) for common issues and solutions.
 ## Support
 
 For issues or questions:
-- GitHub Issues: https://github.com/jamesk9526/SheduleRight---NonProfit-Sheduling-Software/issues
-- Documentation: https://github.com/jamesk9526/SheduleRight---NonProfit-Sheduling-Software
+- GitHub Issues: https://github.com/jamesk9526/scheduleright---NonProfit-Sheduling-Software/issues
+- Documentation: https://github.com/jamesk9526/scheduleright---NonProfit-Sheduling-Software

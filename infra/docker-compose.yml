@@ -8,11 +8,11 @@ services:
       COUCHDB_USER: admin
       COUCHDB_PASSWORD: changeme
     ports:
-      - '5984:5984'
+      - '5713:5713'
     volumes:
       - couchdb-data:/opt/couchdb/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5984/_up"]
+      test: ["CMD", "curl", "-f", "http://localhost:5713/_up"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -21,7 +21,7 @@ services:
     image: redis:7-alpine
     container_name: scheduleright-redis
     ports:
-      - '6379:6379'
+      - '5714:5714'
     volumes:
       - redis-data:/data
     healthcheck:

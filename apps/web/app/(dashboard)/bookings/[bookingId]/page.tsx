@@ -1,9 +1,11 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { useEffect, useMemo, useState } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useApi } from '@/lib/hooks/useApi'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
+import { useAuth } from '@/lib/hooks/useAuth'
 
 interface Booking {
   id: string
@@ -19,10 +21,38 @@ interface Booking {
   updatedAt: string
 }
 
+interface PropertyType {
+  _id: string
+  propertyId: string
+  label: string
+  description?: string
+  dataType: string
+  required?: boolean
+  defaultValue?: any
+  validation?: {
+    enumOptions?: string[]
+  }
+  visibility?: 'public' | 'staff' | 'admin'
+  appliesTo: string[]
+}
+
+interface PropertyValue {
+  _id: string
+  propertyId: string
+  value: any
+}
+
 export default function BookingDetailsPage() {
   const params = useParams()
   const bookingId = params.bookingId as string
   const api = useApi()
+  const { user } = useAuth()
+  const queryClient = useQueryClient()
+  const isStaff = (user?.roles || []).some((role) => role === 'ADMIN' || role === 'STAFF')
+  const isAdmin = (user?.roles || []).includes('ADMIN')
+  const [customValues, setCustomValues] = useState<Record<string, any>>({})
+  const [savingCustom, setSavingCustom] = useState(false)
+  const [customError, setCustomError] = useState<string | null>(null)
 
   const { data: booking, isLoading } = useQuery({
     queryKey: ['booking', bookingId],
@@ -32,6 +62,58 @@ export default function BookingDetailsPage() {
     },
     enabled: !!bookingId,
   })
+
+  const { data: propertyTypesData } = useQuery({
+    queryKey: ['property-types'],
+    queryFn: async () => await api.get('/api/v1/properties'),
+    enabled: isStaff,
+  })
+
+  const { data: propertyValuesData } = useQuery({
+    queryKey: ['appointment-properties', bookingId],
+    queryFn: async () => await api.get(`/api/v1/entities/appointment/${encodeURIComponent(bookingId)}/properties`),
+    enabled: isStaff && !!bookingId,
+  })
+
+  const propertyTypes: PropertyType[] = propertyTypesData?.data || []
+  const appointmentPropertyTypes = useMemo(
+    () => propertyTypes.filter((type) => type.appliesTo.includes('appointment')),
+    [propertyTypes]
+  )
+
+  useEffect(() => {
+    const values: PropertyValue[] = propertyValuesData?.data || []
+    const initial: Record<string, any> = {}
+    appointmentPropertyTypes.forEach((type) => {
+      const match = values.find((value) => value.propertyId === type.propertyId)
+      if (match) {
+        initial[type.propertyId] = match.value
+      } else if (type.defaultValue !== undefined) {
+        initial[type.propertyId] = type.defaultValue
+      }
+    })
+    setCustomValues(initial)
+  }, [propertyValuesData, appointmentPropertyTypes])
+
+  const handleSaveCustomFields = async () => {
+    setSavingCustom(true)
+    setCustomError(null)
+    try {
+      const values = appointmentPropertyTypes.map((type) => ({
+        propertyId: type.propertyId,
+        value: customValues[type.propertyId] ?? null,
+      }))
+      await api.call(`/api/v1/entities/appointment/${encodeURIComponent(bookingId)}/properties`, {
+        method: 'PUT',
+        body: { values },
+      })
+      queryClient.invalidateQueries({ queryKey: ['appointment-properties', bookingId] })
+    } catch (err: any) {
+      setCustomError(err?.message || 'Failed to save custom fields.')
+    } finally {
+      setSavingCustom(false)
+    }
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -134,6 +216,127 @@ export default function BookingDetailsPage() {
             <p className="text-gray-900 font-semibold">{booking.siteId}</p>
           </div>
         </div>
+      </div>
+
+      {/* Appointment Custom Fields */}
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">Custom Fields</h2>
+          <button
+            type="button"
+            onClick={handleSaveCustomFields}
+            disabled={savingCustom}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-60"
+          >
+            {savingCustom ? 'Saving...' : 'Save Fields'}
+          </button>
+        </div>
+        {customError && (
+          <div className="mb-3 rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {customError}
+          </div>
+        )}
+        {appointmentPropertyTypes.length === 0 ? (
+          <p className="text-sm text-gray-600">No custom fields configured for appointments yet.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {appointmentPropertyTypes.map((type) => {
+              const value = customValues[type.propertyId] ?? ''
+              const readOnly = type.visibility === 'admin' && !isAdmin
+              if (type.dataType === 'boolean') {
+                return (
+                  <div key={type.propertyId} className="flex items-center gap-2 text-sm text-gray-700">
+                    <input
+                      id={`appointment-field-${type.propertyId}`}
+                      type="checkbox"
+                      checked={Boolean(value)}
+                      onChange={(e) => setCustomValues((prev) => ({ ...prev, [type.propertyId]: e.target.checked }))}
+                      disabled={readOnly}
+                    />
+                    <label htmlFor={`appointment-field-${type.propertyId}`} className="text-sm text-gray-700">
+                      {type.label}
+                      {readOnly && <span className="ml-2 text-xs text-gray-400">(Admin only)</span>}
+                    </label>
+                  </div>
+                )
+              }
+
+              if (type.dataType === 'enum') {
+                return (
+                  <div key={type.propertyId}>
+                    <label htmlFor={`appointment-field-${type.propertyId}`} className="block text-sm font-medium text-gray-700 mb-1">{type.label}</label>
+                    <select
+                      id={`appointment-field-${type.propertyId}`}
+                      value={value}
+                      onChange={(e) => setCustomValues((prev) => ({ ...prev, [type.propertyId]: e.target.value }))}
+                      className="w-full border border-gray-300 rounded-md px-3 py-2"
+                      disabled={readOnly}
+                    >
+                      <option value="">Select...</option>
+                      {(type.validation?.enumOptions || []).map((option) => (
+                        <option key={option} value={option}>{option}</option>
+                      ))}
+                    </select>
+                  </div>
+                )
+              }
+
+              if (type.dataType === 'multiEnum') {
+                const selected: string[] = Array.isArray(value) ? value : []
+                return (
+                  <div key={type.propertyId}>
+                    <label htmlFor={`appointment-field-${type.propertyId}`} className="block text-sm font-medium text-gray-700 mb-1">{type.label}</label>
+                    <select
+                      id={`appointment-field-${type.propertyId}`}
+                      multiple
+                      value={selected}
+                      onChange={(e) => {
+                        const selections = Array.from(e.target.selectedOptions).map((option) => option.value)
+                        setCustomValues((prev) => ({ ...prev, [type.propertyId]: selections }))
+                      }}
+                      className="w-full border border-gray-300 rounded-md px-3 py-2"
+                      disabled={readOnly}
+                    >
+                      {(type.validation?.enumOptions || []).map((option) => (
+                        <option key={option} value={option}>{option}</option>
+                      ))}
+                    </select>
+                  </div>
+                )
+              }
+
+              if (type.dataType === 'text') {
+                return (
+                  <div key={type.propertyId}>
+                    <label htmlFor={`appointment-field-${type.propertyId}`} className="block text-sm font-medium text-gray-700 mb-1">{type.label}</label>
+                    <textarea
+                      id={`appointment-field-${type.propertyId}`}
+                      value={value}
+                      onChange={(e) => setCustomValues((prev) => ({ ...prev, [type.propertyId]: e.target.value }))}
+                      className="w-full border border-gray-300 rounded-md px-3 py-2"
+                      rows={3}
+                      disabled={readOnly}
+                    />
+                  </div>
+                )
+              }
+
+              return (
+                <div key={type.propertyId}>
+                  <label htmlFor={`appointment-field-${type.propertyId}`} className="block text-sm font-medium text-gray-700 mb-1">{type.label}</label>
+                  <input
+                    id={`appointment-field-${type.propertyId}`}
+                    type={type.dataType === 'date' ? 'date' : type.dataType === 'number' ? 'number' : 'text'}
+                    value={value}
+                    onChange={(e) => setCustomValues((prev) => ({ ...prev, [type.propertyId]: e.target.value }))}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2"
+                    disabled={readOnly}
+                  />
+                </div>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       {/* Notes */}

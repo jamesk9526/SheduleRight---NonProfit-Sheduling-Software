@@ -129,7 +129,7 @@ Completed major milestone: **Switched to MySQL as default database, finalized ad
 - [x] Bootstrap blocks if already initialized
 - [x] Status endpoint displays correct DB provider
 - [x] Next.js dev build succeeds without warnings
-- [x] Web app loads on http://localhost:3000
+- [x] Web app loads on http://localhost:5711
 - [x] Server health endpoints responsive
 - [ ] E2E test bootstrap → login → dashboard flow
 - [ ] RBAC enforcement on protected routes

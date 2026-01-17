@@ -87,7 +87,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Navigation Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {/* Profile Card */}
         <Link
           href="/profile"
@@ -102,6 +102,119 @@ export default function DashboardPage() {
             View Profile →
           </div>
         </Link>
+
+        {/* Notification Preferences Card */}
+        <Link
+          href="/notifications"
+          className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition cursor-pointer border border-neutral-200"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-semibold text-neutral-900">Notifications</h3>
+            <span className="text-2xl">🔔</span>
+          </div>
+          <p className="text-neutral-600">Control how and when you receive notifications</p>
+          <div className="mt-4 text-primary-600 font-medium flex items-center">
+            Manage Preferences →
+          </div>
+        </Link>
+
+        {/* Bookings / Scheduling Card */}
+        <Link
+          href="/bookings"
+          className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition cursor-pointer border border-neutral-200"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-semibold text-neutral-900">Bookings</h3>
+            <span className="text-2xl">📅</span>
+          </div>
+          <p className="text-neutral-600">Manage appointments and client scheduling</p>
+          <div className="mt-4 text-primary-600 font-medium flex items-center">
+            View Bookings →
+          </div>
+        </Link>
+
+        {/* Clients Card (Staff/Admin) */}
+        {(isAdmin || user.roles.includes('STAFF')) && (
+          <Link
+            href="/clients"
+            className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition cursor-pointer border border-neutral-200"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-semibold text-neutral-900">Clients</h3>
+              <span className="text-2xl">👥</span>
+            </div>
+            <p className="text-neutral-600">View and manage client information</p>
+            <div className="mt-4 text-primary-600 font-medium flex items-center">
+              View Clients →
+            </div>
+          </Link>
+        )}
+
+        {/* Volunteers Card */}
+        <Link
+          href="/volunteers"
+          className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition cursor-pointer border border-neutral-200"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-semibold text-neutral-900">Volunteers</h3>
+            <span className="text-2xl">🙋</span>
+          </div>
+          <p className="text-neutral-600">Manage volunteers and shift scheduling</p>
+          <div className="mt-4 text-primary-600 font-medium flex items-center">
+            View Volunteers →
+          </div>
+        </Link>
+
+        {/* SMS Reminders Card (Staff/Admin) */}
+        {(isAdmin || user.roles.includes('STAFF')) && (
+          <Link
+            href="/reminders"
+            className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition cursor-pointer border border-neutral-200"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-semibold text-neutral-900">SMS Reminders</h3>
+              <span className="text-2xl">📲</span>
+            </div>
+            <p className="text-neutral-600">Configure automated SMS reminders</p>
+            <div className="mt-4 text-primary-600 font-medium flex items-center">
+              Configure →
+            </div>
+          </Link>
+        )}
+
+        {/* Field Library Card (Admin) */}
+        {isAdmin && (
+          <Link
+            href="/properties"
+            className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition cursor-pointer border border-neutral-200"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-semibold text-neutral-900">Field Library</h3>
+              <span className="text-2xl">🏷️</span>
+            </div>
+            <p className="text-neutral-600">Manage custom properties for all entities</p>
+            <div className="mt-4 text-primary-600 font-medium flex items-center">
+              Manage Fields →
+            </div>
+          </Link>
+        )}
+
+        {/* Client Custom Fields Card (Admin) */}
+        {isAdmin && (
+          <Link
+            href="/admin/client-fields"
+            className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition cursor-pointer border border-neutral-200"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-semibold text-neutral-900">Client Fields</h3>
+              <span className="text-2xl">📋</span>
+            </div>
+            <p className="text-neutral-600">Define custom fields for client profiles</p>
+            <div className="mt-4 text-primary-600 font-medium flex items-center">
+              Manage Fields →
+            </div>
+          </Link>
+        )}
 
         {/* Organizations Card (Admin Only) */}
         {isAdmin && (
@@ -134,6 +247,23 @@ export default function DashboardPage() {
             View Organization →
           </div>
         </Link>
+
+        {/* Availability Card (Staff/Admin) */}
+        {(isAdmin || user.roles.includes('STAFF')) && (
+          <Link
+            href="/availability"
+            className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition cursor-pointer border border-neutral-200"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-semibold text-neutral-900">Availability</h3>
+              <span className="text-2xl">🕐</span>
+            </div>
+            <p className="text-neutral-600">Manage time slots and scheduling</p>
+            <div className="mt-4 text-primary-600 font-medium flex items-center">
+              Manage Availability →
+            </div>
+          </Link>
+        )}
       </div>
 
       {/* Quick Stats */}

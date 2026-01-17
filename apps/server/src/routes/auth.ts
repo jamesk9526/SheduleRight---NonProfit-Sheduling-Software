@@ -210,4 +210,31 @@ export async function registerAuthRoutes(
       })
     }
   )
+
+  fastify.get(
+    '/api/v1/auth/me',
+    { preHandler: authMiddleware },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const token = extractToken(request)
+      const payload = request.user
+
+      return reply.status(200).send({
+        user: {
+          id: payload?.userId,
+          email: payload?.email,
+          orgId: payload?.orgId,
+          roles: payload?.roles,
+        },
+        token: {
+          present: !!token,
+          issuer: payload?.iss,
+          subject: payload?.sub,
+          issuedAt: payload?.iat,
+          expiresAt: payload?.exp,
+          expiresInSeconds: payload?.exp ? payload.exp - Math.floor(Date.now() / 1000) : undefined,
+        },
+        timestamp: new Date().toISOString(),
+      })
+    }
+  )
 }

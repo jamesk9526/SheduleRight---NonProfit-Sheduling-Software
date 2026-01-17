@@ -12,7 +12,7 @@ pnpm install
 pnpm dev
 
 # Open browser
-http://localhost:3000
+http://localhost:5711
 ```
 
 You'll see the login page! (Won't be able to log in without a database yet)
@@ -50,10 +50,10 @@ pnpm dev
 
 # Wait for all servers to start
 # You should see:
-# ✓ web ready in 2.5s (port 3000)
-# ✓ admin ready in 2.5s (port 3002)
-# ✓ embed ready in 2.5s (port 3003)
-# ✓ server ready (port 3001)
+# ✓ web ready in 2.5s (port 5711)
+# ✓ admin ready in 2.5s (port 5712)
+# ✓ embed ready in 2.5s (port 5712)
+# ✓ server ready (port 5710)
 ```
 
 ### Step 3: Seed Test Data
@@ -78,7 +78,7 @@ This creates:
 
 ### Step 4: Test Login
 
-Visit **http://localhost:3000** and log in with:
+Visit **http://localhost:5711** and log in with:
 ```
 Email: admin@example.com
 Password: admin123
@@ -166,7 +166,7 @@ pnpm --filter=@scheduleright/server type-check
 pnpm --filter=@scheduleright/server seed
 
 # View CouchDB admin console
-open http://localhost:5984/_utils
+open http://localhost:5713/_utils
 ```
 
 ### Docker
@@ -193,7 +193,7 @@ docker-compose down -v
 
 **Solution**: Make sure:
 1. Dev servers are running: `pnpm dev`
-2. Server is on port 3001
+2. Server is on port 5710
 3. CouchDB is running: `docker-compose ps`
 4. Try the "Test API Connection" button on login page
 
@@ -213,11 +213,11 @@ docker-compose restart couchdb
 ### Port already in use
 
 ```bash
-# Find what's using port 3001 (macOS/Linux)
-lsof -i :3001
+# Find what's using port 5710 (macOS/Linux)
+lsof -i :5710
 
-# Find what's using port 3001 (Windows)
-netstat -ano | findstr :3001
+# Find what's using port 5710 (Windows)
+netstat -ano | findstr :5710
 
 # Kill the process or change port in .env
 ```
@@ -341,7 +341,7 @@ apps/
 - [ ] `docker-compose up -d` running
 - [ ] `pnpm dev` started
 - [ ] `pnpm --filter=@scheduleright/server seed` completed
-- [ ] Can see login page at http://localhost:3000
+- [ ] Can see login page at http://localhost:5711
 - [ ] Can click "Test API Connection" and see success
 - [ ] Can log in with admin@example.com / admin123
 - [ ] Dashboard loads after login

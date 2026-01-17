@@ -95,6 +95,16 @@ export default function OrgSettingsPage() {
     updateMutation.mutate(formData)
   }
 
+  const handleFileUpload = (file: File | null) => {
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      const dataUrl = reader.result as string
+      setFormData((prev) => ({ ...prev, logoUrl: dataUrl }))
+    }
+    reader.readAsDataURL(file)
+  }
+
   const handleColorChange = (field: 'primaryColor' | 'secondaryColor', value: string) => {
     // Ensure hex format
     let color = value
@@ -158,22 +168,40 @@ export default function OrgSettingsPage() {
         {/* Form */}
         <div className="lg:col-span-2">
           <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-lg p-6 space-y-6">
-            {/* Logo URL */}
+            {/* Logo URL / Upload */}
             <div>
               <label htmlFor="logoUrl" className="block text-sm font-medium text-gray-700 mb-2">
-                Logo URL
+                Logo
               </label>
-              <input
-                type="url"
-                id="logoUrl"
-                value={formData.logoUrl}
-                onChange={(e) => setFormData({ ...formData, logoUrl: e.target.value })}
-                placeholder="https://example.com/logo.png"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-              />
-              <p className="mt-1 text-sm text-gray-500">
-                Enter a public URL to your organization's logo image
-              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <input
+                    type="url"
+                    id="logoUrl"
+                    value={formData.logoUrl}
+                    onChange={(e) => setFormData({ ...formData, logoUrl: e.target.value })}
+                    placeholder="https://example.com/logo.png"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  />
+                  <p className="text-xs text-gray-500">Paste a public URL or upload a file.</p>
+                  <label htmlFor="logo-file" className="text-xs font-medium text-gray-600">Upload logo file</label>
+                  <input
+                    id="logo-file"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleFileUpload(e.target.files?.[0] || null)}
+                    className="w-full text-sm text-gray-700"
+                  />
+                  <p className="text-xs text-gray-500">Uploads are stored as data URLs for quick preview.</p>
+                </div>
+                <div className="flex items-center justify-center border border-dashed border-gray-300 rounded-lg bg-gray-50 p-3">
+                  {formData.logoUrl ? (
+                    <img src={formData.logoUrl} alt="Logo preview" className="max-h-16 object-contain" />
+                  ) : (
+                    <span className="text-xs text-gray-500">Logo preview</span>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Primary Color */}

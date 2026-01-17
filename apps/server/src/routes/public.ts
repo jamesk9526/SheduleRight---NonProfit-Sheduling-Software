@@ -108,6 +108,45 @@ export async function registerPublicRoutes(
   )
 
   fastify.get<{
+    Params: { orgId: string }
+  }>(
+    '/api/public/orgs/:orgId/branding',
+    async (request, reply) => {
+      try {
+        const { orgId } = request.params
+        const org = await orgService.getOrgById(orgId)
+
+        if (!org) {
+          return reply.status(404).send({
+            error: 'Organization not found',
+            code: 'ORG_NOT_FOUND',
+            statusCode: 404,
+            timestamp: new Date().toISOString(),
+          })
+        }
+
+        const branding = org.branding || {}
+        return reply.status(200).send({
+          data: {
+            name: org.name,
+            logoUrl: branding.logoUrl,
+            primaryColor: branding.primaryColor,
+            secondaryColor: branding.secondaryColor,
+            customDomain: branding.customDomain,
+          },
+        })
+      } catch (error) {
+        return reply.status(500).send({
+          error: 'Failed to load branding',
+          code: 'BRANDING_PUBLIC_FAILED',
+          statusCode: 500,
+          timestamp: new Date().toISOString(),
+        })
+      }
+    }
+  )
+
+  fastify.get<{
     Params: { siteId: string }
     Querystring: { date?: string; startDate?: string; endDate?: string; token?: string }
   }>(

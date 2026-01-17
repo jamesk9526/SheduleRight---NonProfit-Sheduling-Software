@@ -200,8 +200,8 @@ TWILIO_PHONE_NUMBER=+1234567890
 TWILIO_VERIFY_SID=VExxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  # Optional for 2FA
 
 # App URLs
-NEXT_PUBLIC_EMBED_URL=http://localhost:3003
-NEXT_PUBLIC_API_URL=http://localhost:3001
+NEXT_PUBLIC_EMBED_URL=http://localhost:5712
+NEXT_PUBLIC_API_URL=http://localhost:5710
 ```
 
 ---

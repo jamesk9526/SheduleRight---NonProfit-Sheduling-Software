@@ -39,6 +39,23 @@ to API
 
 See [INSTRUCTIONS_NEXT_STEPS.md](INSTRUCTIONS_NEXT_STEPS.md) for full details.
 
+## UI Usability Pass (Iterative)
+- [x] UX polish for Field Library (filter clarity, empty states, help text)
+- [x] UX polish for Client custom fields (labels, spacing, save feedback)
+- [x] UX polish for Volunteer custom fields (selection clarity, save feedback)
+- [x] UX polish for Site custom fields (selection clarity, save feedback)
+- [x] UX polish for Organization custom fields (helper text, required/admin indicators, save feedback)
+- [x] UX polish for Programs/Resources custom fields (entity selector clarity, save feedback)
+- [ ] Auditing & permissions
+   - [x] Log changes to property definitions + values
+   - [x] Enforce visibility (public vs staff vs admin)
+- [ ] Login page branding polish (pull org branding, apply colors/logo, branded gradients)
+- [x] Help Desk / searchable guide
+   - [x] Searchable `/help` page with indexed URLs to docs/tools, API endpoints, embed guide, properties/branding/messaging
+   - [x] Context cards with deep links: API base, embed token docs, branding settings, login branding orgId parameter, properties routes
+   - [x] Surface quick actions in dashboard header and login footer; optional keyboard shortcut (`?` or `Ctrl+K`) opening a command palette backed by the same index
+   - [x] Add tests or e2e smoke for branding/help
+
 ## ✅ COMPLETED TODOS (Core Feature Set)
 
 ### ✅ Todo #1: Auth System with JWT

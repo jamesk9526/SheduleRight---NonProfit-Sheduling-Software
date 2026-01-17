@@ -1,6 +1,6 @@
-# Copilot Instructions for SheduleRight Development
+# Copilot Instructions for scheduleright Development
 
-This document guides developers on conventions, code organization, patterns, and best practices for working with AI assistants (Copilot) during implementation of SheduleRight. It ensures consistency, reduces rework, and accelerates feature delivery.
+This document guides developers on conventions, code organization, patterns, and best practices for working with AI assistants (Copilot) during implementation of scheduleright. It ensures consistency, reduces rework, and accelerates feature delivery.
 
 ## Table of Contents
 1. [Getting Started](#getting-started)
@@ -27,8 +27,8 @@ This document guides developers on conventions, code organization, patterns, and
 ### Initial Setup
 ```bash
 # Clone and install
-git clone https://github.com/james-knox/SheduleRight.git
-cd SheduleRight
+git clone https://github.com/james-knox/scheduleright.git
+cd scheduleright
 pnpm install
 
 # Start dev environment
@@ -407,7 +407,7 @@ describe('BookingForm', () => {
 import { test, expect } from '@playwright/test'
 
 test('book an appointment and receive SMS confirmation', async ({ page }) => {
-  await page.goto('http://localhost:3000/booking')
+  await page.goto('http://localhost:5711/booking')
   await page.selectOption('[data-service]', 'pregnancy-test')
   await page.click('[data-slot="09:00"]')
   await page.fill('[data-phone]', '+15551234567')

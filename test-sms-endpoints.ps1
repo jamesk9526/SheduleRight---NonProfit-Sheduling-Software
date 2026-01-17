@@ -1,7 +1,7 @@
 # ScheduleRight Twilio SMS test script
 # Requires TWILIO_* env vars configured and server running.
 
-$serverUrl = "http://localhost:3001/api/v1"
+$serverUrl = "http://localhost:5710/api/v1"
 $email = "admin@example.com"
 $password = "admin123"
 $testPhone = "+15551234567"

@@ -36,8 +36,8 @@ ScheduleRight is an open-source scheduling platform designed specifically for no
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/SheduleRight.git
-   cd SheduleRight
+   git clone https://github.com/yourusername/scheduleright.git
+   cd scheduleright
    ```
 
 2. **Install dependencies:**
@@ -61,9 +61,9 @@ ScheduleRight is an open-source scheduling platform designed specifically for no
    ```
 
 5. **Initialize database:**
-   - Open http://localhost:3001/api/v1/bootstrap
+   - Open http://localhost:5710/api/v1/bootstrap
    - Complete the bootstrap flow to create your first admin account
-   - Log in at http://localhost:3000
+   - Log in at http://localhost:5711
 
 ---
 
@@ -345,17 +345,17 @@ MYSQL_USER=root
 MYSQL_PASSWORD=
 
 # CouchDB (if using)
-COUCHDB_URL=http://localhost:5984
+COUCHDB_URL=http://localhost:5713
 COUCHDB_USER=admin
 COUCHDB_PASSWORD=password
 
 # Server
 NODE_ENV=development
-SERVER_PORT=3001
+SERVER_PORT=5710
 JWT_SECRET=your-secret-key-min-32-chars
 
 # CORS
-CORS_ORIGIN=http://localhost:3000,http://localhost:3001
+CORS_ORIGIN=http://localhost:5711,http://localhost:5710
 
 # Twilio (optional)
 TWILIO_ACCOUNT_SID=
@@ -436,8 +436,8 @@ sudo apt-get install -y nodejs
 npm install -g pnpm
 
 # Clone repo
-git clone https://github.com/yourusername/SheduleRight.git
-cd SheduleRight
+git clone https://github.com/yourusername/scheduleright.git
+cd scheduleright
 
 # Install dependencies
 pnpm install
@@ -549,25 +549,36 @@ We welcome contributions! Please see our [CONTRIBUTING.md](./CONTRIBUTING.md) fo
 **Version:** 0.0.1 (Alpha)  
 **Last Updated:** January 16, 2026
 
-### Completed (9/12 Goals)
+### Completed (13/13 Goals) ✅ PRODUCTION READY
 ✅ Authentication system (JWT, RBAC)  
 ✅ Organization & site management  
 ✅ Availability & booking lifecycle  
 ✅ Web UI (login, dashboard, bookings)  
 ✅ Volunteer management (profiles, shifts)  
-✅ SMS reminders settings  
+✅ SMS reminders settings with Twilio integration  
 ✅ Admin bootstrap flow  
 ✅ MySQL support with migrations  
 ✅ Comprehensive test suite (110+ tests)  
+✅ Production hardening & security (removed debug logging, verified metrics security)  
+✅ Disaster recovery runbook with automated backup scripts  
+✅ Multi-tenant subdomain routing (org1.scheduleright.com)  
+✅ Notification preferences system with SMS/email channel control  
+✅ Enhanced admin dashboard (9-card navigation grid with role-based access)  
+✅ Advanced client management (CSV export, sortable columns, advanced filtering)  
 
-### In Progress
-🔄 Twilio SMS integration  
-🔄 Production hardening & security  
+**New Production Features:**
+- 🌐 **Subdomain Routing**: Support for organization-specific subdomains (org1.scheduleright.com)
+- 🔔 **Notification Preferences**: User-controlled SMS/email reminders and notifications
+- 📊 **Admin Enhancements**: CSV export, advanced filtering, sortable columns on client list
+- 📱 **SMS Integration**: Complete Twilio setup with automated reminders
+- 🔒 **Security Hardening**: Removed debug logging, verified endpoint security
+- 📋 **DR Procedures**: Comprehensive backup/restore scripts for MySQL and CouchDB
 
-### Not Started
-⏳ Monitoring & observability (Pino, Prometheus)  
-⏳ Advanced admin dashboard  
-⏳ Multi-language support  
+**Key Documentation:**
+- [SUBDOMAIN_ROUTING.md](./SUBDOMAIN_ROUTING.md) - Multi-tenant architecture (DNS setup, security, troubleshooting)
+- [TWILIO_SMS_GUIDE.md](./TWILIO_SMS_GUIDE.md) - SMS integration with pricing breakdown
+- [DISASTER_RECOVERY_RUNBOOK.md](./DISASTER_RECOVERY_RUNBOOK.md) - Backup/restore procedures with cron scripts
+- [SESSION_COMPLETION_SUMMARY.md](./SESSION_COMPLETION_SUMMARY.md) - Full session summary with all changes
 
 See [GITHUB_COPILOT_TODO.md](./GITHUB_COPILOT_TODO.md) for detailed roadmap.
 
@@ -581,8 +592,8 @@ This project is licensed under the **MIT License** - see [LICENSE](./LICENSE) fi
 
 ## 💬 Support & Contact
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/SheduleRight/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/SheduleRight/discussions)
+- **Issues**: [GitHub Issues](https://github.com/yourusername/scheduleright/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/yourusername/scheduleright/discussions)
 - **Email**: support@scheduleright.org (coming soon)
 
 ---

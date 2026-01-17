@@ -8,7 +8,7 @@ Comprehensive booking API tests for ScheduleRight
 Tests all availability and booking endpoints with various scenarios
 
 .EXAMPLE
-./test-booking-api.ps1 -ApiUrl "http://localhost:3001" -Token "eyJ..."
+./test-booking-api.ps1 -ApiUrl "http://localhost:5710" -Token "eyJ..."
 #>
 
 param(

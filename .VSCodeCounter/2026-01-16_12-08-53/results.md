@@ -2,7 +2,7 @@
 
 Date : 2026-01-16 12:08:53
 
-Directory c:\\Users\\James\\Documents\\GitHub\\SheduleRight---NonProfit-Sheduling-Software
+Directory c:\\Users\\James\\Documents\\GitHub\\scheduleright---NonProfit-Sheduling-Software
 
 Total : 136 files,  17860 codes, 1083 comments, 3112 blanks, all 22055 lines
 

@@ -3,6 +3,7 @@ import { z } from 'zod'
 import type { OrgService } from '../services/org.service.js'
 import { CreateOrgSchema } from '../services/org.service.js'
 import { authMiddleware, requireRole, enforceTenancy } from '../middleware/auth.js'
+import { validateSubdomainUniqueness } from '../middleware/subdomain.js'
 
 /**
  * Organization Routes
@@ -14,7 +15,8 @@ import { authMiddleware, requireRole, enforceTenancy } from '../middleware/auth.
  */
 export async function registerOrgRoutes(
   fastify: FastifyInstance,
-  orgService: OrgService
+  orgService: OrgService,
+  dbAdapter?: any
 ) {
   /**
    * GET /api/v1/orgs
@@ -164,6 +166,59 @@ export async function registerOrgRoutes(
         return reply.status(status).send({
           error: message,
           code: status === 404 ? 'ORG_NOT_FOUND' : 'ORG_UPDATE_FAILED',
+          statusCode: status,
+          timestamp: new Date().toISOString(),
+        })
+      }
+    }
+  )
+
+  /**
+   * PUT /api/v1/orgs/:orgId/subdomain
+   * Set or update organization subdomain
+   * RBAC: ADMIN only
+   */
+  fastify.put(
+    '/api/v1/orgs/:orgId/subdomain',
+    {
+      preHandler: [authMiddleware, requireRole('ADMIN')],
+    },
+    async (request, reply) => {
+      try {
+        const { orgId } = request.params as { orgId: string }
+        const { subdomain } = request.body as { subdomain?: string }
+
+        // Validate subdomain if provided
+        if (subdomain && dbAdapter) {
+          const isValid = await validateSubdomainUniqueness(dbAdapter, subdomain, orgId)
+          if (!isValid) {
+            return reply.status(400).send({
+              error: 'Subdomain is invalid or already taken. Use alphanumeric and hyphens only.',
+              code: 'INVALID_SUBDOMAIN',
+              statusCode: 400,
+              timestamp: new Date().toISOString(),
+            })
+          }
+        }
+
+        // Update the organization with the subdomain
+        const org = await orgService.getOrg(orgId)
+        const updated = await orgService.updateOrg(orgId, {
+          ...org,
+          subdomain: subdomain || null,
+        })
+
+        return reply.status(200).send({
+          message: subdomain ? `Subdomain set to: ${subdomain}.scheduleright.com` : 'Subdomain removed',
+          data: updated,
+        })
+      } catch (error) {
+        console.error('Update subdomain error:', error)
+        const message = error instanceof Error ? error.message : 'Failed to update subdomain'
+        const status = message.includes('not found') ? 404 : 500
+        return reply.status(status).send({
+          error: message,
+          code: status === 404 ? 'ORG_NOT_FOUND' : 'SUBDOMAIN_UPDATE_FAILED',
           statusCode: status,
           timestamp: new Date().toISOString(),
         })

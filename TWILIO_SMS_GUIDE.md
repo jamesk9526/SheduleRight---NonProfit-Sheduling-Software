@@ -147,7 +147,7 @@ This guide explains how to set up and use the SMS reminder system powered by Twi
 
 ```bash
 # Get JWT token first (login)
-curl -X POST http://localhost:3001/api/v1/auth/login \
+curl -X POST http://localhost:5710/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "admin@example.com",
@@ -156,12 +156,12 @@ curl -X POST http://localhost:3001/api/v1/auth/login \
   -c cookies.txt
 
 # Check Twilio status
-curl -X GET http://localhost:3001/api/v1/reminders/twilio-status \
+curl -X GET http://localhost:5710/api/v1/reminders/twilio-status \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -b cookies.txt
 
 # Send test SMS
-curl -X POST http://localhost:3001/api/v1/reminders/send \
+curl -X POST http://localhost:5710/api/v1/reminders/send \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -b cookies.txt \
@@ -177,7 +177,7 @@ Create `test-sms-endpoints.ps1`:
 
 ```powershell
 # Configuration
-$serverUrl = "http://localhost:3001/api/v1"
+$serverUrl = "http://localhost:5710/api/v1"
 $email = "admin@example.com"
 $password = "admin123"
 
@@ -240,7 +240,7 @@ pwsh test-sms-endpoints.ps1               # Terminal 2: Run tests
 
 1. **Create Collection:** "SMS Reminders"
 2. **Add Environment Variables:**
-   - `base_url`: `http://localhost:3001/api/v1`
+   - `base_url`: `http://localhost:5710/api/v1`
    - `jwt_token`: (obtained from login)
 
 3. **Add Requests:**

@@ -119,6 +119,16 @@ export default function BookingsPage() {
               href="/clients"
               className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-amber-400 hover:bg-amber-50 transition"
             >
+          <Link
+            href="/resources"
+            className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-teal-400 hover:bg-teal-50 transition"
+          >
+            <div>
+              <div className="font-medium text-gray-900">Programs & Resources</div>
+              <div className="text-sm text-gray-600">Access programs and resources</div>
+            </div>
+            <div className="text-teal-600">→</div>
+          </Link>
               <div>
                 <div className="font-medium text-gray-900">Client Management</div>
                 <div className="text-sm text-gray-600">View client profiles and history</div>

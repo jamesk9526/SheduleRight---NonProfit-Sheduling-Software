@@ -1,10 +1,33 @@
 'use client'
 
 import { useRouter, useParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useCurrentUser, useOrganization, useSites, useCreateSite } from '@/lib/hooks/useData'
 import { useSite } from '@/lib/hooks/useSite'
 import type { Site } from '@/lib/hooks/useData'
+import { useApi } from '@/lib/hooks/useApi'
+
+interface PropertyType {
+  _id: string
+  propertyId: string
+  label: string
+  description?: string
+  dataType: string
+  required?: boolean
+  defaultValue?: any
+  validation?: {
+    enumOptions?: string[]
+  }
+  visibility?: 'public' | 'staff' | 'admin'
+  appliesTo: string[]
+}
+
+interface PropertyValue {
+  _id: string
+  propertyId: string
+  value: any
+}
 
 export default function OrgDetailPage() {
   const router = useRouter()
@@ -16,11 +39,18 @@ export default function OrgDetailPage() {
   const [newSiteAddress, setNewSiteAddress] = useState('')
   const [newSitePhone, setNewSitePhone] = useState('')
   const [mounted, setMounted] = useState(false)
+  const { call } = useApi()
+  const queryClient = useQueryClient()
+  const [customValues, setCustomValues] = useState<Record<string, any>>({})
+  const [savingCustom, setSavingCustom] = useState(false)
+  const [customError, setCustomError] = useState<string | null>(null)
+  const [customSaved, setCustomSaved] = useState(false)
 
   const { data: user } = useCurrentUser()
   const { data: org, isLoading: orgLoading, error: orgError } = useOrganization(orgId)
   const { data: sites, isLoading: sitesLoading, error: sitesError } = useSites(orgId)
   const { mutate: createSite, isPending: isCreatingSite } = useCreateSite(orgId)
+  const isStaff = (user?.roles || []).some((role) => role === 'ADMIN' || role === 'STAFF')
 
   useEffect(() => {
     setMounted(true)
@@ -51,6 +81,65 @@ export default function OrgDetailPage() {
         },
       }
     )
+  }
+
+  const isAdmin = (user?.roles || []).includes('ADMIN')
+  const orgDisplayName = org?.name || 'Untitled Organization'
+
+  const { data: propertyTypesData } = useQuery({
+    queryKey: ['property-types'],
+    queryFn: async () => await call('/api/v1/properties'),
+    enabled: isStaff,
+  })
+
+  const { data: propertyValuesData } = useQuery({
+    queryKey: ['org-properties', orgId],
+    queryFn: async () => await call(`/api/v1/entities/org/${encodeURIComponent(orgId)}/properties`),
+    enabled: isStaff && !!orgId,
+  })
+
+  const propertyTypes: PropertyType[] = propertyTypesData?.data || []
+  const orgPropertyTypes = useMemo(
+    () => propertyTypes.filter((type) => type.appliesTo.includes('org')),
+    [propertyTypes]
+  )
+
+  useEffect(() => {
+    const values: PropertyValue[] = propertyValuesData?.data || []
+    const initial: Record<string, any> = {}
+    orgPropertyTypes.forEach((type) => {
+      const match = values.find((value) => value.propertyId === type.propertyId)
+      if (match) {
+        initial[type.propertyId] = match.value
+      } else if (type.defaultValue !== undefined) {
+        initial[type.propertyId] = type.defaultValue
+      }
+    })
+    setCustomValues(initial)
+    setCustomSaved(false)
+  }, [propertyValuesData, orgPropertyTypes])
+
+  const handleSaveCustomFields = async () => {
+    setSavingCustom(true)
+    setCustomError(null)
+    setCustomSaved(false)
+    try {
+      const values = orgPropertyTypes.map((type) => ({
+        propertyId: type.propertyId,
+        value: customValues[type.propertyId] ?? null,
+      }))
+
+      await call(`/api/v1/entities/org/${encodeURIComponent(orgId)}/properties`, {
+        method: 'PUT',
+        body: { values },
+      })
+      queryClient.invalidateQueries({ queryKey: ['org-properties', orgId] })
+      setCustomSaved(true)
+    } catch (err: any) {
+      setCustomError(err?.message || 'Failed to save custom fields.')
+    } finally {
+      setSavingCustom(false)
+    }
   }
 
   const handleSelectSite = (siteId: string) => {
@@ -92,9 +181,6 @@ export default function OrgDetailPage() {
       </div>
     )
   }
-
-  const isAdmin = (user?.roles || []).includes('ADMIN')
-  const orgDisplayName = org.name || 'Untitled Organization'
 
   return (
     <div className="container mt-12">
@@ -168,6 +254,152 @@ export default function OrgDetailPage() {
                 </p>
               </div>
             </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md border border-neutral-200 p-6 mt-6">
+            <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between mb-4">
+              <div>
+                <h2 className="text-lg font-semibold text-neutral-900">Custom Fields</h2>
+                <p className="text-sm text-neutral-500">Organization-level properties visible across sites and bookings.</p>
+              </div>
+              <button
+                type="button"
+                onClick={handleSaveCustomFields}
+                disabled={savingCustom}
+                className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-60"
+              >
+                {savingCustom ? 'Saving...' : 'Save Fields'}
+              </button>
+            </div>
+            {customSaved && (
+              <div className="mb-3 rounded border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+                Custom fields saved successfully.
+              </div>
+            )}
+            {customError && (
+              <div className="mb-3 rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                {customError}
+              </div>
+            )}
+            {orgPropertyTypes.length === 0 ? (
+              <p className="text-sm text-neutral-600">No custom fields configured for organizations yet.</p>
+            ) : (
+              <div className="space-y-3">
+                {orgPropertyTypes.map((type) => {
+                  const value = customValues[type.propertyId] ?? ''
+                  const readOnly = type.visibility === 'admin' && !isAdmin
+                  const requiredLabel = type.required ? ' *' : ''
+                  if (type.dataType === 'boolean') {
+                    return (
+                      <div key={type.propertyId} className="flex items-center gap-2 text-sm text-neutral-700">
+                        <input
+                          id={`org-field-${type.propertyId}`}
+                          type="checkbox"
+                          checked={Boolean(value)}
+                          onChange={(e) => setCustomValues((prev) => ({ ...prev, [type.propertyId]: e.target.checked }))}
+                          disabled={readOnly}
+                        />
+                        <label htmlFor={`org-field-${type.propertyId}`} className="text-sm text-neutral-700">
+                          {type.label}{requiredLabel}
+                          {readOnly && <span className="ml-2 text-xs text-neutral-400">(Admin only)</span>}
+                        </label>
+                      </div>
+                    )
+                  }
+
+                  if (type.dataType === 'enum') {
+                    return (
+                      <div key={type.propertyId}>
+                        <label htmlFor={`org-field-${type.propertyId}`} className="block text-sm font-medium text-neutral-700 mb-1">
+                          {type.label}{requiredLabel}
+                          {readOnly && <span className="ml-2 text-xs text-neutral-400">(Admin only)</span>}
+                        </label>
+                        <select
+                          id={`org-field-${type.propertyId}`}
+                          value={value}
+                          onChange={(e) => setCustomValues((prev) => ({ ...prev, [type.propertyId]: e.target.value }))}
+                          className="w-full border border-neutral-300 rounded-md px-3 py-2"
+                          disabled={readOnly}
+                        >
+                          <option value="">Select...</option>
+                          {(type.validation?.enumOptions || []).map((option) => (
+                            <option key={option} value={option}>{option}</option>
+                          ))}
+                        </select>
+                        {type.description && <p className="mt-1 text-xs text-neutral-500">{type.description}</p>}
+                      </div>
+                    )
+                  }
+
+                  if (type.dataType === 'multiEnum') {
+                    const selected: string[] = Array.isArray(value) ? value : []
+                    return (
+                      <div key={type.propertyId}>
+                        <label htmlFor={`org-field-${type.propertyId}`} className="block text-sm font-medium text-neutral-700 mb-1">
+                          {type.label}{requiredLabel}
+                          {readOnly && <span className="ml-2 text-xs text-neutral-400">(Admin only)</span>}
+                        </label>
+                        <select
+                          id={`org-field-${type.propertyId}`}
+                          multiple
+                          value={selected}
+                          onChange={(e) => {
+                            const selections = Array.from(e.target.selectedOptions).map((option) => option.value)
+                            setCustomValues((prev) => ({ ...prev, [type.propertyId]: selections }))
+                          }}
+                          className="w-full border border-neutral-300 rounded-md px-3 py-2"
+                          disabled={readOnly}
+                        >
+                          {(type.validation?.enumOptions || []).map((option) => (
+                            <option key={option} value={option}>{option}</option>
+                          ))}
+                        </select>
+                        <p className="mt-1 text-xs text-neutral-500">Hold Ctrl (Windows) or ⌘ (Mac) to select multiple.</p>
+                        {type.description && <p className="mt-1 text-xs text-neutral-500">{type.description}</p>}
+                      </div>
+                    )
+                  }
+
+                  if (type.dataType === 'text') {
+                    return (
+                      <div key={type.propertyId}>
+                        <label htmlFor={`org-field-${type.propertyId}`} className="block text-sm font-medium text-neutral-700 mb-1">
+                          {type.label}{requiredLabel}
+                          {readOnly && <span className="ml-2 text-xs text-neutral-400">(Admin only)</span>}
+                        </label>
+                        <textarea
+                          id={`org-field-${type.propertyId}`}
+                          value={value}
+                          onChange={(e) => setCustomValues((prev) => ({ ...prev, [type.propertyId]: e.target.value }))}
+                          className="w-full border border-neutral-300 rounded-md px-3 py-2"
+                          rows={3}
+                          disabled={readOnly}
+                        />
+                        {type.description && <p className="mt-1 text-xs text-neutral-500">{type.description}</p>}
+                      </div>
+                    )
+                  }
+
+                  return (
+                    <div key={type.propertyId}>
+                      <label htmlFor={`org-field-${type.propertyId}`} className="block text-sm font-medium text-neutral-700 mb-1">
+                        {type.label}{requiredLabel}
+                        {readOnly && <span className="ml-2 text-xs text-neutral-400">(Admin only)</span>}
+                      </label>
+                      <input
+                        id={`org-field-${type.propertyId}`}
+                        type={type.dataType === 'date' ? 'date' : type.dataType === 'number' ? 'number' : 'text'}
+                        value={value}
+                        onChange={(e) => setCustomValues((prev) => ({ ...prev, [type.propertyId]: e.target.value }))}
+                        className="w-full border border-neutral-300 rounded-md px-3 py-2"
+                        disabled={readOnly}
+                      />
+                      {type.description && <p className="mt-1 text-xs text-neutral-500">{type.description}</p>}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </div>
         </div>
 

@@ -1,0 +1,44 @@
+"filename", "language", "Markdown", "TypeScript", "MS SQL", "TypeScript JSX", "PowerShell", "comment", "blank", "total"
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\README.md", "Markdown", 26, 0, 0, 0, 0, 0, 7, 33
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\TODO_FROM_SERVER_LOG.md", "Markdown", 74, 0, 0, 0, 0, 0, 4, 78
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\embed\app\page.tsx", "TypeScript JSX", 0, 0, 0, 244, 0, 0, 24, 268
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\config.ts", "TypeScript", 0, 7, 0, 0, 0, 0, 1, 8
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\db\adapter.ts", "TypeScript", 0, 15, 0, 0, 0, 0, 0, 15
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\db\indexes.ts", "TypeScript", 0, 15, 0, 0, 0, 1, 1, 17
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\db\mysql\migrations\005_property_fields.sql", "MS SQL", 0, 0, 6, 0, 0, 0, 2, 8
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\db\mysql\schema.sql", "MS SQL", 0, 0, 5, 0, 0, 0, 0, 5
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\index.ts", "TypeScript", 0, 15, 0, 0, 0, 5, 5, 25
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\routes\clients.ts", "TypeScript", 0, 128, 0, 0, 0, 0, 18, 146
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\routes\embed-configs.ts", "TypeScript", 0, 193, 0, 0, 0, 0, 20, 213
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\routes\embed-public.ts", "TypeScript", 0, 53, 0, 0, 0, 0, 5, 58
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\routes\properties.ts", "TypeScript", 0, 256, 0, 0, 0, 0, 29, 285
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\routes\public.ts", "TypeScript", 0, 215, 0, 0, 0, 0, 24, 239
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\services\audit.service.ts", "TypeScript", 0, 3, 0, 0, 0, 1, 1, 5
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\services\booking.service.ts", "TypeScript", 0, 31, 0, 0, 0, 6, 4, 41
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\services\embed-config.service.ts", "TypeScript", 0, 94, 0, 0, 0, 0, 15, 109
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\server\src\services\property.service.ts", "TypeScript", 0, 269, 0, 0, 0, 0, 29, 298
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\availability\page.tsx", "TypeScript JSX", 0, 0, 0, 23, 0, 0, 2, 25
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\bookings\[bookingId]\messages\page.tsx", "TypeScript JSX", 0, 0, 0, 97, 0, 0, 13, 110
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\bookings\[bookingId]\page.tsx", "TypeScript JSX", 0, 0, 0, 196, 0, 1, 12, 209
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\bookings\browse\page.tsx", "TypeScript JSX", 0, 0, 0, 2, 0, 0, 0, 2
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\bookings\manage\page.tsx", "TypeScript JSX", 0, 0, 0, -1, 0, 0, 0, -1
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\bookings\new\page.tsx", "TypeScript JSX", 0, 0, 0, 1, 0, 0, 0, 1
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\bookings\page.tsx", "TypeScript JSX", 0, 0, 0, 46, 0, 0, 3, 49
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\clients\[email]\page.tsx", "TypeScript JSX", 0, 0, 0, 358, 0, 0, 24, 382
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\clients\page.tsx", "TypeScript JSX", 0, 0, 0, 134, 0, 0, 12, 146
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\embed\page.tsx", "TypeScript JSX", 0, 0, 0, 525, 0, 0, 21, 546
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\layout.tsx", "TypeScript JSX", 0, 0, 0, 64, 0, 0, 7, 71
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\orgs\[orgId]\page.tsx", "TypeScript JSX", 0, 0, 0, 189, 0, 0, 13, 202
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\orgs\[orgId]\settings\page.tsx", "TypeScript JSX", 0, 0, 0, 8, 0, 0, 1, 9
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\orgs\[orgId]\sites\[siteId]\page.tsx", "TypeScript JSX", 0, 0, 0, 229, 0, 0, 13, 242
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\orgs\new\page.tsx", "TypeScript JSX", 0, 0, 0, 2, 0, 0, 0, 2
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\profile\page.tsx", "TypeScript JSX", 0, 0, 0, 3, 0, 0, 0, 3
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\properties\page.tsx", "TypeScript JSX", 0, 0, 0, 633, 0, 0, 26, 659
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\reminders\page.tsx", "TypeScript JSX", 0, 0, 0, 3, 0, 0, 0, 3
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\resources\page.tsx", "TypeScript JSX", 0, 0, 0, 253, 0, 0, 23, 276
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\volunteers\page.tsx", "TypeScript JSX", 0, 0, 0, 219, 0, 0, 13, 232
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\(dashboard)\volunteers\shifts\page.tsx", "TypeScript JSX", 0, 0, 0, 24, 0, 0, 0, 24
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\app\layout.tsx", "TypeScript JSX", 0, 0, 0, -1, 0, 0, 0, -1
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\apps\web\lib\hooks\useData.ts", "TypeScript", 0, 26, 0, 0, 0, 3, 2, 31
+"c:\Users\James\Documents\GitHub\scheduleright---NonProfit-Sheduling-Software\test-sms-endpoints.ps1", "PowerShell", 0, 0, 0, 0, 28, 2, 10, 40
+"Total", "-", 100, 1320, 11, 3251, 28, 19, 384, 5113

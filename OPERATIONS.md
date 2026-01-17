@@ -38,12 +38,12 @@ echo ""
 
 # 2. Health endpoint
 echo "2. Health Check:"
-curl -s http://localhost:3001/health | jq
+curl -s http://localhost:5710/health | jq
 echo ""
 
 # 3. Readiness check
 echo "3. Readiness Check:"
-curl -s http://localhost:3001/readiness | jq
+curl -s http://localhost:5710/readiness | jq
 echo ""
 
 # 4. Check disk space
@@ -63,7 +63,7 @@ echo ""
 
 # 7. Active users (from audit logs)
 echo "7. Active Users (last 24h):"
-curl -s http://admin:password@localhost:5984/scheduleright/_find \
+curl -s http://admin:password@localhost:5713/scheduleright/_find \
   -H "Content-Type: application/json" \
   -d '{
     "selector": {
@@ -79,7 +79,7 @@ echo ""
 
 # 8. Booking statistics (last 24h)
 echo "8. Bookings (last 24h):"
-curl -s http://admin:password@localhost:5984/scheduleright/_find \
+curl -s http://admin:password@localhost:5713/scheduleright/_find \
   -H "Content-Type: application/json" \
   -d '{
     "selector": {
@@ -93,7 +93,7 @@ echo ""
 
 # 9. Performance metrics
 echo "9. Performance (slowest endpoints):"
-curl -s http://localhost:3001/metrics | jq -r '.endpoints | to_entries | sort_by(.value.avgDuration) | reverse | .[0:5] | .[] | "\(.key): \(.value.avgDuration)ms avg"'
+curl -s http://localhost:5710/metrics | jq -r '.endpoints | to_entries | sort_by(.value.avgDuration) | reverse | .[0:5] | .[] | "\(.key): \(.value.avgDuration)ms avg"'
 echo ""
 
 # 10. Backup status
@@ -161,7 +161,7 @@ pnpm update
 **2. Review Access Logs:**
 ```bash
 # Check failed login attempts
-curl http://admin:password@localhost:5984/scheduleright/_find \
+curl http://admin:password@localhost:5713/scheduleright/_find \
   -H "Content-Type: application/json" \
   -d '{
     "selector": {
@@ -201,14 +201,14 @@ sudo certbot renew --dry-run
 **1. Performance Metrics:**
 ```bash
 # Get performance summary
-curl http://localhost:3001/metrics | jq '.summary'
+curl http://localhost:5710/metrics | jq '.summary'
 
 # Identify slow endpoints (>1000ms avg)
-curl http://localhost:3001/metrics | \
+curl http://localhost:5710/metrics | \
   jq -r '.endpoints | to_entries[] | select(.value.avgDuration > 1000) | "\(.key): \(.value.avgDuration)ms"'
 
 # Check p95/p99 latencies
-curl http://localhost:3001/metrics | \
+curl http://localhost:5710/metrics | \
   jq -r '.endpoints | to_entries[] | "\(.key): p95=\(.value.p95)ms, p99=\(.value.p99)ms"' | \
   sort -t'=' -k2 -n | tail -10
 ```
@@ -216,11 +216,11 @@ curl http://localhost:3001/metrics | \
 **2. Database Performance:**
 ```bash
 # Database size and document count
-curl http://admin:password@localhost:5984/scheduleright | \
+curl http://admin:password@localhost:5713/scheduleright | \
   jq '{doc_count, disk_size_mb: (.disk_size / 1024 / 1024 | round)}'
 
 # Compact database if needed
-curl -X POST http://admin:password@localhost:5984/scheduleright/_compact
+curl -X POST http://admin:password@localhost:5713/scheduleright/_compact
 
 # Check index usage
 cd /opt/scheduleright/apps/server
@@ -294,7 +294,7 @@ aws s3 ls s3://your-bucket/scheduleright/ --recursive | tail -10
 **1. Audit Log Review:**
 ```bash
 # User activity summary
-curl http://admin:password@localhost:5984/scheduleright/_find \
+curl http://admin:password@localhost:5713/scheduleright/_find \
   -H "Content-Type: application/json" \
   -d '{
     "selector": {
@@ -305,7 +305,7 @@ curl http://admin:password@localhost:5984/scheduleright/_find \
   }' | jq -r '.docs | group_by(.action) | map({action: .[0].action, count: length}) | sort_by(.count) | reverse'
 
 # High-risk actions (deletions, role changes)
-curl http://admin:password@localhost:5984/scheduleright/_find \
+curl http://admin:password@localhost:5713/scheduleright/_find \
   -H "Content-Type: application/json" \
   -d '{
     "selector": {
@@ -321,7 +321,7 @@ curl http://admin:password@localhost:5984/scheduleright/_find \
 ```bash
 # Monthly performance report
 echo "=== Monthly Performance Report ===" > /var/log/scheduleright/monthly-$(date +%Y%m).txt
-curl http://localhost:3001/metrics >> /var/log/scheduleright/monthly-$(date +%Y%m).txt
+curl http://localhost:5710/metrics >> /var/log/scheduleright/monthly-$(date +%Y%m).txt
 
 # Identify trends
 # Compare with previous month
@@ -331,13 +331,13 @@ curl http://localhost:3001/metrics >> /var/log/scheduleright/monthly-$(date +%Y%
 **3. Capacity Planning:**
 ```bash
 # Database growth rate
-DB_SIZE_NOW=$(curl -s http://admin:password@localhost:5984/scheduleright | jq '.disk_size')
+DB_SIZE_NOW=$(curl -s http://admin:password@localhost:5713/scheduleright | jq '.disk_size')
 # Compare with last month
 # Calculate monthly growth rate
 # Estimate when disk will be full
 
 # User growth
-USERS_NOW=$(curl -s http://admin:password@localhost:5984/scheduleright/_find \
+USERS_NOW=$(curl -s http://admin:password@localhost:5713/scheduleright/_find \
   -H "Content-Type: application/json" \
   -d '{"selector":{"type":"user"},"fields":["_id"],"limit":10000}' | jq '.docs | length')
 
@@ -348,7 +348,7 @@ echo "Database size: $(($DB_SIZE_NOW / 1024 / 1024)) MB"
 **4. User Access Audit:**
 ```bash
 # List all users and last login
-curl http://admin:password@localhost:5984/scheduleright/_find \
+curl http://admin:password@localhost:5713/scheduleright/_find \
   -H "Content-Type: application/json" \
   -d '{
     "selector": {"type": "user"},
@@ -418,7 +418,7 @@ curl http://admin:password@localhost:5984/scheduleright/_find \
 
 2. **Assess (within 10 min):**
    - [ ] Check service status: `pm2 status`
-   - [ ] Check health: `curl http://localhost:3001/health`
+   - [ ] Check health: `curl http://localhost:5710/health`
    - [ ] Review recent logs: `pm2 logs --err --lines 50`
    - [ ] Check recent changes (deployments, configs)
 
@@ -460,7 +460,7 @@ pm2 restart all
 pm2 logs scheduleright-server --lines 100
 
 # 4. Check database
-curl http://localhost:5984
+curl http://localhost:5713
 sudo systemctl status couchdb
 
 # 5. Check environment
@@ -474,33 +474,33 @@ cat .env | grep -v PASSWORD | grep -v SECRET
 **Performance Degradation:**
 ```bash
 # 1. Check current performance
-curl http://localhost:3001/metrics | jq '.summary'
+curl http://localhost:5710/metrics | jq '.summary'
 
 # 2. Identify slow endpoints
-curl http://localhost:3001/metrics | jq -r '.endpoints | to_entries[] | select(.value.avgDuration > 1000) | "\(.key): \(.value.avgDuration)ms"'
+curl http://localhost:5710/metrics | jq -r '.endpoints | to_entries[] | select(.value.avgDuration > 1000) | "\(.key): \(.value.avgDuration)ms"'
 
 # 3. Check system resources
 pm2 monit
 htop
 
 # 4. Check database
-curl http://admin:password@localhost:5984/scheduleright | jq
+curl http://admin:password@localhost:5713/scheduleright | jq
 
 # 5. Restart services
 pm2 restart all
 
 # 6. Monitor for improvement
-watch -n 5 'curl -s http://localhost:3001/metrics | jq .summary'
+watch -n 5 'curl -s http://localhost:5710/metrics | jq .summary'
 ```
 
 **Database Issues:**
 ```bash
 # 1. Check CouchDB status
 sudo systemctl status couchdb
-curl http://localhost:5984
+curl http://localhost:5713
 
 # 2. Check database connection from app
-curl http://localhost:3001/health
+curl http://localhost:5710/health
 
 # 3. Check CouchDB logs
 sudo tail -f /var/log/couchdb/couchdb.log
@@ -660,7 +660,7 @@ External Contacts:
 **Check service status:**
 ```bash
 pm2 status
-curl http://localhost:3001/health
+curl http://localhost:5710/health
 ```
 
 **View logs:**
@@ -678,14 +678,14 @@ pm2 restart scheduleright-server
 
 **Check performance:**
 ```bash
-curl http://localhost:3001/metrics | jq '.summary'
+curl http://localhost:5710/metrics | jq '.summary'
 pm2 monit
 ```
 
 **Database health:**
 ```bash
-curl http://localhost:5984
-curl http://admin:password@localhost:5984/scheduleright
+curl http://localhost:5713
+curl http://admin:password@localhost:5713/scheduleright
 ```
 
 **Deploy update:**

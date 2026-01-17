@@ -1,7 +1,7 @@
 {
   "name": "@scheduleright/server",
   "version": "0.0.1",
-  "description": "SheduleRight Node API Server",
+  "description": "scheduleright Node API Server",
   "private": true,
   "type": "module",
   "main": "src/index.ts",

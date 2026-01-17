@@ -7,6 +7,20 @@ Date: 2026-01-16
    - Frontend requests `GET /bookings/me` without `/api/v1`.
    - Align API client/base URL so `useMyBookings()` hits `/api/v1/bookings/me`.
 
+- [x] Org detail page runtime crash
+   - TypeError: Cannot read properties of undefined (reading 'name') in org detail route
+   - Observed while navigating dashboard orgs (stack points to page.tsx around org name)
+   - Fixed by adding optional chaining to org?.name
+
+- [x] Help desk / global search
+   - Create `/help` page with global search; pre-index docs URLs, API endpoints, embed guide, properties/branding/messaging pages
+   - Show context cards with deep links: API base, embed token docs, branding settings, login branding orgId parameter, properties routes
+   - Expose quick actions in dashboard header and login footer; consider keyboard shortcut (`?` or `Ctrl+K`) for a searchable command palette backed by same index
+   - Added help page, search index, header/login triggers, keyboard shortcuts (?/Ctrl+K), and smoke tests
+
+- [x] Enforce property visibility on reads
+   - Filter property types and values by `visibility` (public/staff/admin) for non-admin users
+
 - [x] Align dashboard bookings routes
    - 404s for `/dashboard/bookings/browse`, `/dashboard/bookings/new`, `/dashboard/bookings/my`.
    - Match Next.js routes with navigation links.
@@ -75,20 +89,33 @@ Date: 2026-01-16
    - [x] List properties + filters by entity type + visibility
    - [x] Create/edit property modal (data_type, validation, applies_to)
    - [x] Preview rendering per data_type
-   - [ ] Drag/drop ordering per entity type section
+   - [x] Drag/drop ordering per entity type section
 - [x] UI: Client profile integration (Phase 1)
    - [x] Render custom fields with correct controls
    - [x] Inline edit + save (bulk upsert)
    - [x] Show read-only fields by visibility
 - [ ] UI: Additional entities (Phase 2)
-   - [ ] Appointments
-   - [ ] Staff/Volunteers
-   - [ ] Sites/Locations
-   - [ ] Organizations
-   - [ ] Programs/Resources
+   - [x] Appointments
+   - [x] Staff/Volunteers
+   - [x] Sites/Locations
+   - [x] Organizations
+   - [x] Programs/Resources
+
+## UI Usability Pass (Iterative)
+- [x] UX polish for Field Library (filter clarity, empty states, help text)
+- [x] UX polish for Client custom fields (labels, spacing, save feedback)
+- [x] UX polish for Volunteer custom fields (selection clarity, save feedback)
+- [x] UX polish for Site custom fields (selection clarity, save feedback)
+- [x] UX polish for Organization custom fields (helper text, required/admin indicators, save feedback)
+- [x] UX polish for Programs/Resources custom fields (entity selector clarity, save feedback)
 - [ ] Auditing & permissions
-   - [ ] Log changes to property definitions + values
+   - [x] Log changes to property definitions + values
    - [ ] Enforce visibility (public vs staff vs admin)
+- [ ] Login page branding polish (pull org branding, apply colors/logo, branded gradients)
+- [ ] Help Desk / searchable guide
+   - [ ] Searchable help desk UI with indexed URLs to docs/tools
+   - [ ] Curated links for booking API, embed, properties, branding, messaging
+   - [ ] Surface in dashboard header and login page
 - [ ] Import/Export
    - [ ] Export property definitions + values (CSV/JSON)
    - [ ] Import definitions with conflict resolution

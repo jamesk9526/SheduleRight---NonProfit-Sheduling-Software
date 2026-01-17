@@ -20,7 +20,7 @@ export type ReminderSettings = z.infer<typeof ReminderSettingsSchema> & {
 
 const DEFAULT_TEMPLATE = 'Hello {{name}}, your appointment is scheduled for {{date}} at {{time}}.'
 
-export function createReminderService(dbAdapter: DbAdapter) {
+export function createReminderService(dbAdapter: DbAdapter, notificationService?: any) {
   return {
     async getSettings(orgId: string): Promise<ReminderSettings> {
       const result = await dbAdapter.find({
@@ -98,6 +98,19 @@ export function createReminderService(dbAdapter: DbAdapter) {
         if (!settings.enabled) {
           skipped += 1
           continue
+        }
+
+        // Check if client has enabled SMS reminders in their notification preferences
+        if (notificationService && booking.clientId) {
+          const shouldSend = await notificationService.shouldNotify(
+            booking.clientId,
+            booking.orgId,
+            'smsReminder'
+          )
+          if (!shouldSend) {
+            skipped += 1
+            continue
+          }
         }
 
         const bookingStart = new Date(booking.startTime).getTime()

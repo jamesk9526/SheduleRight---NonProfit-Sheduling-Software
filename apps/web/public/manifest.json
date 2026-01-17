@@ -1,6 +1,6 @@
 {
-  "name": "SheduleRight",
-  "short_name": "SheduleRight",
+  "name": "scheduleright",
+  "short_name": "scheduleright",
   "description": "Offline-first scheduling for non-profit pregnancy care centers",
   "start_url": "/",
   "scope": "/",
