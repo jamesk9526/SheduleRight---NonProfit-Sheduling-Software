@@ -1,5 +1,8 @@
 -- ScheduleRight MySQL Schema (initial)
 
+CREATE DATABASE IF NOT EXISTS scheduleright;
+USE scheduleright;
+
 CREATE TABLE IF NOT EXISTS organizations (
   id VARCHAR(64) PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
