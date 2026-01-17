@@ -44,8 +44,7 @@ CREATE TABLE IF NOT EXISTS shift_assignments (
   PRIMARY KEY (id),
   INDEX idx_assignments_shift (shift_id),
   INDEX idx_assignments_volunteer (volunteer_id),
+  INDEX idx_assignments_org (org_id),
   CONSTRAINT fk_assignments_shifts_shift_id FOREIGN KEY (shift_id) REFERENCES shifts(shift_id)
-    ON UPDATE CASCADE ON DELETE CASCADE,
-  CONSTRAINT fk_assignments_volunteers_volunteer_id FOREIGN KEY (volunteer_id) REFERENCES volunteers(volunteer_id)
     ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
