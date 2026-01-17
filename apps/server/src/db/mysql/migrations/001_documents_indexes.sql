@@ -2,16 +2,21 @@
 -- Note: Execute each CREATE INDEX separately (no multiple statements in single query)
 
 -- Index for type and organization queries
- CREATE INDEX idx_documents_type_org ON documents(type, org_id);
+DROP INDEX IF EXISTS idx_documents_type_org ON documents;
+CREATE INDEX idx_documents_type_org ON documents(type, org_id);
 
 -- Index for site-based queries
- CREATE INDEX idx_documents_site ON documents(site_id);
+DROP INDEX IF EXISTS idx_documents_site ON documents;
+CREATE INDEX idx_documents_site ON documents(site_id);
 
 -- Index for email lookups
- CREATE INDEX idx_documents_email ON documents(email);
+DROP INDEX IF EXISTS idx_documents_email ON documents;
+CREATE INDEX idx_documents_email ON documents(email);
 
 -- Index for status filtering
- CREATE INDEX idx_documents_status ON documents(status);
+DROP INDEX IF EXISTS idx_documents_status ON documents;
+CREATE INDEX idx_documents_status ON documents(status);
 
 -- Index for timestamp sorting
- CREATE INDEX idx_documents_timestamp ON documents(timestamp);
+DROP INDEX IF EXISTS idx_documents_timestamp ON documents;
+CREATE INDEX idx_documents_timestamp ON documents(timestamp);
