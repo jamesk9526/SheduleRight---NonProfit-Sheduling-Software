@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS organizations (
   branding JSON NULL,
   created_at DATETIME NOT NULL,
   updated_at DATETIME NOT NULL
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS users (
   id VARCHAR(64) PRIMARY KEY,
@@ -24,8 +24,10 @@ CREATE TABLE IF NOT EXISTS users (
   active TINYINT(1) NOT NULL DEFAULT 1,
   created_at DATETIME NOT NULL,
   updated_at DATETIME NOT NULL,
-  INDEX idx_users_org (org_id)
-);
+  INDEX idx_users_org (org_id),
+  CONSTRAINT fk_users_organizations_org_id FOREIGN KEY (org_id) REFERENCES organizations(id)
+    ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS sites (
   id VARCHAR(64) PRIMARY KEY,
@@ -35,8 +37,10 @@ CREATE TABLE IF NOT EXISTS sites (
   timezone VARCHAR(64) NOT NULL,
   created_at DATETIME NOT NULL,
   updated_at DATETIME NOT NULL,
-  INDEX idx_sites_org (org_id)
-);
+  INDEX idx_sites_org (org_id),
+  CONSTRAINT fk_sites_organizations_org_id FOREIGN KEY (org_id) REFERENCES organizations(id)
+    ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS availability (
   id VARCHAR(64) PRIMARY KEY,
@@ -46,8 +50,12 @@ CREATE TABLE IF NOT EXISTS availability (
   start_time DATETIME NOT NULL,
   end_time DATETIME NOT NULL,
   capacity INT NOT NULL DEFAULT 1,
-  created_at DATETIME NOT NULL,
-  updated_at DATETIME NOT NULL,
+  created_at DATETIME NOT NULL,,
+  CONSTRAINT fk_availability_organizations_org_id FOREIGN KEY (org_id) REFERENCES organizations(id)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_availability_sites_site_id FOREIGN KEY (site_id) REFERENCES sites(id)
+    ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 updated_at DATETIME NOT NULL,
   INDEX idx_availability_site (site_id, status, start_time)
 );
 
@@ -59,8 +67,12 @@ CREATE TABLE IF NOT EXISTS bookings (
   status VARCHAR(32) NOT NULL,
   client_name VARCHAR(255) NOT NULL,
   client_email VARCHAR(255) NOT NULL,
-  notes TEXT NULL,
-  created_at DATETIME NOT NULL,
+  notes TEXT NULL,,
+  CONSTRAINT fk_bookings_organizations_org_id FOREIGN KEY (org_id) REFERENCES organizations(id)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT fk_bookings_sites_site_id FOREIGN KEY (site_id) REFERENCES sites(id)
+    ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 created_at DATETIME NOT NULL,
   updated_at DATETIME NOT NULL,
   INDEX idx_bookings_site (site_id, status, created_at),
   INDEX idx_bookings_client (client_email, created_at)
@@ -76,7 +88,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
   details JSON NULL,
   ip_address VARCHAR(64) NULL,
   user_agent TEXT NULL,
-  success TINYINT(1) NOT NULL DEFAULT 1,
+  ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 success TINYINT(1) NOT NULL DEFAULT 1,
   error_message TEXT NULL,
   created_at DATETIME NOT NULL,
   INDEX idx_audit_org (org_id, action, created_at)
@@ -87,14 +99,14 @@ CREATE TABLE IF NOT EXISTS system_config (
   data JSON NOT NULL,
   created_at DATETIME NOT NULL,
   updated_at DATETIME NOT NULL
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS system_bootstrap (
   id VARCHAR(64) PRIMARY KEY,
   completed TINYINT(1) NOT NULL DEFAULT 0,
   created_at DATETIME NOT NULL,
   updated_at DATETIME NOT NULL
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Generic document store for CouchDB-like access
 CREATE TABLE IF NOT EXISTS documents (
@@ -123,4 +135,4 @@ CREATE TABLE IF NOT EXISTS documents (
   INDEX idx_docs_timestamp (type, timestamp),
   INDEX idx_docs_entity (type, entity_type, entity_id),
   INDEX idx_docs_property (type, property_id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
