@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
@@ -13,9 +14,9 @@ interface CheckResult {
   endpoint?: string
 }
 
-const API_BASE_URL = typeof window !== 'undefined'
-  ? `http://${window.location.hostname}:3001`
-  : 'http://localhost:3001'
+import { getApiBaseUrl } from '@/lib/apiBase'
+
+const API_BASE_URL = getApiBaseUrl()
 
 export default function ApiHealthPage() {
   const { user, isAuthenticated } = useAuth()

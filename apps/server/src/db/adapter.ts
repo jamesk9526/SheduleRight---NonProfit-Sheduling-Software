@@ -47,6 +47,7 @@ function extractIndexFields(doc: any) {
     id: doc.id || doc._id,
     type,
     org_id: doc.orgId || null,
+    subdomain: doc.subdomain || null,
     site_id: doc.siteId || null,
     email: doc.email || null,
     status: doc.status || null,
@@ -138,11 +139,12 @@ export function createMySqlAdapter(pool: MySqlPool): DbAdapter {
 
       await pool.query(
         `INSERT INTO documents
-          (id, type, data, org_id, site_id, email, status, slot_id, client_email, timestamp, entity_type, entity_id, property_id, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          (id, type, data, org_id, subdomain, site_id, email, status, slot_id, client_email, timestamp, entity_type, entity_id, property_id, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
           data = VALUES(data),
           org_id = VALUES(org_id),
+          subdomain = VALUES(subdomain),
           site_id = VALUES(site_id),
           email = VALUES(email),
           status = VALUES(status),
@@ -158,6 +160,7 @@ export function createMySqlAdapter(pool: MySqlPool): DbAdapter {
           indexFields.type,
           payload,
           indexFields.org_id,
+          indexFields.subdomain,
           indexFields.site_id,
           indexFields.email,
           indexFields.status,
@@ -209,6 +212,8 @@ function mapSelectorKey(key: string): string {
   switch (key) {
     case 'orgId':
       return 'org_id'
+    case 'subdomain':
+      return 'subdomain'
     case 'siteId':
       return 'site_id'
     case 'clientEmail':

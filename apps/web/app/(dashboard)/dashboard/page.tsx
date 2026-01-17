@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { getApiBaseUrl } from '@/lib/apiBase'
 
 interface User {
   id: string
@@ -33,7 +34,7 @@ export default function DashboardPage() {
     try {
       const accessToken = localStorage.getItem('accessToken')
       if (accessToken) {
-        await fetch(`http://${typeof window !== 'undefined' ? window.location.hostname : 'localhost'}:3001/api/v1/auth/logout`, {
+        await fetch(`${getApiBaseUrl()}/api/v1/auth/logout`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${accessToken}`,

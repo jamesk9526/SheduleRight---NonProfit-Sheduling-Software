@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import { getApiBaseUrl } from '@/lib/apiBase'
 
 interface ApiOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
@@ -17,9 +18,7 @@ interface ApiError {
  * Automatically includes auth token from localStorage
  */
 export function useApi() {
-  const API_BASE_URL = typeof window !== 'undefined' 
-    ? `http://${window.location.hostname}:3001`
-    : 'http://localhost:3001'
+  const API_BASE_URL = getApiBaseUrl()
 
   const call = useCallback(async (
     endpoint: string,

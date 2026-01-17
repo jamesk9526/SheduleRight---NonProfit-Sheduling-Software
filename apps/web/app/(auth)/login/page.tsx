@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useHelpShortcut } from '@/lib/hooks/useHelpShortcut'
+import { getApiBaseUrl } from '@/lib/apiBase'
 
 interface LoginCredentials {
   email: string
@@ -31,9 +32,7 @@ interface LoginError {
 }
 
 // API base URL - try multiple endpoints
-const API_BASE_URL = typeof window !== 'undefined' 
-  ? `http://${window.location.hostname}:3001`
-  : 'http://localhost:3001'
+const API_BASE_URL = getApiBaseUrl()
 
 async function loginUser(credentials: LoginCredentials): Promise<LoginResponse> {
   try {
@@ -127,7 +126,7 @@ export default function LoginPage() {
       const data = await response.json()
       alert(`✅ API is running!\n\n${JSON.stringify(data, null, 2)}`)
     } catch (error) {
-      alert(`❌ API is not reachable\n\nError: ${error instanceof Error ? error.message : 'Unknown error'}\n\nMake sure the server is running on port 3001`)
+      alert(`❌ API is not reachable\n\nError: ${error instanceof Error ? error.message : 'Unknown error'}\n\nMake sure the server is running on port 5710`)
     }
   }
 
@@ -166,7 +165,7 @@ export default function LoginPage() {
                 : 'An error occurred during login'}
             </p>
             <p className="text-xs text-red-600 mt-2">
-              💡 Hint: Make sure the API server is running on port 3001. 
+              💡 Hint: Make sure the API server is running on port 5710. 
               <button 
                 type="button"
                 onClick={testAPI}
@@ -227,25 +226,6 @@ export default function LoginPage() {
           {loginMutation.isPending ? 'Signing in...' : 'Sign In'}
         </button>
       </form>
-
-      {/* Demo Credentials */}
-      <div className="mt-6 pt-6 border-t border-neutral-200">
-        <p className="text-xs text-neutral-500 text-center mb-3">
-          Demo Credentials (Development Only)
-        </p>
-        <div className="grid grid-cols-2 gap-3 text-xs">
-          <div className="bg-neutral-50 p-3 rounded">
-            <p className="font-semibold text-neutral-700">Admin</p>
-            <p className="text-neutral-600 font-mono">admin@example.com</p>
-            <p className="text-neutral-600 font-mono">admin123</p>
-          </div>
-          <div className="bg-neutral-50 p-3 rounded">
-            <p className="font-semibold text-neutral-700">Staff</p>
-            <p className="text-neutral-600 font-mono">staff@example.com</p>
-            <p className="text-neutral-600 font-mono">staff123</p>
-          </div>
-        </div>
-      </div>
 
       {/* Debug/Help Section */}
       <div className="mt-6 pt-6 border-t border-neutral-200">

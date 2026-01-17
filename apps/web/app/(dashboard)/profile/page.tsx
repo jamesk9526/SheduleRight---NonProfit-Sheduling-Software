@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useCurrentUser } from '@/lib/hooks/useData'
 import type { User } from '@/lib/hooks/useData'
+import { getApiBaseUrl } from '@/lib/apiBase'
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -24,7 +25,7 @@ export default function ProfilePage() {
     try {
       const accessToken = localStorage.getItem('accessToken')
       if (accessToken) {
-        await fetch(`http://${typeof window !== 'undefined' ? window.location.hostname : 'localhost'}:3001/api/v1/auth/logout`, {
+        await fetch(`${getApiBaseUrl()}/api/v1/auth/logout`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${accessToken}`,
